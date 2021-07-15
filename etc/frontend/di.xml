@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Url\SecurityInfo">
+        <arguments>
+            <argument name="secureUrlList" xsi:type="array">
+                <item name="trevipay_magento" xsi:type="string">/trevipay_magento/</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Customer\Block\Account\Navigation">
+        <plugin name="trevipay_magento_rename_customer_menu_item"
+                      type="TreviPay\TreviPayMagento\Plugin\RenameCustomerMenuItem" sortOrder="10" disabled="false"  />
+    </type>
+    <type name="TreviPay\TreviPayMagento\Plugin\RenameCustomerMenuItem">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="trevipay_magento_frontend_config_provider" xsi:type="object">TreviPay\TreviPayMagento\Model\Ui\Frontend\ConfigProvider</item>
+            </argument>
+            <argument name="request" xsi:type="object">Magento\Framework\Webapi\Rest\Request\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="TreviPay\TreviPayMagento\Block\Customer\TreviPayLink">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="TreviPay\TreviPayMagento\ViewModel\Customer\CustomerTreviPay">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="TreviPay\TreviPayMagento\Observer\SignOutForForceCheckout">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="TreviPay\TreviPayMagento\Block\Info">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="TreviPay\TreviPayMagento\Controller\Customer\ApplyForCreditAndUpdateOrders">
+        <arguments>
+            <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>
+        </arguments>
+    </type>
+    <type name="TreviPay\TreviPayMagento\Controller\Customer\ApplyForCredit\Helper">
+        <arguments>
+            <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>
+        </arguments>
+    </type>
+    <type name="TreviPay\TreviPayMagento\Controller\Buyer\CancelCheckoutRedirect">
+        <arguments>
+            <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>
+        </arguments>
+    </type>
+    <type name="TreviPay\TreviPayMagento\Controller\Buyer\LinkM2CustomerWithTreviPayBuyer">
+        <arguments>
+            <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>
+        </arguments>
+    </type>
+    <type name="TreviPay\TreviPayMagento\Controller\Webhook">
+        <arguments>
+            <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="trevipay_magento_frontend_config_provider" xsi:type="object">TreviPay\TreviPayMagento\Model\Ui\Frontend\ConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Sales\Model\Order\Payment\Operations\AuthorizeOperation">
+        <plugin name="trevipay_magento_skip_create_payment_authorization_for_non_registered_trevipay_buyer"
+                type="TreviPay\TreviPayMagento\Plugin\Model\Sales\Order\Payment\Operations\AuthorizeOperationPlugin" />
+    </type>
+    <type name="TreviPay\TreviPayMagento\Plugin\Model\Sales\Order\Payment\Operations\AuthorizeOperationPlugin">
+        <arguments>
+            <argument name="request" xsi:type="object">Magento\Framework\Webapi\Rest\Request\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Payment\Model\MethodInterface">
+        <plugin name="trevipay_magento_skip_create_payment_capture_for_non_registered_trevipay_buyer"
+                type="TreviPay\TreviPayMagento\Plugin\Model\Payment\SkipCapturePlugin" />
+    </type>
+    <type name="TreviPay\TreviPayMagento\Plugin\Model\Payment\SkipCapturePlugin">
+        <arguments>
+            <argument name="request" xsi:type="object">Magento\Framework\Webapi\Rest\Request\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Multishipping\Controller\Checkout\Success">
+        <plugin name="trevipay_magento_gateway_redirect_from_multishipping"
+                type="TreviPay\TreviPayMagento\Plugin\Controller\Multishipping\Checkout\SuccessPlugin"/>
+    </type>
+</config>

@@ -1,0 +1,18 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use TreviPay\TreviPayMagento\Block\Adminhtml\System\Config\Form\Field\MultishippingUnsupportedMessage;
+
+/**
+ * @var MultishippingUnsupportedMessage $block
+ * @var Escaper $escaper
+ */
+
+?>
+
+<td id="payment_trevipay-magento-multishipping-unsupported-message">
+    <div class="message message-info">
+        <?= $escaper->escapeHtml(__('TreviPay does not support multishipping.')) ?>
+    </div>
+</td>

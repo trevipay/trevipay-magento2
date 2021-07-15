@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="controller_action_predispatch_sales_order_edit_index">
+        <observer name="trevipay_magento_admin_order_edit_before"
+                  instance="TreviPay\TreviPayMagento\Observer\DisplayAdditionalFeeMessage" />
+    </event>
+    <event name="controller_action_predispatch_sales_order_invoice_new">
+        <observer name="trevipay_magento_admin_order_invoice_new"
+                  instance="TreviPay\TreviPayMagento\Observer\DisplayPartialInvoiceNotPossibleMessage" />
+    </event>
+    <event name="sales_order_place_after">
+        <observer name="trevipay_magento_is_admin_order" instance="TreviPay\TreviPayMagento\Observer\IsAdminOrder" />
+        <observer name="trevipay_magento_set_buyer_id" instance="TreviPay\TreviPayMagento\Observer\SetBuyerId" />
+    </event>
+</config>

@@ -1,0 +1,22 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use TreviPay\TreviPayMagento\Block\Adminhtml\System\Config\Form\Field\DeleteWebhooks;
+
+/**
+ * @var DeleteWebhooks $block
+ * @var Escaper $escaper
+ */
+?>
+
+<td class="value">
+    <button id="payment_trevipay_magento_delete_webhooks"
+            class="trevipay-magento-delete-webhooks action-default"
+            type="button">
+        <span><?= $escaper->escapeHtml(__('Delete Webhooks')) ?></span>
+    </button>
+    <p class="note">
+        <span><?= $escaper->escapeHtml(__('Make sure to "Save Config" before using this button')) ?></span>
+    </p>
+</td>

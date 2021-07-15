@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="trevipay_magento" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>TreviPay</label>
+                <field id="multishipping_unsupported_message" type="note" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <frontend_model>TreviPay\TreviPayMagento\Block\Adminhtml\System\Config\Form\Field\MultishippingUnsupportedMessage</frontend_model>
+                </field>
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="payment_action" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Payment Action</label>
+                    <source_model>TreviPay\TreviPayMagento\Model\OptionSource\PaymentAction</source_model>
+                </field>
+                <field id="sandbox" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sandbox Mode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="sandbox_api_url" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sandbox API URL</label>
+                    <comment>
+                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://app.b2b.credit/]]>
+                    </comment>
+                    <depends>
+                        <field id="sandbox">1</field>
+                    </depends>
+                    <validate>validate-url</validate>
+                </field>
+                <field id="api_url" translate="label comment" type="text" sortOrder="41" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>API URL</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://app.b2b.credit/]]>
+                    </comment>
+                    <depends>
+                        <field id="sandbox">0</field>
+                    </depends>
+                    <validate>validate-url</validate>
+                </field>
+                <field id="sandbox_api_key" translate="label" type="obscure" sortOrder="42" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sandbox API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="sandbox">1</field>
+                    </depends>
+                </field>
+                <field id="api_key" translate="label" type="obscure" sortOrder="43" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="sandbox">0</field>
+                    </depends>
+                </field>
+                <field id="sandbox_seller_id" translate="label" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sandbox Seller ID</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="sandbox">1</field>
+                    </depends>
+                </field>
+                <field id="seller_id" translate="label" type="obscure" sortOrder="51" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Seller ID</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="sandbox">0</field>
+                    </depends>
+                </field>
+                <field id="program_id" translate="label" type="obscure" sortOrder="60" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Program ID</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="sandbox_program_url" translate="label" type="text" sortOrder="61" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sandbox Program URL</label>
+                    <comment>
+                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://<strong>my_program</strong>.b2b.credit/]]>
+                    </comment>
+                    <depends>
+                        <field id="sandbox">1</field>
+                    </depends>
+                    <validate>validate-url</validate>
+                </field>
+                <field id="program_url" translate="label" type="text" sortOrder="62" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Program URL</label>
+                    <comment>
+                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://<strong>my_program</strong>.b2b.credit/]]>
+                    </comment>
+                    <depends>
+                        <field id="sandbox">0</field>
+                    </depends>
+                    <validate>validate-url</validate>
+                </field>
+                <field id="force_checkout_app" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Force Checkout App</label>
+                    <comment>
+                        <![CDATA[Force TreviPay buyer sign-in (via our Checkout App) on every checkout.]]>
+                    </comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="trevipay_checkout_app_public_key" translate="label" type="obscure" sortOrder="82" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>TreviPay Checkout App Public Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="client_private_key" translate="label" type="obscure" sortOrder="84" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Client Private Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="trevipay_checkout_app_url" translate="label comment" type="text" sortOrder="86" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>TreviPay Checkout App URL</label>
+                    <comment>
+                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://checkout.b2b.credit/]]>
+                    </comment>
+                    <validate>validate-url</validate>
+                </field>
+                <field id="created_webhooks" translate="label" sortOrder="120" type="textarea" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Created Webhooks</label>
+                    <frontend_model>TreviPay\TreviPayMagento\Block\Adminhtml\System\Config\Form\Field\Disable</frontend_model>
+                </field>
+                <field id="webhook_status" type="note" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Status of the webhooks</label>
+                    <frontend_model>TreviPay\TreviPayMagento\Block\Adminhtml\System\Config\Form\Field\WebhookStatus</frontend_model>
+                </field>
+                <field id="check_created_webhooks" translate="label comment" type="button" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label />
+                    <frontend_model>TreviPay\TreviPayMagento\Block\Adminhtml\System\Config\Form\Field\CheckCreatedWebhooks</frontend_model>
+                    <comment><![CDATA[Make sure to "Save Config" before using this button]]></comment>
+                </field>
+                <field id="recreate_webhooks" translate="label comment" type="button" sortOrder="150" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label />
+                    <frontend_model>TreviPay\TreviPayMagento\Block\Adminhtml\System\Config\Form\Field\ReCreateWebhooks</frontend_model>
+                    <comment><![CDATA[Make sure to "Save Config" before using this button]]></comment>
+                </field>
+                <field id="delete_webhooks" translate="label comment" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label />
+                    <frontend_model>TreviPay\TreviPayMagento\Block\Adminhtml\System\Config\Form\Field\DeleteWebhooks</frontend_model>
+                </field>
+                <field id="debug" translate="label" type="select" sortOrder="170" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Debug</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="180" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="availability" translate="label" type="select" sortOrder="190" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Availability</label>
+                    <source_model>TreviPay\TreviPayMagento\Model\OptionSource\Availability</source_model>
+                </field>
+                <field id="support_number" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>TreviPay Support Number</label>
+                </field>
+                <field id="order_status" translate="label" type="select" sortOrder="210" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>New Order Status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
+                </field>
+                <field id="currency" translate="label" type="select" sortOrder="220" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Accepted Currency</label>
+                    <source_model>Magento\Config\Model\Config\Source\Locale\Currency</source_model>
+                </field>
+                <field id="allowspecific" translate="label" type="select" sortOrder="230" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Payment from Applicable Countries</label>
+                    <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" translate="label" type="multiselect" sortOrder="240" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Payment from Specific Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <can_be_empty>1</can_be_empty>
+                    <depends>
+                        <field id="allowspecific">1</field>
+                    </depends>
+                </field>
+                <field id="min_order_total" translate="label" type="text" sortOrder="250" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Minimum Order Total</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="max_order_total" translate="label" type="text" sortOrder="260" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Maximum Order Total</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="sort_order" translate="label" type="text" sortOrder="270" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+                <field id="payment_method_image_local_path" translate="label comment" type="image" sortOrder="280" showInDefault="1" showInWebsite="1" showInStore="1" >
+                    <label>Payment Method Logo</label>
+                    <!-- backend_model handles the calling of deleting\uploading the image-->
+                    <backend_model>TreviPay\TreviPayMagento\Model\Config\Backend\Image</backend_model>
+                    <!-- The folder created to add images after being saved in admin. -->
+                    <base_url type="media" scope_info="1">trevipay/images</base_url>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

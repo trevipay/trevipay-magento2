@@ -1,0 +1,223 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use TreviPay\TreviPayMagento\ViewModel\Customer\CustomerTreviPay;
+
+/**
+ * @var CustomerTreviPay $viewModel
+ * @var Template $block
+ * @var Escaper $escaper
+ */
+$viewModel = $block->getData('view_model');
+$isRegisteredCustomer = $viewModel->isRegisteredCustomer();
+$paymentMethodImagePath = $viewModel->getPaymentMethodImageLocalPath();
+$paymentMethodName = $viewModel->getPaymentMethodName();
+
+$logoPath = 'TreviPay_TreviPayMagento::images/trevipay-logo.svg';
+$featurePath1 = 'TreviPay_TreviPayMagento::images/feature-1.svg';
+$featurePath2 = 'TreviPay_TreviPayMagento::images/feature-2.svg';
+$featurePath3 = 'TreviPay_TreviPayMagento::images/feature-3.svg';
+
+$forgetMeLabel = __('Forget Me');
+?>
+
+<?php if (!$isRegisteredCustomer): ?>
+    <div class="trevipay-apply-wrapper">
+        <div class="trevipay-apply-header">
+            <?php if ($paymentMethodImagePath): ?>
+                <img class="trevipay-apply-logo"
+                    src="<?= $escaper->escapeHtmlAttr($paymentMethodImagePath) ?>"
+                    alt="<?= $escaper->escapeHtmlAttr($paymentMethodName) ?>"
+                />
+            <?php else: ?>
+                <h3 class="trevipay-apply-nologo"> <?=$escaper->escapeHtml($paymentMethodName)?> </h3>
+            <?php endif; ?>
+            <h6 class="trevipay-apply-title">
+                <?= $escaper->escapeHtml(__('Invoicing made easy')) ?>
+            </h6>
+            <a class="trevipay-apply-link"
+               href="<?= $escaper->escapeUrl($viewModel->getApplyForCreditUrl()) ?>">
+                <?= $escaper->escapeHtml(__('Apply Now')) ?>
+            </a>
+        </div>
+        <div class="trevipay-apply-section trevipay-apply-section-features">
+            <h6 class="trevipay-apply-section-title"><?= $escaper->escapeHtml(__('Features')) ?></h6>
+            <div class="trevipay-apply-section-content">
+                <div class="trevipay-apply-feature-box">
+                    <img class="trevipay-apply-feature-box-image"
+                         src="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl($featurePath1)) ?>"
+                         alt="<?= $escaper->escapeHtmlAttr(__('Flexible Terms')) ?>"/>
+                    <h4 class="trevipay-apply-feature-box-title">
+                        <?= $escaper->escapeHtml(__('Flexible Terms')) ?>
+                    </h4>
+                    <p class="trevipay-apply-feature-box-paragraph">
+                        <?= $escaper->escapeHtml(__('Approval for a Line of Credit')) ?>
+                    </p>
+                    <p class="trevipay-apply-feature-box-paragraph">
+                        <?= $escaper->escapeHtml(__('Up to 45 Days to Pay')) ?>
+                    </p>
+                </div>
+                <div class="trevipay-apply-feature-box">
+                    <img class="trevipay-apply-feature-box-image"
+                         src="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl($featurePath2)) ?>"
+                         alt="<?= $escaper->escapeHtmlAttr(__('Invoicing Your Way')) ?>"/>
+                    <h4 class="trevipay-apply-feature-box-title">
+                        <?= $escaper->escapeHtml(__('Invoicing Your Way')) ?>
+                    </h4>
+                    <p class="trevipay-apply-feature-box-paragraph">
+                        <?= $escaper->escapeHtml(__('Accounts Payable Integration')) ?>
+                    </p>
+                    <p class="trevipay-apply-feature-box-paragraph">
+                        <?= $escaper->escapeHtml(__('Connect with Purchase Orders')) ?>
+                    </p>
+                </div>
+                <div class="trevipay-apply-feature-box">
+                    <img class="trevipay-apply-feature-box-image"
+                         src="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl($featurePath3)) ?>"
+                         alt="<?= $escaper->escapeHtmlAttr(__('Easy Checkout')) ?>"/>
+                    <h4 class="trevipay-apply-feature-box-title">
+                        <?= $escaper->escapeHtml(__('Easy Checkout')) ?>
+                    </h4>
+                    <p class="trevipay-apply-feature-box-paragraph">
+                        <?= $escaper->escapeHtml(__('Zero Friction')) ?>
+                    </p>
+                    <p class="trevipay-apply-feature-box-paragraph">
+                        <?= $escaper->escapeHtml(__('Company Wide Purchasing')) ?>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="trevipay-apply-section trevipay-apply-section-howitworks">
+            <h6 class="trevipay-apply-section-title"><?= $escaper->escapeHtml(__('How it works')) ?></h6>
+            <div class="trevipay-apply-section-content">
+                <h4 class="trevipay-apply-how-it-works-step">
+                    <?= $escaper->escapeHtml(__('Provide Business Info')) ?>
+                </h4>
+                <span class="trevipay-apply-how-it-works-arrow"></span>
+                <h4 class="trevipay-apply-how-it-works-step"><?= $escaper->escapeHtml(__('Fast Approval')) ?></h4>
+                <span class="trevipay-apply-how-it-works-arrow"></span>
+                <?php if ($paymentMethodImagePath): ?>
+                    <img class="trevipay-apply-how-it-works-step trevipay-apply-how-it-works-image"
+                         src="<?= $escaper->escapeHtmlAttr($paymentMethodImagePath) ?>"
+                         alt="<?= $escaper->escapeHtmlAttr($paymentMethodName) ?>"
+                    />
+                <?php else: ?>
+                    <h4 class="trevipay-apply-how-it-works-step"> <?=$escaper->escapeHtml($paymentMethodName)?> </h4>
+                <?php endif; ?>
+             </div>
+         </div>
+    </div>
+<?php elseif ($viewModel->shouldDisplayMessageOnly()): ?>
+    <span class="trevipay-buyer-name"><?= $escaper->escapeHtml($viewModel->getBuyerName()) ?></span>
+    <div class="block-content">
+        <p><?= /* @noEscape */ $viewModel->getMessage() ?></p>
+    </div>
+    <?php if ($viewModel->shouldDisplayPendingOrderModalOnForgetMe()): ?>
+        <button class="action primary"
+                id="trevipay-forget-me-btn"
+                type="button"
+                data-trigger="trevipay-forget-me-modal-trigger"
+                data-bind="attr: { title: '<?= $escaper->escapeHtml($forgetMeLabel) ?>' }">
+            <span><?= $escaper->escapeHtml($forgetMeLabel) ?></span>
+        </button>
+        <div id="trevipay-forget-me-modal"
+             data-bind="mageInit: {
+                    'Magento_Ui/js/modal/modal':{
+                        'type': 'popup',
+                        'trigger': '[data-trigger=trevipay-forget-me-modal-trigger]',
+                        'responsive': true,
+                        'buttons': [{
+                            text: jQuery.mage.__('Close'),
+                            class: 'action secondary',
+                            click: function () {
+                                this.closeModal();
+                            }
+                        }, {
+                            text: '<?= $escaper->escapeHtml($forgetMeLabel) ?>',
+                            class: 'action primary',
+                            type: 'submit',
+                            click: window.trevipay.forgetMe,
+                        }]
+                    }}">
+            <div class="modal-body-content">
+                <h2><?= $escaper->escapeHtml($forgetMeLabel) ?></h2>
+                <p><?= $escaper->escapeHtml(__(
+                    'Any pending orders may not be processed correctly if you proceed to forget your %1 Account.',
+                    $paymentMethodName
+                )) ?></p>
+            </div>
+        </div>
+    <?php else: ?>
+        <p>
+            <a href="<?= /* @noEscape */
+            $viewModel->getForgetMeUrl() ?>"
+               class="action button primary">
+                <?= $escaper->escapeHtml($forgetMeLabel) ?>
+            </a>
+        </p>
+    <?php endif; ?>
+<?php else: ?>
+    <div class="block block-dashboard-info">
+        <div class="block-title"><strong><?= $escaper->escapeHtml(__('Credit Information')) ?></strong></div>
+        <span class="trevipay-buyer-name"><?= $escaper->escapeHtml($viewModel->getBuyerName()) ?></span>
+        <div class="block-content">
+            <ul class="trevipay-credit-details">
+                <li>
+                    <label
+                        class="trevipay-credit-details-label"><?= $escaper->escapeHtml(__('Approved Limit')) ?></label>
+                    <span
+                        class="trevipay-credit-details-value">
+                        <?= $escaper->escapeHtml($viewModel->getTreviPayM2CreditLimit()) ?>
+                    </span>
+                </li>
+                <li>
+                    <label class="trevipay-credit-details-label"><?= $escaper->escapeHtml(__('Balance')) ?></label>
+                    <span
+                        class="trevipay-credit-details-value">
+                        <?= $escaper->escapeHtml($viewModel->getTreviPayM2CreditBalance()) ?>
+                    </span>
+                </li>
+                <li>
+                    <label class="trevipay-credit-details-label"><?= $escaper->escapeHtml(__('Authorized')) ?></label>
+                    <span
+                        class="trevipay-credit-details-value">
+                        <?= $escaper->escapeHtml($viewModel->getTreviPayM2CreditAuthorized()) ?>
+                    </span>
+                </li>
+                <li>
+                    <hr>
+                </li>
+                <li>
+                    <label class="trevipay-credit-details-label"><?= $escaper->escapeHtml(__('Available')) ?></label>
+                    <span
+                        class="trevipay-credit-details-value">
+                        <?= $escaper->escapeHtml($viewModel->getTreviPayM2CreditAvailable()) ?>
+                    </span>
+                </li>
+            </ul>
+            <p><?=
+                /* @noEscape */
+                __(
+                    'Visit the %1 Portal to view your invoices, increase your credit line, or make a payment.',
+                    $paymentMethodName
+                ) ?></p>
+            <p>
+                <a href="<?= /* @noEscape */
+                $viewModel->getBuyerPortalUrl() ?>"
+                   class="action button primary"
+                   target="_blank">
+                    <?= $escaper->escapeHtml(__('TreviPay Portal', $paymentMethodName)) ?>
+                </a>
+            </p>
+            <p>
+                <a href="<?= /* @noEscape */
+                $viewModel->getForgetMeUrl() ?>"
+                   class="action button primary">
+                    <?= $escaper->escapeHtml($forgetMeLabel) ?>
+                </a>
+            </p>
+        </div>
+    </div>
+<?php endif; ?>

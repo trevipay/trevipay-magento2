@@ -1,0 +1,80 @@
+<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <!-- ko if: (getPaymentMethodImageLocalPath()) -->
+    <div class="trevipay-payment-method-title">
+        <img data-bind="attr: {src: getPaymentMethodImageLocalPath(), alt: getPaymentMethodName()}" class="payment-icon trevipay-payment-icon" />
+    </div>
+    <!-- /ko -->
+    <!-- ko if: (isRegisteredButNotActiveBuyer()) -->
+        <label class="label">
+            <span html="tPaymentMethodNotAvailableToYou()"></span>
+        </label>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout"
+                        type="button"
+                        data-bind="
+                                    click: treviPaySectionClick,
+                                    attr: {title: getPaymentMethodName()},
+                                    enable: (getCode() == isChecked())
+                                    "
+                        disabled>
+                    <span html="getPaymentMethodName()"></span>
+                </button>
+            </div>
+        </div>
+    <!-- /ko -->
+    <!-- ko ifnot: (isRegisteredButNotActiveBuyer()) -->
+        <!-- ko if: (isNotRegisteredBuyer()) -->
+            <label class="label">
+                <span html="tYouAreNotRegistered()"></span>
+            </label>
+        <!-- /ko -->
+        <!-- ko ifnot: (isNotRegisteredBuyer())-->
+            <ul class="trevipay-credit-details">
+                <li>
+                    <label class="trevipay-credit-details-label" data-bind="i18n: 'Approved Limit'"></label>
+                    <span class="trevipay-credit-details-value" html="formatPrice(creditApprovedLimit())"></span>
+                </li>
+                <li>
+                    <label class="trevipay-credit-details-label" data-bind="i18n: 'Balance'"></label>
+                    <span class="trevipay-credit-details-value" html="formatPrice(creditBalance())"></span>
+                </li>
+                <li>
+                    <label class="trevipay-credit-details-label" data-bind="i18n: 'Authorized'"></label>
+                    <span class="trevipay-credit-details-value" html="formatPrice(creditAuthorized())"></span>
+                </li>
+                <li>
+                    <hr>
+                </li>
+                <li>
+                    <label class="trevipay-credit-details-label" data-bind="i18n: 'Available'"></label>
+                    <span class="trevipay-credit-details-value" html="formatPrice(creditAvailable())"></span>
+                </li>
+            </ul>
+            <div class="field required">
+                <label data-bind="attr: {for: getCode() + '_trevipay_po_number'}" class="label">
+                    <span><!-- ko i18n: 'Purchase Order Number'--><!-- /ko --></span>
+                </label>
+
+                <div class="control">
+                    <input type="text" name="payment[trevipay_po_number]"
+                           class="select"
+                           data-bind=" value: trevipayPoNumber, attr: {maxlength: getMaxLengthForPurchaserOrderNumber()}" />
+                </div>
+            </div>
+
+            <div class="field required">
+                <label data-bind="attr: {for: getCode() + '_trevipay_notes'}" class="label">
+                    <span><!-- ko i18n: 'Notes'--><!-- /ko --></span>
+                </label>
+
+                <div class="control">
+                    <textarea type="text" name="payment[trevipay_notes]"
+                              class="select"
+                              data-bind=" value: trevipayNotes, attr: {maxlength: getMaxLengthForNotes()}">
+                    </textarea>
+                </div>
+            </div>
+        <!-- /ko -->
+    <!-- /ko -->
+</div>

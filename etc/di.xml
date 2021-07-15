@@ -1,0 +1,403 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="TreviPay\TreviPay\Api\Data\Webhook\WebhookInterface"
+                type="TreviPay\TreviPay\Model\Data\Webhook\Webhook"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\ListMethod\ListChargesRequestInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\ListMethod\ListChargesRequest"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\ChargeDetailInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\ChargeDetail"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\TaxDetailInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\TaxDetail"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\ChargeResponseInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\ChargeResponse"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\ReturnMethod\ReturnAChargeRequestInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\ReturnMethod\ReturnAChargeRequest"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\CreateMethod\CreateAChargeRequestInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\CreateMethod\CreateAChargeRequest"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Refund\CreateMethod\CreateRefundRequestInterface"
+                type="TreviPay\TreviPay\Model\Data\Refund\CreateMethod\CreateRefundRequest"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Refund\ListMethod\ListRefundsRequestInterface"
+                type="TreviPay\TreviPay\Model\Data\Refund\ListMethod\ListRefundsRequest"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Refund\RefundDetailInterface"
+                type="TreviPay\TreviPay\Model\Data\Refund\RefundDetail"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Refund\RefundResponseInterface"
+                type="TreviPay\TreviPay\Model\Data\Refund\RefundResponse"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\ShipToInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\ShipTo"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\CompanyAddressInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\CompanyAddress"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\SupplierInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\Supplier"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Charge\TrackingInterface"
+                type="TreviPay\TreviPay\Model\Data\Charge\Tracking"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Authorization\CreateMethod\CreateAnAuthorizationRequestInterface"
+                type="TreviPay\TreviPay\Model\Data\Authorization\CreateMethod\CreateAnAuthorizationRequest"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Authorization\UpdateMethod\UpdateAnAuthorizationRequestInterface"
+                type="TreviPay\TreviPay\Model\Data\Authorization\UpdateMethod\UpdateAnAuthorizationRequest"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Authorization\AuthorizationResponseInterface"
+                type="TreviPay\TreviPay\Model\Data\Authorization\AuthorizationResponse"/>
+    <preference for="TreviPay\TreviPay\Api\Data\Buyer\BuyerResponseInterface"
+                type="TreviPay\TreviPay\Model\Data\Buyer\CustomerResponse"/>
+    <preference for="TreviPay\TreviPay\Api\Data\ErrorResponseInterface"
+                type="TreviPay\TreviPay\Model\Data\ErrorResponse"/>
+    <preference for="TreviPay\TreviPay\Api\Data\ValidationErrorInterface"
+                type="TreviPay\TreviPay\Model\Data\ValidationError"/>
+    <preference for="GuzzleHttp\ClientInterface"
+                type="GuzzleHttp\Client"/>
+    <preference for="TreviPay\TreviPay\ApiClientInterface"
+                type="TreviPay\TreviPayMagento\Model\Http\ApiClientDecorator"/>
+    <preference for="TreviPay\TreviPay\Api\ConfigProviderInterface"
+                type="TreviPay\TreviPayMagento\Model\ConfigProvider"/>
+
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="TreviPayMagentoPaymentGatewayFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">\TreviPay\TreviPayMagento\Model\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">TreviPay\TreviPayMagento\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\ConfigurableInfo</argument>
+            <argument name="valueHandlerPool" xsi:type="object">TreviPayMagentoPaymentGatewayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">TreviPayMagentoCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Commands infrastructure -->
+    <virtualType name="TreviPayMagentoCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="refund" xsi:type="string">TreviPayMagentoRefundCommand</item>
+                <item name="authorize" xsi:type="string">TreviPayMagentoAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">TreviPayMagentoCaptureCommand</item>
+                <item name="void" xsi:type="string">TreviPayMagentoVoidCommand</item>
+                <item name="cancel" xsi:type="string">TreviPayMagentoVoidCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Void command -->
+    <virtualType name="TreviPayMagentoVoidCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">TreviPay\TreviPayMagento\Gateway\Request\AuthorizationTransactionTxnBuilder</argument>
+            <argument name="transferFactory" xsi:type="object">TreviPay\TreviPayMagento\Gateway\Request\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">TreviPay\TreviPayMagento\Gateway\Http\Client\TransactionVoid</argument>
+            <argument name="handler" xsi:type="object">TreviPayMagentoVoidHandler</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Void Request handlers -->
+    <virtualType name="TreviPayMagentoVoidHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction_id" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Response\VoidHandler</item>
+                <item name="payment_additional_info" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler\Void</item>
+                <item name="cancel_original_transaction" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Response\CancelAuthorizationTransactionHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler\Void" type="TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler">
+        <arguments>
+            <argument name="privateResponseMap" xsi:type="array">
+                <item name="id" xsi:type="string">id</item>
+                <item name="seller_id" xsi:type="string">seller_id</item>
+                <item name="buyer_id" xsi:type="string">buyer_id</item>
+                <item name="currency" xsi:type="string">currency</item>
+                <item name="authorized_amount" xsi:type="string">authorized_amount</item>
+                <item name="captured_amount" xsi:type="string">captured_amount</item>
+                <item name="foreign_exchange_fee" xsi:type="string">foreign_exchange_fee</item>
+                <item name="status" xsi:type="string">status</item>
+                <item name="po_number" xsi:type="string">po_number</item>
+                <item name="expires" xsi:type="string">expires</item>
+                <item name="created" xsi:type="string">created</item>
+                <item name="modified" xsi:type="string">modified</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize command -->
+    <virtualType name="TreviPayMagentoAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">TreviPayMagentoPaymentAuthorizeBuilder</argument>
+            <argument name="transferFactory" xsi:type="object">TreviPay\TreviPayMagento\Gateway\Request\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">TreviPay\TreviPayMagento\Gateway\Http\Client\TransactionAuthorize</argument>
+            <argument name="handler" xsi:type="object">TreviPayMagentoPaymentAuthorizeHandler</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize Request handlers -->
+    <virtualType name="TreviPayMagentoPaymentAuthorizeBuilder" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="seller_id" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\SellerIdBuilder</item>
+                <item name="buyer_id" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\BuyerIdBuilder</item>
+                <item name="payment" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\PaymentDataBuilder</item>
+                <item name="transaction_details" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\TransactionDetails</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Authorize Response handlers -->
+    <virtualType name="TreviPayMagentoPaymentAuthorizeHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction_id" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Response\TransactionIdHandler</item>
+                <item name="payment_additional_info" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler\Authorize</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler\Authorize" type="TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler">
+        <arguments>
+            <argument name="privateResponseMap" xsi:type="array">
+                <item name="id" xsi:type="string">id</item>
+                <item name="seller_id" xsi:type="string">seller_id</item>
+                <item name="buyer_id" xsi:type="string">buyer_id</item>
+                <item name="currency" xsi:type="string">currency</item>
+                <item name="authorized_amount" xsi:type="string">authorized_amount</item>
+                <item name="captured_amount" xsi:type="string">captured_amount</item>
+                <item name="foreign_exchange_fee" xsi:type="string">foreign_exchange_fee</item>
+                <item name="status" xsi:type="string">status</item>
+                <item name="po_number" xsi:type="string">po_number</item>
+                <item name="expires" xsi:type="string">expires</item>
+                <item name="created" xsi:type="string">created</item>
+                <item name="modified" xsi:type="string">modified</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture command -->
+    <virtualType name="TreviPayMagentoCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">TreviPayMagentoPaymentCaptureBuilder</argument>
+            <argument name="transferFactory" xsi:type="object">TreviPay\TreviPayMagento\Gateway\Request\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">TreviPay\TreviPayMagento\Gateway\Http\Client\TransactionCapture</argument>
+            <argument name="handler" xsi:type="object">TreviPayMagentoPaymentCaptureHandler</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture Request builder -->
+    <virtualType name="TreviPayMagentoPaymentCaptureBuilder" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="seller_id" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\SellerIdBuilder</item>
+                <item name="buyer_id" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\BuyerIdBuilder</item>
+                <item name="transaction_details" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\TransactionDetails</item>
+                <item name="totals" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\CaptureTotalsBuilder</item>
+                <item name="capture_base_data" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\CaptureBaseDataBuilder</item>
+                <item name="ship_to" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\ShipToBuilder</item>
+                <item name="metadata" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\MetadataBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture Response handlers -->
+    <virtualType name="TreviPayMagentoPaymentCaptureHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction_id" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Response\TransactionIdHandler</item>
+                <item name="payment_additional_info" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler\Capture</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler\Capture" type="TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler">
+        <arguments>
+            <argument name="privateResponseMap" xsi:type="array">
+                <item name="id" xsi:type="string">id</item>
+                <item name="seller_id" xsi:type="string">seller_id</item>
+                <item name="buyer_id" xsi:type="string">buyer_id</item>
+                <item name="status" xsi:type="string">status</item>
+                <item name="currency" xsi:type="string">currency</item>
+                <item name="total_amount" xsi:type="string">total_amount</item>
+                <item name="tax_amount" xsi:type="string">tax_amount</item>
+                <item name="discount_amount" xsi:type="string">discount_amount</item>
+                <item name="shipping_amount" xsi:type="string">shipping_amount</item>
+                <item name="shipping_tax_amount" xsi:type="string">shipping_tax_amount</item>
+                <item name="shipping_discount_amount" xsi:type="string">shipping_discount_amount</item>
+                <item name="foreign_exchange_fee" xsi:type="string">foreign_exchange_fee</item>
+                <item name="original_total_amount" xsi:type="string">original_total_amount</item>
+                <item name="paid_amount_currency" xsi:type="string">paid_amount_currency</item>
+                <item name="paid_amount" xsi:type="string">paid_amount</item>
+                <item name="order_url" xsi:type="string">order_url</item>
+                <item name="order_number" xsi:type="string">order_number</item>
+                <item name="po_number" xsi:type="string">po_number</item>
+                <item name="previous_charge_id" xsi:type="string">previous_charge_id</item>
+                <item name="comment" xsi:type="string">comment</item>
+                <item name="due_date" xsi:type="string">due_date</item>
+                <item name="created" xsi:type="string">created</item>
+                <item name="modified" xsi:type="string">modified</item>
+                <item name="details" xsi:type="string">details</item>
+                <item name="sku" xsi:type="string">sku</item>
+                <item name="description" xsi:type="string">description</item>
+                <item name="quantity" xsi:type="string">quantity</item>
+                <item name="unit_price" xsi:type="string">unit_price</item>
+                <item name="cancellation_reason" xsi:type="string">cancellation_reason</item>
+                <item name="return_reason" xsi:type="string">return_reason</item>
+                <item name="invoice_url" xsi:type="string">invoice_url</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Refund command -->
+    <virtualType name="TreviPayMagentoRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">TreviPayMagentoPaymentRefundBuilder</argument>
+            <argument name="transferFactory" xsi:type="object">TreviPay\TreviPayMagento\Gateway\Request\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">TreviPay\TreviPayMagento\Gateway\Http\Client\TransactionRefund</argument>
+            <argument name="handler" xsi:type="object">TreviPayMagentoRefundHandler</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Refund Request handlers -->
+    <virtualType name="TreviPayMagentoPaymentRefundBuilder" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="parent_transaction_id" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\ParentTransactionIdBuilder</item>
+                <item name="refund" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Request\RefundBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Refund Response handlers -->
+    <virtualType name="TreviPayMagentoRefundHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="refund" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Response\RefundHandler</item>
+                <item name="payment_additional_info" xsi:type="string">TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler\Refund</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler\Refund" type="TreviPay\TreviPayMagento\Gateway\Response\PaymentAdditionalInfoHandler">
+        <arguments>
+            <argument name="privateResponseMap" xsi:type="array">
+                <item name="id" xsi:type="string">id</item>
+                <item name="seller_id" xsi:type="string">seller_id</item>
+                <item name="buyer_id" xsi:type="string">buyer_id</item>
+                <item name="status" xsi:type="string">status</item>
+                <item name="currency" xsi:type="string">currency</item>
+                <item name="total_amount" xsi:type="string">total_amount</item>
+                <item name="tax_amount" xsi:type="string">tax_amount</item>
+                <item name="discount_amount" xsi:type="string">discount_amount</item>
+                <item name="shipping_amount" xsi:type="string">shipping_amount</item>
+                <item name="shipping_tax_amount" xsi:type="string">shipping_tax_amount</item>
+                <item name="shipping_discount_amount" xsi:type="string">shipping_discount_amount</item>
+                <item name="foreign_exchange_fee" xsi:type="string">foreign_exchange_fee</item>
+                <item name="original_total_amount" xsi:type="string">original_total_amount</item>
+                <item name="paid_amount_currency" xsi:type="string">paid_amount_currency</item>
+                <item name="paid_amount" xsi:type="string">paid_amount</item>
+                <item name="order_url" xsi:type="string">order_url</item>
+                <item name="order_number" xsi:type="string">order_number</item>
+                <item name="po_number" xsi:type="string">po_number</item>
+                <item name="previous_charge_id" xsi:type="string">previous_charge_id</item>
+                <item name="comment" xsi:type="string">comment</item>
+                <item name="due_date" xsi:type="string">due_date</item>
+                <item name="created" xsi:type="string">created</item>
+                <item name="modified" xsi:type="string">modified</item>
+                <item name="details" xsi:type="string">details</item>
+                <item name="sku" xsi:type="string">sku</item>
+                <item name="description" xsi:type="string">description</item>
+                <item name="quantity" xsi:type="string">quantity</item>
+                <item name="unit_price" xsi:type="string">unit_price</item>
+                <item name="cancellation_reason" xsi:type="string">cancellation_reason</item>
+                <item name="return_reason" xsi:type="string">return_reason</item>
+                <item name="refund_reason" xsi:type="string">refund_reason</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Configuration reader -->
+    <virtualType name="TreviPayMagentoPaymentGatewayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\TreviPay\TreviPayMagento\Model\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="TreviPay\TreviPay\ApiClient">
+        <arguments>
+            <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="TreviPay\TreviPayMagento\Model\TreviPayFactory">
+        <arguments>
+            <argument name="logger" xsi:type="object">TreviPayMagentoLogger</argument>
+        </arguments>
+    </type>
+
+    <!-- Value handlers infrastructure -->
+    <virtualType name="TreviPayMagentoPaymentGatewayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">TreviPayMagentoPaymentGatewayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="TreviPayMagentoPaymentGatewayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">TreviPayMagentoPaymentGatewayConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="TreviPayMagentoLogger" type="TreviPay\TreviPayMagento\Model\Logger">
+        <arguments>
+            <argument name="handlers"  xsi:type="array">
+                <item name="debug" xsi:type="object">TreviPayMagentoLoggerHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="TreviPayMagentoLoggerHandler" type="TreviPay\TreviPayMagento\Model\Logger\TreviPayHandler">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/payment_trevipay_magento.log</argument>
+            <argument name="format" xsi:type="string">
+                [%datetime%] %channel%.%level_name%: %message%&#10;[debug_data] => %context% %extra%&#10;
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="TreviPay\TreviPayMagento\Model\ConfigProvider">
+        <arguments>
+            <argument name="request" xsi:type="object">Magento\Framework\App\Request\Http\Proxy</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="PaymentTreviPayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\TreviPay\TreviPayMagento\Model\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PaymentTreviPayLogger" type="Magento\Payment\Model\Method\Logger">
+        <arguments>
+            <argument name="config" xsi:type="object">PaymentTreviPayConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="TreviPay\TreviPayMagento\Gateway\Http\Client\AbstractTransaction">
+        <arguments>
+            <argument name="paymentLogger" xsi:type="object">PaymentTreviPayLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Payment\Model\Method\AbstractMethod">
+        <plugin name="TreviPayMagentoPluginModelMethodPaymentMethodIsAvailablePlugin"
+                type="TreviPay\TreviPayMagento\Plugin\Model\Method\PaymentMethodIsAvailablePlugin" />
+    </type>
+    <type name="Magento\Payment\Model\Method\Adapter">
+        <plugin name="TreviPayMagentoPluginModelMethodPaymentMethodIsAvailablePlugin"
+                type="TreviPay\TreviPayMagento\Plugin\Model\Method\PaymentMethodIsAvailablePlugin" />
+    </type>
+    <type name="Magento\Sales\Model\Order">
+        <plugin name="trevipay_magento_order_invoice" type="TreviPay\TreviPayMagento\Plugin\OrderCanInvoicePlugin"/>
+    </type>
+    <type name="Magento\Sales\Model\Order\Creditmemo">
+        <plugin name="creditmemo_without_invoice" type="TreviPay\TreviPayMagento\Observer\CreditMemoWithoutInvoicePlugin"/>
+    </type>
+    <type name="Magento\Sales\Model\Order\RefundAdapterInterface">
+        <plugin name="trevipay_magento_refund_offline" type="TreviPay\TreviPayMagento\Plugin\Model\Sales\Order\RefundAdapterPlugin"/>
+    </type>
+    <type name="Magento\Payment\Model\MethodInterface">
+        <plugin name="trevipay_magento_partial_invoice_not_available"
+                type="TreviPay\TreviPayMagento\Plugin\Model\Payment\MethodInterfacePlugin"/>
+    </type>
+</config>

@@ -1,0 +1,12 @@
+{
+    "customer_entity": {
+        "column": {
+            "trevipay_m2_client_reference_buyer_id": true,
+            "trevipay_m2_client_reference_customer_id": true
+        },
+        "index": {
+            "CUSTOMER_ENTITY_TREVIPAY_M2_CLIENT_REFERENCE_BUYER_ID": true,
+            "CUSTOMER_ENTITY_TREVIPAY_M2_CLIENT_REFERENCE_CUSTOMER_ID": true
+        }
+    }
+}

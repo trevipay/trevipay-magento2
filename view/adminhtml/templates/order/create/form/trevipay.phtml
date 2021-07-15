@@ -1,0 +1,90 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use TreviPay\TreviPayMagento\Block\Form;
+use TreviPay\TreviPayMagento\Gateway\Request\TransactionDetails;
+
+/**
+ * @var Form $block
+ * @var Escaper $escaper
+ */
+?>
+<?php if ($block->isBuyerActive()): ?>
+    <fieldset class="admin__fieldset payment-method"
+              id="payment_form_<?= $escaper->escapeHtml($block->getMethodCode()) ?>" style="display: none;">
+        <div class="admin__field">
+            <label for="trevipay_po_number"
+                   class="admin__field-label">
+                   <span><?= $escaper->escapeHtml(__('Purchase Order Number')) ?></span>
+            </label>
+            <div class="admin__field-control">
+                <input type="text" id="po_number" name="payment[trevipay_po_number]"
+                       title="<?= $escaper->escapeHtml(__("Purchase Order Number")) ?>" class="admin__control-text"
+                       value="<?= /* @noEscape */ $block->getInfoData('trevipay_po_number') ?>"
+                       maxlength="<?= /* @noEscape */ TransactionDetails::FORM_FIELD_PO_NUMBER_MAXIMUM_LENGTH ?>"/>
+            </div>
+        </div>
+        <div class="admin__field">
+            <label for="trevipay_notes" class="admin__field-label">
+                <span><?= $escaper->escapeHtml(__('Notes')) ?></span>
+            </label>
+            <div class="admin__field-control">
+            <textarea id="trevipay_notes" name="payment[trevipay_notes]"
+                      title="<?= $escaper->escapeHtml(__("Notes")) ?>" class="admin__control-text"
+                      rows="2"
+                      maxlength="<?= /* @noEscape */ TransactionDetails::FORM_FIELD_NOTES_MAXIMUM_LENGTH ?>"><?=
+                        /* @noEscape */ $block->getInfoData('trevipay_notes')
+                        ?></textarea>
+            </div>
+        </div>
+    </fieldset>
+<?php else: ?>
+    <script>
+        require([
+            'jquery',
+            'jquery/validate',
+            'domReady!'
+        ], function ($) {
+
+            var config = {
+                validatorName: 'validate-trevipay-not-active-buyer',
+                paymentMethodCode: "<?= $escaper->escapeHtml($block->getMethodCode()) ?>",
+                observerContainer: '#order-billing_method_form',
+                message: "<?= $escaper->escapeHtml(__($block->getValidationMessage())) ?>"
+            };
+
+            var addCustomValidationClass = function () {
+                $('input[name="payment[method]"]').addClass(config.validatorName);
+            };
+
+            var observer = new MutationObserver(addCustomValidationClass);
+            observer.observe($(config.observerContainer)[0], {attributes: false, childList: true, subtree: true});
+
+            addCustomValidationClass();
+
+            $.validator.addMethod(
+                config.validatorName,
+                function (value, element) {
+                    return !(value === config.paymentMethodCode)
+                },
+                config.message
+            );
+
+            $('#edit_form').on('changePaymentMethod', function (e, methodCode) {
+                var paymentMethodValidationMessage = $(this).find('.mage-error[for="payment[method]"]');
+                if (!paymentMethodValidationMessage) return;
+
+                if (
+                    methodCode != config.paymentMethodCode
+                    && paymentMethodValidationMessage.html() === $('<div>').html(config.message).html()
+                ) {
+                    paymentMethodValidationMessage.hide();
+                } else {
+                    paymentMethodValidationMessage.show();
+                }
+
+            });
+        });
+    </script>
+<?php endif; ?>

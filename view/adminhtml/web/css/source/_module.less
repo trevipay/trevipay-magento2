@@ -1,0 +1,83 @@
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .trevipay-magento-recreate-webhooks,
+    .trevipay-magento-check-created-webhooks {
+        &:extend(.abs-action-primary all);
+    }
+
+    .trevipay-magento-delete-webhooks {
+        position: relative;
+        padding-left: 3.2rem;
+
+        &:before {
+            background: none;
+            border: 0;
+            color: @alert-icon__error__color;
+            content: @alert-icon__error__content;
+            font-family: @alert-icon__font-name;
+            font-size: 1.2rem;
+            font-style: @alert__font-style;
+            font-weight: @alert__font-weight;
+            height: auto;
+            left: 1rem;
+            line-height: inherit;
+            position: absolute;
+            speak: none;
+            text-shadow: none;
+            top: 50%;
+            margin-top: -.75rem;
+            width: auto;
+        }
+    }
+
+    .trevipay-magento-status {
+        .admin__field-tooltip { /* stylelint-disable-line selector-class-pattern */
+            width: auto;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+        }
+    }
+
+    .trevipay-magento-payment-details {
+        margin: 20px 0 0;
+
+        dt {
+            margin-bottom: 5px;
+        }
+
+        dd {
+            margin: 0 0 10px;
+
+            textarea {
+                width: 100%;
+            }
+        }
+    }
+}
+
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__xl) {
+    .trevipay-magento-payment-details {
+        margin: 20px 0 0;
+
+        dt {
+            clear: left;
+            float: left;
+            width: 165px;
+        }
+
+        dd {
+            display: inline-block;
+            margin: 0 0 10px 20px;
+            width: calc(~'100% - 185px');
+        }
+    }
+}

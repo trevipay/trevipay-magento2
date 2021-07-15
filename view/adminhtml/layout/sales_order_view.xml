@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="payment_additional_info">
+            <block class="TreviPay\TreviPayMagento\Block\Adminhtml\Order\View\Info\PaymentDetails" name="trevipay_magento_details" template="TreviPay_TreviPayMagento::order/view/info/payment_details.phtml" />
+        </referenceBlock>
+    </body>
+</page>

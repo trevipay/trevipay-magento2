@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="payment_method_assign_data_trevipay_magento">
+        <observer name="trevipay_magento_data_assign"
+                  instance="TreviPay\TreviPayMagento\Observer\PaymentAdditionalDataAssignObserver" />
+    </event>
+    <event name="checkout_multishipping_refund_all">
+        <observer name="trevipay_magento" instance="TreviPay\TreviPayMagento\Observer\RefundForAllOrders" />
+    </event>
+</config>
+

@@ -1,0 +1,11 @@
+vendor/
+node_modules/
+composer.lock
+yarn.lock
+package-lock.json
+.DS_Store
+.vscode
+.phpunit.result.cache
+*-report.xml
+trevipay-php/
+.idea/*

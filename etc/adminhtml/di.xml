@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Customer\Model\Customer\DataProviderWithDefaultAddresses">
+        <plugin name="trevipay_magento_prepare_customer_data"
+                type="TreviPay\TreviPayMagento\Plugin\Model\Customer\DataProviderWithDefaultAddressesPlugin"
+                sortOrder="1"/>
+    </type>
+    <type name="Magento\Sales\Model\Order">
+        <plugin name="can_create_creditmemo_trevipay_magento" type="TreviPay\TreviPayMagento\Observer\CanCreateCreditMemoPlugin"/>
+    </type>
+    <type name="Magento\CustomerBalance\Block\Adminhtml\Sales\Order\Creditmemo\Controls">
+        <plugin name="trevipay_magento_disallow_return_to_store_credits"
+                type="TreviPay\TreviPayMagento\Plugin\Block\Sales\Order\Creditmemo\ControlsPlugin"/>
+    </type>
+</config>

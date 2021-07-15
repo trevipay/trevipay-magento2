@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="trevipay_magento_customer_details" class="TreviPay\TreviPayMagento\Ui\Component\Fieldset\TreviPay">
+        <settings>
+            <label translate="true">TreviPay</label>
+        </settings>
+        <field name="trevipay_m2_empty_fields_message">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/messageInfo</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="value" xsi:type="string">${ $.provider }:data.customer.empty_trevipay_fields_message</item>
+                        <item name="visible" xsi:type="string">${ $.provider }:data.customer.has_empty_trevipay_fields</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_client_reference_customer_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Client Reference Customer ID</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_client_reference_customer_id</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_client_reference_customer_id
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_client_reference_buyer_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Client Reference Buyer ID</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_client_reference_buyer_id</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_client_reference_buyer_id
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_customer_status">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Customer Status</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_customer_status</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_customer_status
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_buyer_status">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Buyer Status</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_buyer_status</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_buyer_status
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="trevipay_m2_customer_name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Customer Name</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_customer_name</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_customer_name
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_buyer_name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Buyer Name</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_buyer_name</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_buyer_name
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_customer_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Customer ID (first 8 characters)</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_customer_id</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_customer_id
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_buyer_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Buyer ID (first 8 characters)</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_buyer_id</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_buyer_id
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_buyer_currency">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Currency</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_buyer_currency</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_buyer_currency
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_buyer_credit_limit">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Approved Limit</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_buyer_credit_limit</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_buyer_credit_limit
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_buyer_credit_available">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Available</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_buyer_credit_available</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_buyer_credit_available
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_buyer_credit_balance">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Balance</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_buyer_credit_balance</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_buyer_credit_balance
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="trevipay_m2_buyer_credit_authorized">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Authorized</item>
+                    <item name="dataScope" xsi:type="string">trevipay_m2_buyer_credit_authorized</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="readonly" xsi:type="boolean">true</item>
+                    <item name="elementTmpl" xsi:type="string">TreviPay_TreviPayMagento/form/element/inputReadonly</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="default" xsi:type="string">
+                            ${ $.provider }:data.customer.trevipay_m2_buyer_credit_authorized
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+</form>

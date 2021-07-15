@@ -1,0 +1,19 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Backend\Block\Template;
+use TreviPay\TreviPayMagento\ViewModel\Payment\CreateInvoice;
+
+/** @var Template $block */
+/** @var CreateInvoice $viewModel */
+$viewModel = $block->getData('view_model');
+?>
+<?php if ($viewModel->removeCaptureOffline()): ?>
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "TreviPay_TreviPayMagento/js/capture_offline": {}
+            }
+        }
+    </script>
+<?php endif; ?>

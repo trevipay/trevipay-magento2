@@ -1,0 +1,34 @@
+<?php
+declare(strict_types=1);
+
+use TreviPay\TreviPayMagento\Block\Form;
+
+/** @var Form $block */
+?>
+<script>
+    require([
+        'uiLayout',
+        'jquery'
+    ], function (layout, $) {
+        $(function () {
+            var paymentMethodData = {
+                method: 'trevipay_magento'
+            };
+            var path = 'TreviPay_TreviPayMagento/js/view/payment/method-renderer/'
+                + 'multishipping/trevipay_magento_gateway';
+
+            layout([
+                {
+                    component: path,
+                    name: 'payment_method_trevipay_magento',
+                    method: paymentMethodData.method,
+                    item: paymentMethodData
+                }
+            ]);
+
+            $('body').trigger('contentUpdated');
+        })
+    })
+</script>
+
+<!-- ko template: getTemplate() --><!-- /ko -->

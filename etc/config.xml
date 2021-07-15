@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <trevipay_magento>
+                <active>0</active>
+                <sandbox>1</sandbox>
+                <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <sandbox_api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <sandbox_api_url>https://app.b2b.credit/</sandbox_api_url>
+                <api_url>https://app.b2b.credit/</api_url>
+                <trevipay_checkout_app_url>https://checkout.b2b.credit/</trevipay_checkout_app_url>
+                <seller_id backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <sandbox_seller_id backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <trevipay_checkout_app_public_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <client_private_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <program_id backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <debug>0</debug>
+                <payment_action>authorize</payment_action>
+                <created_webhooks backend_model="TreviPay\TreviPayMagento\Model\Config\Backend\CreatedWebhooks" />
+                <webhook_auth_token_for_created_webhooks backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <api_key_for_created_webhooks backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <title>TreviPay</title>
+                <currency>USD</currency>
+                <sort_order>1</sort_order>
+                <order_status>processing</order_status>
+                <availability>all_customers</availability>
+                <is_gateway>1</is_gateway>
+                <model>TreviPayMagentoPaymentGatewayFacade</model>
+                <can_authorize>1</can_authorize>
+                <is_offline>0</is_offline>
+                <can_cancel>1</can_cancel>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_use_internal>1</can_use_internal>
+                <can_use_checkout>1</can_use_checkout>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_edit>1</can_edit>
+                <webhook_auth_token_header_name>Authorization</webhook_auth_token_header_name>
+            </trevipay_magento>
+        </payment>
+    </default>
+</config>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="customer_entity">
+        <column xsi:type="varchar" name="trevipay_m2_client_reference_buyer_id" length="255" nullable="true"
+                comment="Unique Buyer Identifier"/>
+        <index referenceId="CUSTOMER_ENTITY_TREVIPAY_M2_CLIENT_REFERENCE_BUYER_ID" indexType="btree">
+            <column name="trevipay_m2_client_reference_buyer_id"/>
+        </index>
+
+        <column xsi:type="varchar" name="trevipay_m2_client_reference_customer_id" length="255" nullable="true"
+                comment="Unique Customer Identifier"/>
+        <index referenceId="CUSTOMER_ENTITY_TREVIPAY_M2_CLIENT_REFERENCE_CUSTOMER_ID" indexType="btree">
+            <column name="trevipay_m2_client_reference_customer_id"/>
+        </index>
+    </table>
+
+    <table name="sales_order" resource="sales">
+        <column xsi:type="varchar" name="trevipay_m2_buyer_id" length="255" nullable="true" comment="TreviPay Buyer Identifier"/>
+        <column xsi:type="int" name="trevipay_m2_admin_order" nullable="true" comment="TreviPay Admin Order"/>
+    </table>
+</schema>

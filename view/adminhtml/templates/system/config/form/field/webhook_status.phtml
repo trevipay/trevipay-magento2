@@ -1,0 +1,57 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use TreviPay\TreviPayMagento\Block\Adminhtml\System\Config\Form\Field\WebhookStatus;
+
+/**
+ * @var WebhookStatus $block
+ * @var Escaper $escaper
+ */
+$checkResult = $block->getData('check_result');
+
+$createdDivClass = isset($checkResult['statusCreated'])
+    ? 'message-' . $escaper->escapeHtmlAttr($checkResult['statusCreated'])
+    : 'hidden';
+$apiDivClass = isset($checkResult['statusApiKey'])
+    ? 'message-' . $escaper->escapeHtmlAttr($checkResult['statusApiKey'])
+    : 'hidden';
+$baseUrlDivClass = isset($checkResult['statusBaseUrl'])
+    ? 'message-' . $escaper->escapeHtmlAttr($checkResult['statusBaseUrl'])
+    : 'hidden';
+$tooltipClass = $escaper->escapeHtmlAttr($checkResult['tooltip']) ? '' : 'hidden';
+?>
+
+<td id="payment_trevipay-magento-status" class="trevipay-magento-status">
+    <div data-message-type="created"
+         class="message <?= /* @noEscape */ $createdDivClass ?>">
+        <?= $escaper->escapeHtml($checkResult['messageCreated'] ?? '') ?>
+    </div>
+    <div data-message-type="apikey"
+         class="message <?= /* @noEscape */ $apiDivClass ?>">
+        <?= $escaper->escapeHtml($checkResult['messageApiKey'] ?? '') ?>
+    </div>
+    <div data-message-type="baseUrl"
+         class="message <?= /* @noEscape */ $baseUrlDivClass ?>">
+        <?= $escaper->escapeHtml($checkResult['messageBaseUrl'] ?? '') ?>
+    </div>
+    <div data-message-type="tooltip" class="admin__field-tooltip <?= /* @noEscape */ $tooltipClass ?>">
+        <a class="admin__field-tooltip-action action-help" href="javascript:void(0);"></a>
+        <div class="admin__field-tooltip-content">
+            <?= $escaper->escapeHtml($checkResult['tooltip'] ?? '', ['p', 'strong', 'a']) ?>
+        </div>
+    </div>
+</td>
+
+<script type="text/x-magento-init">
+{
+    "#payment_trevipay-magento-status": {
+        "TreviPay_TreviPayMagento/js/webhook_status": {
+            "checkCreatedWebhooksUrl": "<?= $escaper->escapeJs($block->getCheckCreatedWebhooksUrl()) ?>",
+            "recreateCreatedWebhooksUrl": "<?= $escaper->escapeJs($block->getRecreateCreatedWebhooksUrl()) ?>",
+            "deleteCreatedWebhooksUrl": "<?= $escaper->escapeJs($block->getDeleteCreatedWebhooksUrl()) ?>",
+            "deleteConfirmMessage": "<?= $escaper->escapeHtml(__('Are you sure you want to delete the webhooks?'))?>"
+        }
+    }
+}
+</script>

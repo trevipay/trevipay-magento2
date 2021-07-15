@@ -1,0 +1,41 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+use TreviPay\TreviPayMagento\ViewModel\Sales\Order\Invoice;
+
+/**
+ * @var Invoice $viewModel
+ * @var Template $block
+ * @var \Magento\Framework\Escaper $escaper
+*/
+
+
+$viewModel = $block->getData('view_model');
+?>
+<?php if ($viewModel->isTreviPayOrder()): ?>
+<div class="block">
+    <div class="block-title">
+        <div class="trevipay-magento-buyer-portal-link">
+            <p><?=
+                /* @noEscape */ __(
+                    'Visit the <a href="%1">TreviPay Portal</a> to view your invoices, increase your '
+                        . 'credit line, or make a payment.',
+                    $block->escapeUrl($viewModel->getBuyerPortalUrl())
+                ) ?></p>
+            <?php foreach ($viewModel->getOrder()->getInvoiceCollection() as $invoice): ?>
+                <?php $invoiceUrl = $viewModel->getInvoiceUrl($invoice); ?>
+                <?php if ($invoiceUrl): ?>
+                    <div class="actions-toolbar">
+                        <div class="primary">
+                            <a href="<?= $block->escapeUrl($invoiceUrl) ?>" class="action primary" target="_blank">
+                                <span><?= $escaper->escapeHtml(__('View TreviPay Invoice')) ?></span>
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>

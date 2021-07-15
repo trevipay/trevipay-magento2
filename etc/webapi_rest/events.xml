@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_place_before">
+        <observer name="trevipay_magento_prevent_order_if_not_signed_in_for_force_checkout"
+                  instance="TreviPay\TreviPayMagento\Observer\PreventOrderIfNotSignedInForForcedCheckout" />
+    </event>
+    <event name="sales_order_place_after">
+        <observer name="trevipay_magento_set_buyer_id" instance="TreviPay\TreviPayMagento\Observer\SetBuyerId" />
+    </event>
+</config>

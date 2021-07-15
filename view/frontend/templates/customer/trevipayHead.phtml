@@ -1,0 +1,25 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use TreviPay\TreviPayMagento\ViewModel\Customer\CustomerTreviPay;
+
+/**
+ * @var CustomerTreviPay $viewModel
+ * @var Template $block
+ * @var Escaper $escaper
+ */
+$viewModel = $block->getData('view_model');
+$isRegisteredCustomer = $viewModel->isRegisteredCustomer();
+?>
+
+<?php if ($isRegisteredCustomer): ?>
+    <script type="text/javascript">
+        window.trevipay = {
+            forgetMe: function () {
+                window.location.href = "<?= /* @noEscape */ $viewModel->getForgetMeUrl() ?>"
+            },
+        }
+    </script>
+<?php endif; ?>

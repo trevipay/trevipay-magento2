@@ -1,0 +1,33 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * @var TreviPay\TreviPayMagento\Block\Adminhtml\Order\View\Info\PaymentDetails $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$poNumber = $block->getPayment()->getAdditionalInformation('trevipay_po_number') ?: '-';
+$notes = $block->getPayment()->getAdditionalInformation('trevipay_notes') ?: '-';
+?>
+<dl class="trevipay-magento-payment-details">
+    <dt><?= $escaper->escapeHtml(__('Purchase Order Number')) ?></dt>
+    <dd>
+        <?php if ($poNumber === '-'): ?>
+            <strong>-</strong>
+        <?php else: ?>
+            <textarea id="trevipay_magento_po_number" cols="40" rows="4" maxlength="200" readonly><?=
+                $escaper->escapeHtml($poNumber)
+            ?></textarea>
+        <?php endif; ?>
+    </dd>
+
+    <dt><?= $escaper->escapeHtml(__('Notes')) ?></dt>
+    <dd>
+        <?php if ($notes === '-'): ?>
+            <strong>-</strong>
+        <?php else: ?>
+            <textarea id="trevipay_magento_notes" cols="40" rows="10" maxlength="1000" readonly><?=
+                $escaper->escapeHtml($notes)
+            ?></textarea>
+        <?php endif; ?>
+    </dd>
+</dl>

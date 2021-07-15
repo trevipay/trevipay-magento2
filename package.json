@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "eslint": "^7.1.0",
+    "stylelint": "^13.6.0"
+  },
+  "scripts": {
+    "lint:css": "stylelint ./view --config .stylelintrc.json",
+    "lint:js": "eslint ./view -c .eslintrc.json"
+  }
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Sales\Model\Order\Payment\Operations\AuthorizeOperation">
+        <plugin name="trevipay_magento_skip_create_payment_authorization_for_non_registered_trevipay_buyer"
+                type="TreviPay\TreviPayMagento\Plugin\Model\Sales\Order\Payment\Operations\AuthorizeOperationPlugin" />
+    </type>
+    <type name="Magento\Payment\Model\MethodInterface">
+        <plugin name="trevipay_magento_skip_create_payment_capture_for_non_registered_trevipay_buyer"
+                type="TreviPay\TreviPayMagento\Plugin\Model\Payment\SkipCapturePlugin" />
+    </type>
+</config>

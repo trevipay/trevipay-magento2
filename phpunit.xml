@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" colors="true" bootstrap="./Test/Unit/bootstrap.php">
+  <coverage>
+    <include>
+      <directory suffix=".php">./Block</directory>
+      <directory suffix=".php">./Gateway</directory>
+      <directory suffix=".php">./Helper</directory>
+      <directory suffix=".php">./Model</directory>
+      <directory suffix=".php">./Observer</directory>
+      <directory suffix=".php">./Setup</directory>
+    </include>
+  </coverage>
+  <testsuite name="TreviPay Magento 2 Unit Tests">
+    <directory suffix=".test.php">Test/Unit</directory>
+  </testsuite>
+</phpunit>

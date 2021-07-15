@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="110px" height="110px" viewBox="0 0 110 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54 (76480) - https://sketchapp.com -->
+    <title>ic_flexible</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-11.8%" y="-11.8%" width="123.5%" height="123.5%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.16 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="69.8691716%" y1="91.1191003%" x2="69.8691716%" y2="-36.3333544%" id="linearGradient-2">
+            <stop stop-color="#0D96E6" offset="0%"></stop>
+            <stop stop-color="#0078BF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="::-Magento---Landing-Page" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ic_flexible" filter="url(#filter-1)" transform="translate(4.000000, 2.000000)">
+            <path d="M9,1 L93,1 C97.418278,1 101,4.581722 101,9 L101,93 C101,97.418278 97.418278,101 93,101 L9,101 C4.581722,101 1,97.418278 1,93 L1,9 C1,4.581722 4.581722,1 9,1 Z" id="Rectangle-path" fill="url(#linearGradient-2)" fill-rule="nonzero" transform="translate(51.000000, 51.000000) rotate(-0.480000) translate(-51.000000, -51.000000) "></path>
+            <g id="Group-3" transform="translate(27.000000, 21.000000)">
+                <rect id="Rectangle" stroke="#FFFFFF" stroke-width="4" x="0" y="6" width="48" height="48" rx="2"></rect>
+                <rect id="Rectangle" fill="#FFFFFF" x="0" y="17" width="48" height="4"></rect>
+                <g id="Group-4" transform="translate(9.000000, 24.000000)" fill="#FFFFFF">
+                    <rect id="Rectangle-Copy-4" x="0" y="4.98150179" width="26" height="3" rx="1.5"></rect>
+                    <path d="M23.420224,6.85687041 L29.920224,6.85687041 L29.920224,9.85687041 L23.420224,9.85687041 C22.5917969,9.85687041 21.920224,9.18529753 21.920224,8.35687041 L21.920224,8.35687041 C21.920224,7.52844328 22.5917969,6.85687041 23.420224,6.85687041 Z" id="Rectangle-Copy-6" transform="translate(25.920224, 8.356870) rotate(-45.000000) translate(-25.920224, -8.356870) "></path>
+                    <path d="M23.3425712,3.00012546 L30.2189309,3.08964766 L30.1300678,6.02463281 L23.3347284,5.98852658 C22.5094237,5.98414142 21.8426983,5.31386411 21.8426983,4.48854775 L21.8426983,4.48059886 C21.8426983,3.66288669 22.505585,3 23.3232972,3 C23.3297221,3 23.3361469,3.00004182 23.3425712,3.00012546 Z" id="Rectangle-Copy-7" transform="translate(26.030815, 4.512316) rotate(-315.000000) translate(-26.030815, -4.512316) "></path>
+                </g>
+                <g id="Group-4-Copy" transform="translate(24.500000, 40.500000) rotate(-180.000000) translate(-24.500000, -40.500000) translate(9.000000, 34.000000)" fill="#FFFFFF">
+                    <rect id="Rectangle-Copy-4" x="0" y="4.98150179" width="27" height="3" rx="1.5"></rect>
+                    <path d="M23.420224,6.85687041 L29.920224,6.85687041 L29.920224,9.85687041 L23.420224,9.85687041 C22.5917969,9.85687041 21.920224,9.18529753 21.920224,8.35687041 L21.920224,8.35687041 C21.920224,7.52844328 22.5917969,6.85687041 23.420224,6.85687041 Z" id="Rectangle-Copy-6" transform="translate(25.920224, 8.356870) rotate(-45.000000) translate(-25.920224, -8.356870) "></path>
+                    <path d="M23.3425712,3.00012546 L30.2189309,3.08964766 L30.1300678,6.02463281 L23.3347284,5.98852658 C22.5094237,5.98414142 21.8426983,5.31386411 21.8426983,4.48854775 L21.8426983,4.48059886 C21.8426983,3.66288669 22.505585,3 23.3232972,3 C23.3297221,3 23.3361469,3.00004182 23.3425712,3.00012546 Z" id="Rectangle-Copy-7" transform="translate(26.030815, 4.512316) rotate(-315.000000) translate(-26.030815, -4.512316) "></path>
+                </g>
+                <rect id="Rectangle-Copy-2" fill="#FFFFFF" transform="translate(9.500000, 2.500000) rotate(-270.000000) translate(-9.500000, -2.500000) " x="6" y="0.5" width="7" height="4" rx="2"></rect>
+                <rect id="Rectangle-Copy-3" fill="#FFFFFF" transform="translate(38.500000, 2.500000) rotate(-270.000000) translate(-38.500000, -2.500000) " x="35" y="0.5" width="7" height="4" rx="2"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

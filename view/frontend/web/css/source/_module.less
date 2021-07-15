@@ -1,0 +1,322 @@
+//
+//  Common
+//  _____________________________________________
+
+& when (@media-common = true) {
+    .trevipay-buyer-name {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 2rem;
+    }
+
+    .trevipay-credit-details {
+        list-style: none;
+        margin-bottom: 3rem;
+        padding: 0;
+        width: 320px;
+
+        li:after {
+            content: '';
+            clear: both;
+            display: table;
+        }
+
+        .trevipay-credit-details-label {
+            display: block;
+            float: left;
+            font-weight: bold;
+            width: 160px;
+
+            &:after {
+                content: ':';
+            }
+        }
+
+        .trevipay-credit-details-value {
+            display: block;
+            float: left;
+            text-align: right;
+            width: 160px;
+        }
+    }
+
+    .trevipay-apply-wrapper {
+        font-family: 'Open Sans', sans-serif;
+        border: 1px solid #d2d2d2;
+        border-radius: 4px;
+        padding: 0 20px 20px;
+    }
+
+    .trevipay-apply-header {
+        .lib-vendor-prefix-display();
+        .lib-vendor-box-align(center);
+        -webkit-justify-content: space-between;
+        -ms-justify-content: space-between;
+        justify-content: space-between;
+        padding: 15px 20px 20px 0;
+        border-bottom: 2px solid #d2d2d2;
+    }
+
+    .trevipay-apply-logo {
+        max-height: 50px;
+        margin-right: 1px;
+    }
+
+    .trevipay-apply-nologo {
+        margin-left: 5px;
+        font-weight: 400;
+    }
+
+    .trevipay-apply-link {
+        height: 48px;
+        padding: 0 50px;
+        font-weight: 800;
+        line-height: 48px;
+        letter-spacing: 1px;
+        white-space: nowrap;
+        text-align: center;
+        text-transform: uppercase;
+        color: #fff;
+        border-radius: 50px;
+        background-color: #0078bf;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#0078bf), to(#0d96e6));
+        background-image: linear-gradient(180deg, #0078bf, #0d96e6); /* stylelint-disable-line unit-allowed-list */
+        box-shadow: 0 8px 14px 0 rgba(33, 33, 33, .2);
+
+        &:visited,
+        &:hover,
+        &:active,
+        &:focus {
+            color: #fff;
+            text-decoration: none;
+        }
+    }
+
+    .trevipay-apply&__title,
+    .trevipay-apply-section-title {
+        color: #0078bf;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+    }
+
+    .trevipay-apply-title {
+        margin: 7px 0 0;
+    }
+
+    .trevipay-apply-section-title {
+        margin-top: 32px;
+        margin-bottom: 24px;
+        text-align: center;
+    }
+
+    .trevipay-apply-section-features {
+        .trevipay-apply-section-content {
+            .lib-vendor-prefix-display();
+            .lib-vendor-box-align(flex-start);
+            .lib-vendor-prefix-flex-wrap();
+            -webkit-justify-content: space-around;
+            -ms-justify-content: space-around;
+            justify-content: space-around;
+            padding: 32px 0 30px;
+        }
+    }
+
+
+    .trevipay-apply-section-howitworks {
+        .trevipay-apply-section-content {
+            .lib-vendor-prefix-display();
+            .lib-vendor-box-align(center);
+            -webkit-justify-content: space-around;
+            -ms-justify-content: space-around;
+            justify-content: space-around;
+            padding: 0 0 40px;
+        }
+    }
+
+
+    .trevipay-apply-feature-box {
+        padding: 0 10px;
+        box-sizing: border-box;
+        max-width: 280px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .trevipay-apply-feature-box-image {
+        width: 64px;
+    }
+
+    .trevipay-apply-feature-box-title {
+        margin: 10px 0 20px;
+        font-size: 18px;
+        font-weight: bold;
+        line-height: 24px;
+        color: #333;
+    }
+
+    .trevipay-apply-feature-box-paragraph {
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: rgba(33, 33, 33, .6);
+    }
+
+    .trevipay-apply-how-it-works-step {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 20px;
+        color: #212121;
+    }
+
+    .trevipay-apply-how-it-works-image {
+        height: 35px;
+    }
+
+    &.trevipay-apply-how-it-works-arrow {
+        position: relative;
+        height: 2px;
+        width: 20px;
+        background-color: #0078bf;
+
+        &:after {
+            content: '';
+            position: absolute;
+            top: -9px;
+            right: 0;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-color: #0078bf;
+            background-image: -webkit-gradient(linear, left top, left bottom, from(#0078bf), to(#0d96e6));
+            background-image: linear-gradient(180deg, #0078bf, #0d96e6); /* stylelint-disable-line unit-allowed-list */
+            border-radius: 50%;
+        }
+
+        &:before {
+            content: '\203A';
+            position: absolute;
+            top: -9px;
+            right: 0;
+            z-index: 2;
+            display: block;
+            width: 20px;
+            height: 20px;
+            font-size: 28px;
+            line-height: 14px;
+            text-align: center;
+            color: #fff;
+        }
+    }
+
+    .trevipay-payment-method-content {
+        .actions-toolbar {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+    }
+
+    .trevipay-payment-method-title {
+        .trevipay-payment-icon {
+            max-height: 50px;
+        }
+    }
+
+}
+
+//
+//  Mobile 639
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__s) {
+    .trevipay-apply-header {
+        padding: 15px 0;
+        .lib-vendor-prefix-flex-direction();
+    }
+
+    .trevipay-apply-logo {
+        width: 155px;
+        margin: 0;
+    }
+
+    .trevipay-apply-link {
+        margin: 20px auto 0;
+    }
+
+    .trevipay-apply-section-features,
+    .trevipay-apply-section-howitworks {
+        .trevipay-apply-section-content {
+            .lib-vendor-prefix-flex-direction();
+        }
+    }
+
+    .trevipay-apply-section-features {
+        .trevipay-apply-section-content {
+            .lib-vendor-box-align(center);
+        }
+    }
+
+    .trevipay-apply-feature-box {
+        margin-bottom: 20px;
+    }
+
+    .trevipay-apply-how-it-works-arrow {
+        height: 20px;
+        background: transparent;
+        margin: 20px 0;
+
+        &:after,
+        &:before {
+            top: 0;
+        }
+
+        &:before {
+            transform: rotate(90deg); /* stylelint-disable-line unit-allowed-list */
+        }
+    }
+}
+
+//
+//  Mobile
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .trevipay-apply-logo {
+        width: 110px;
+    }
+}
+
+//
+//  Desktop 768
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .trevipay-apply-how-it-works-arrow {
+        width: 20px;
+    }
+}
+
+//
+//  Desktop 1024
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__l) {
+    .trevipay-apply-wrapper {
+        padding: 0 60px 20px;
+    }
+
+    .trevipay-apply-how-it-works-arrow {
+        width: 100px;
+    }
+}
+
+//
+//  Desktop 1440
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__xl) {
+    .trevipay-apply-how-it-works-arrow {
+        width: 160px;
+    }
+}
