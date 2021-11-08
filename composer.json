@@ -1,5 +1,5 @@
 {
-    "name": "trevipay/trevipay-magento",
+    "name": "msts/trevipay-magento",
     "description": "TreviPay Magento 2 Module",
     "license": "MPL-2.0",
     "type": "magento2-module",
