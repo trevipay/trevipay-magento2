@@ -1,4 +1,4 @@
-# TreviPay Magento 2 Module
+# MSTS Magento 2 Module
 
 ## Requirements
 
@@ -9,10 +9,10 @@
 
 ### Using Composer
 
-Install the TreviPay TreviPayMagento module with the following command:
+Install the MSTS TreviPayMagento module with the following command:
 
 ```
-composer require trevipay/trevipay-magento
+composer require msts/trevipay-magento
 ```
 
 If your php is < 7.2 or does not have `libsodium` installed, install the `paragonie/sodium_compat` package from composer:
@@ -45,7 +45,7 @@ php ./bin/magento setup:static-content:deploy;
 Run the Composer update command:
 
 ```
-composer update trevipay/trevipay-magento
+composer update msts/trevipay-magento
 ```
 
 Then flush the Magento cache as above.
