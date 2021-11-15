@@ -72,7 +72,7 @@
                     <label>Program ID</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
-                <field id="sandbox_program_url" translate="label" type="text" sortOrder="61" showInDefault="1" showInWebsite="1" canRestore="1">
+                <field id="sandbox_program_url" translate="label" type="text" sortOrder="61" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Sandbox Program URL</label>
                     <comment>
                         <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://<strong>my_program</strong>.b2b.credit/]]>
@@ -82,7 +82,7 @@
                     </depends>
                     <validate>validate-url</validate>
                 </field>
-                <field id="program_url" translate="label" type="text" sortOrder="62" showInDefault="1" showInWebsite="1" canRestore="1">
+                <field id="program_url" translate="label" type="text" sortOrder="62" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Program URL</label>
                     <comment>
                         <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://<strong>my_program</strong>.b2b.credit/]]>

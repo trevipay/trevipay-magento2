@@ -27,6 +27,6 @@ class GenerateUniqueClientReferenceId
      */
     public function execute($userId): string
     {
-        return 'ecomm-uid-' . $userId . '_' . $this->uuidGenerator->execute();
+        return $userId . '_' . $this->uuidGenerator->execute();
     }
 }
