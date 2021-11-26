@@ -16,6 +16,7 @@ use TreviPay\TreviPayMagento\Model\ConfigProvider;
 use TreviPay\TreviPayMagento\Model\Webhook\CheckWebhooksStatus;
 use TreviPay\TreviPayMagento\Model\Webhook\Config\UpdateCreatedWebhooksConfig;
 use TreviPay\TreviPayMagento\Model\Webhook\DeleteAllWebhooks;
+use TreviPay\TreviPayMagento\Controller\Adminhtml\Config\CheckCreatedWebhooks;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -77,6 +78,7 @@ class DeleteWebhooks extends Action implements HttpGetActionInterface
         ReinitableConfigInterface $reinitableConfig,
         CheckWebhooksStatus $checkWebhooksStatus,
         MaskValue $maskValue,
+        CheckCreatedWebhooks $checkCreatedWebhooks,
         LoggerInterface $logger
     ) {
         parent::__construct($context);
@@ -87,6 +89,7 @@ class DeleteWebhooks extends Action implements HttpGetActionInterface
         $this->reinitableConfig = $reinitableConfig;
         $this->checkWebhooksStatus = $checkWebhooksStatus;
         $this->maskValue = $maskValue;
+        $this->checkCreatedWebhooks = $checkCreatedWebhooks;
         $this->logger = $logger;
     }
 
@@ -105,6 +108,8 @@ class DeleteWebhooks extends Action implements HttpGetActionInterface
 
         $result = [];
         try {
+
+            $this->checkCreatedWebhooks->execute();
             $this->deleteAllWebhooks->execute($scope, $scopeId);
             $this->updateCreatedWebhooksConfig->execute([], $scope, $scopeId);
             $this->reinitableConfig->reinit();

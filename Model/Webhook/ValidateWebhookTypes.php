@@ -11,7 +11,7 @@ class ValidateWebhookTypes
      * @param array $webhooks
      * @return bool
      */
-    public function execute(array $webhooks): bool
+    public function execute(array $webhooks, string $baseUrl): bool
     {
         if (!$webhooks) {
             return false;
@@ -19,7 +19,7 @@ class ValidateWebhookTypes
 
         $foundEventTypes = [];
         foreach ($webhooks as $webhook) {
-            if (isset($webhook['event_types'])) {
+            if (isset($webhook['event_types']) && strpos($webhook['webhook_url'], $baseUrl) === 0) {
                 foreach ($webhook['event_types'] as $eventType) {
                     $foundEventTypes[] = $eventType;
                 }
@@ -35,8 +35,11 @@ class ValidateWebhookTypes
     private function getRequiredEventTypes(): array
     {
         return [
+            EventTypeInterface::BUYER_CREATED,
             EventTypeInterface::BUYER_UPDATED,
-            EventTypeInterface::AUTHORIZATION_UPDATED,
+            EventTypeInterface::CUSTOMER_CREATED,
+            EventTypeInterface::CUSTOMER_UPDATED,
+            EventTypeInterface::AUTHORIZATION_UPDATED
         ];
     }
 }

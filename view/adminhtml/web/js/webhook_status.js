@@ -10,14 +10,14 @@ define([
         options: {
             // Knockout.js dynamically generates the ids for Magento Fields in snake_case
             // (e.g., checkCreated, recreateCreated and created webhooks)
-            checkCreatedWebhooksButtonId: '[id$="trevipay_magento_check_created_webhooks"]',
+            checkCreatedWebhooksButtonId: '[id$="trevipay_magento_check_created_webhooks"] input',
             checkCreateWebhooksLabel: 'label[for$="trevipay_magento_check_created_webhooks"]',
             checkCreatedWebhooksUrl: null,
-            recreateCreatedWebhooksButtonId: '[id$="trevipay_magento_recreate_webhooks"]',
+            recreateCreatedWebhooksButtonId: '[id$="trevipay_magento_recreate_webhooks"] input',
             recreateCreatedWebhooksLabel: 'label[for$="trevipay_magento_recreate_webhooks"]',
             recreateCreatedWebhooksUrl: null,
             // this id is explicitly specified in delete_webhooks.phtml
-            deleteCreatedWebhooksButtonId: '[id$="trevipay_magento_delete_webhooks"]',
+            deleteCreatedWebhooksButtonId: '[id$="trevipay_magento_delete_webhooks"] button',
             deleteCreatedWebhooksLabel: 'label[for$="trevipay_magento_delete_webhooks"]',
             deleteCreatedWebhooksUrl: null,
             deleteConfirmMessage: "Are you sure you want to delete the webhooks?",

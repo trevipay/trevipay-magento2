@@ -47,9 +47,10 @@ class CheckWebhooksStatus
     public function execute(string $scope = 'default', ?int $scopeId = null): array
     {
         $webhooks = $this->configProvider->getCreatedWebhooks($scope, $scopeId);
+        $baseUrl = $this->configProvider->getBaseUrl($scope, $scopeId);
         $areAllWebhooksCreated = false;
         if ($webhooks) {
-            $areAllWebhooksCreated = $this->validateWebhookTypes->execute($webhooks);
+            $areAllWebhooksCreated = $this->validateWebhookTypes->execute($webhooks, $baseUrl);
         }
         $matchCurrentApiKey = $this->validateApiKeyForCreatedWebhooks->execute($scope, $scopeId);
         $matchCurrentBaseUrl = $this->validateBaseUrlForCreatedWebhooks->execute($scope, $scopeId);

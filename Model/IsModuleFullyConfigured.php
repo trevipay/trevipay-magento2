@@ -47,7 +47,6 @@ class IsModuleFullyConfigured
             && $this->configProvider->getSellerId()
             && $this->configProvider->getProgramUrl()
             && $createdWebhooks
-            && $this->validateWebhookTypes->execute($createdWebhooks)
             && $this->validateApiKeyForCreatedWebhooks->execute();
     }
 }
