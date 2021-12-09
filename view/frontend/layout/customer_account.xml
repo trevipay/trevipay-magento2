@@ -6,9 +6,8 @@
                    ifconfig="payment/trevipay_magento/active">
                 <arguments>
                     <argument name="path" xsi:type="string">trevipay_magento/customer</argument>
-                    <!--NOTE: The label is dynamically set based on the chosen payment method name -->
-                    <!-- Review class RenameCustomerMenuItem -->
-                    <argument name="label" xsi:type="string">DYNAMIC_CUSTOMER_MENU_ITEM_LABEL</argument>
+                    <argument name="label" xsi:type="helper"
+                              helper="TreviPay\TreviPayMagento\Helper\WhiteLabelPaymentMethodTitle::getLabel"/>
                     <argument name="sortOrder" xsi:type="number">20</argument>
                 </arguments>
             </block>

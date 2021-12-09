@@ -8,18 +8,6 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\Customer\Block\Account\Navigation">
-        <plugin name="trevipay_magento_rename_customer_menu_item"
-                      type="TreviPay\TreviPayMagento\Plugin\RenameCustomerMenuItem" sortOrder="10" disabled="false"  />
-    </type>
-    <type name="TreviPay\TreviPayMagento\Plugin\RenameCustomerMenuItem">
-        <arguments>
-            <argument name="configProviders" xsi:type="array">
-                <item name="trevipay_magento_frontend_config_provider" xsi:type="object">TreviPay\TreviPayMagento\Model\Ui\Frontend\ConfigProvider</item>
-            </argument>
-            <argument name="request" xsi:type="object">Magento\Framework\Webapi\Rest\Request\Proxy</argument>
-        </arguments>
-    </type>
     <type name="TreviPay\TreviPayMagento\Block\Customer\TreviPayLink">
         <arguments>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
