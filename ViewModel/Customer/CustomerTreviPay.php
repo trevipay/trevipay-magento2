@@ -282,9 +282,8 @@ class CustomerTreviPay implements ArgumentInterface
                 break;
             case TreviPayCustomerStatusInterface::DECLINED:
                 $message = __(
-                    'Sorry, your application has been declined. Please visit <a href="%1">%2</a> to resubmit.',
-                    $creditApplicationUrl,
-                    $paymentMethodName
+                    'Sorry, your application has been declined at this time. You are invited to reapply in 6 months' .
+                    ' from the initial application date, where we will re-review.',
                 );
                 break;
             case TreviPayCustomerStatusInterface::INACTIVE:
@@ -308,11 +307,13 @@ class CustomerTreviPay implements ArgumentInterface
             case TreviPayCustomerStatusInterface::PENDING_DIRECT_DEBIT:
             case TreviPayCustomerStatusInterface::PENDING_SETUP:
                 $message = __(
-                    'You have been approved to make purchases on terms! To activate your TreviPay account, please '
-                        . 'visit <a href="%1">%2</a> to complete your setup.',
-                    $programUrl,
+                    'You have been approved to make purchases on terms! ' .
+                    '<span %2>[ACTION REQUIRED]</span> Please now check your ' .
+                    'email for your activation link to complete the setup then your Trevipay credit line is ready ' .
+                    'for use. This link is valid for 7 days. If the email hasn\'t arrived, do check in your ' .
+                    'spam/junk mail folder.',
                     $paymentMethodName,
-                    $paymentMethodName
+                    'class="lbl-bold"'
                 );
                 break;
             case TreviPayCustomerStatusInterface::SUSPENDED:
@@ -335,14 +336,15 @@ class CustomerTreviPay implements ArgumentInterface
             case TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT:
                 $message = __(
                     'You did not complete your TreviPay Credit Application. '
-                    . 'Visit <a href="%1">%2</a> to complete your credit application at any time.',
+                    . 'Please fill out the form in its entirety, sign and submit at the end. '
+                    . '<span %4><a href="%1" %3>Apply</a></span>',
                     $didNotCompleteApplicationUrl,
                     $paymentMethodName,
-                    $paymentMethodName
+                    'class="action primary" type="button" data-role="action"',
+                    'class="apply-btn"'
                 );
                 break;
         }
-
         return $message;
     }
 

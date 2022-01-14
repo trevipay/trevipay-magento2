@@ -114,50 +114,6 @@ $forgetMeLabel = __('Forget Me');
     <div class="block-content">
         <p><?= /* @noEscape */ $viewModel->getMessage() ?></p>
     </div>
-    <?php if ($viewModel->shouldDisplayPendingOrderModalOnForgetMe()): ?>
-        <button class="action primary"
-                id="trevipay-forget-me-btn"
-                type="button"
-                data-trigger="trevipay-forget-me-modal-trigger"
-                data-bind="attr: { title: '<?= $escaper->escapeHtml($forgetMeLabel) ?>' }">
-            <span><?= $escaper->escapeHtml($forgetMeLabel) ?></span>
-        </button>
-        <div id="trevipay-forget-me-modal"
-             data-bind="mageInit: {
-                    'Magento_Ui/js/modal/modal':{
-                        'type': 'popup',
-                        'trigger': '[data-trigger=trevipay-forget-me-modal-trigger]',
-                        'responsive': true,
-                        'buttons': [{
-                            text: jQuery.mage.__('Close'),
-                            class: 'action secondary',
-                            click: function () {
-                                this.closeModal();
-                            }
-                        }, {
-                            text: '<?= $escaper->escapeHtml($forgetMeLabel) ?>',
-                            class: 'action primary',
-                            type: 'submit',
-                            click: window.trevipay.forgetMe,
-                        }]
-                    }}">
-            <div class="modal-body-content">
-                <h2><?= $escaper->escapeHtml($forgetMeLabel) ?></h2>
-                <p><?= $escaper->escapeHtml(__(
-                    'Any pending orders may not be processed correctly if you proceed to forget your %1 Account.',
-                    $paymentMethodName
-                )) ?></p>
-            </div>
-        </div>
-    <?php else: ?>
-        <p>
-            <a href="<?= /* @noEscape */
-            $viewModel->getForgetMeUrl() ?>"
-               class="action button primary">
-                <?= $escaper->escapeHtml($forgetMeLabel) ?>
-            </a>
-        </p>
-    <?php endif; ?>
 <?php else: ?>
     <div class="block block-dashboard-info">
         <div class="block-title"><strong><?= $escaper->escapeHtml(__('Credit Information')) ?></strong></div>
@@ -211,12 +167,66 @@ $forgetMeLabel = __('Forget Me');
                     <?= $escaper->escapeHtml(__('TreviPay Portal', $paymentMethodName)) ?>
                 </a>
             </p>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php if ($viewModel->getCustomerStatus() === 'Declined'): ?>
+<div class="block-content re-apply-btn" >
+    <p class="float-right">
+        <a href="<?= /* @noEscape */
+        $viewModel->getDidNotCompleteApplicationUrl() ?>"
+           class="action button primary">
+            <?= $escaper->escapeHtml(__('Re-apply for TreviPay', $paymentMethodName)) ?>
+        </a>
+    </p>
+</div>
+<?php endif; ?>
+<?php if ($isRegisteredCustomer): ?>
+    <div class="forget-me-link">
+        <?=
+        /* @noEscape */
+        __(
+            'Looking to unlink your TreviPay from this account? Please click <a %2><span>'
+            . 'Forget Me' . '</span></a>',
+            $paymentMethodName,
+            'class="action view cursor-pointer" ' .
+            'id="trevipay-forget-me-btn" type="button" data-trigger="trevipay-forget-me-modal-trigger" '
+        ) ?>
+    </div>
+    <div id="trevipay-forget-me-modal"
+         data-bind="mageInit: {
+                        'Magento_Ui/js/modal/modal':{
+                            'type': 'popup',
+                            'trigger': '[data-trigger=trevipay-forget-me-modal-trigger]',
+                            'responsive': true,
+                            'buttons': [{
+                                text: jQuery.mage.__('Cancel'),
+                                class: 'action secondary',
+                                click: function () {
+                                    this.closeModal();
+                                }
+                            }, {
+                                text: '<?= $escaper->escapeHtml($forgetMeLabel) ?>',
+                                class: 'action primary',
+                                type: 'submit',
+                                click: window.trevipay.forgetMe,
+                            }]
+                        }}">
+        <div class="modal-body-content">
+            <h2><?= $escaper->escapeHtml($forgetMeLabel) ?></h2>
             <p>
-                <a href="<?= /* @noEscape */
-                $viewModel->getForgetMeUrl() ?>"
-                   class="action button primary">
-                    <?= $escaper->escapeHtml($forgetMeLabel) ?>
-                </a>
+                <?= $escaper->escapeHtml(__(
+                    'Please confirm you want to unlink this account from Trevipay. You will be forced to log in ' .
+                    'again at next checkout when using this payment type.',
+                    $paymentMethodName
+                )) ?>
+            </p>
+            <p>
+                <?= $escaper->escapeHtml(__(
+                    'If you have just applied and haven’t activated the account yet, any pending orders may not ' .
+                    'be processed correctly.'
+                )) ?>
             </p>
         </div>
     </div>

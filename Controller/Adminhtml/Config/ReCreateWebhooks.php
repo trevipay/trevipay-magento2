@@ -21,6 +21,8 @@ use TreviPay\TreviPayMagento\Model\Webhook\Config\UpdateCreatedWebhooksConfig;
 use TreviPay\TreviPayMagento\Model\Webhook\CreateWebhooks;
 use TreviPay\TreviPayMagento\Model\Webhook\DeleteAllWebhooks;
 use TreviPay\TreviPayMagento\Controller\Adminhtml\Config\CheckCreatedWebhooks;
+use TreviPay\TreviPayMagento\Model\ConfigProvider;
+use TreviPay\TreviPayMagento\Model\Webhook\FilterWebhooksByBaseUrl;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -84,6 +86,11 @@ class ReCreateWebhooks extends Action implements HttpGetActionInterface
     private $treviPayFactory;
 
     /**
+     * @var FilterWebhooksByBaseUrl
+     */
+    private $filterWebhooksByBaseUrl;
+
+    /**
      * @param Action\Context $context
      * @param JsonFactory $jsonResultFactory
      * @param DeleteAllWebhooks $deleteAllWebhooks
@@ -95,6 +102,8 @@ class ReCreateWebhooks extends Action implements HttpGetActionInterface
      * @param LoggerInterface $logger
      * @param UpdateCreatedWebhooksConfig $updateCreatedWebhooksConfig
      * @param TreviPayFactory $treviPayFactory
+     * @param ConfigProvider $configProvider
+     * @param FilterWebhooksByBaseUrl $filterWebhooksByBaseUrl
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -109,7 +118,8 @@ class ReCreateWebhooks extends Action implements HttpGetActionInterface
         LoggerInterface $logger,
         UpdateCreatedWebhooksConfig $updateCreatedWebhooksConfig,
         CheckCreatedWebhooks $checkCreatedWebhooks,
-        TreviPayFactory $treviPayFactory
+        TreviPayFactory $treviPayFactory,
+        FilterWebhooksByBaseUrl $filterWebhooksByBaseUrl
     ) {
         parent::__construct($context);
         $this->jsonResultFactory = $jsonResultFactory;
@@ -123,6 +133,7 @@ class ReCreateWebhooks extends Action implements HttpGetActionInterface
         $this->updateCreatedWebhooksConfig = $updateCreatedWebhooksConfig;
         $this->checkCreatedWebhooks = $checkCreatedWebhooks;
         $this->treviPayFactory = $treviPayFactory;
+        $this->filterWebhooksByBaseUrl = $filterWebhooksByBaseUrl;
     }
 
     /**
@@ -150,12 +161,15 @@ class ReCreateWebhooks extends Action implements HttpGetActionInterface
             $this->createWebhooks->execute($scope, $scopeId);
             $treviPay = $this->treviPayFactory->create([], $scope, $scopeId);
             $webhooks = $treviPay->webhooks->list();
-            $this->updateCreatedWebhooksConfig->execute($webhooks, $scope, $scopeId);
+
+            $webhooksForBaseUrl = $this->filterWebhooksByBaseUrl->execute($webhooks, $scope, $scopeId);
+
+            $this->updateCreatedWebhooksConfig->execute($webhooksForBaseUrl, $scope, $scopeId);
             $this->reinitableConfig->reinit();
             $result = $this->checkWebhooksStatus->execute($scope, $scopeId);
             $result['status'] = 'success';
             $result['createdWebhooks'] = $this->maskValue->maskValues(
-                $this->serializer->unserialize($this->serializer->serialize($webhooks)),
+                $this->serializer->unserialize($this->serializer->serialize($webhooksForBaseUrl)),
                 WebhookApiCall::METHOD_NAME
             );
         } catch (Exception $exception) {

@@ -176,6 +176,10 @@ define([
             return window.checkoutConfig.payment.trevipay_magento.paymentMethodName;
         },
 
+        getTreviPaySection: function () {
+            return window.checkoutConfig.payment.trevipay_magento.treviPaySectionUrl;
+        },
+
         getPaymentMethodImageLocalPath: function () {
             return window.checkoutConfig.payment.trevipay_magento.paymentMethodImageLocalPath;
         },
@@ -371,7 +375,7 @@ define([
         },
 
         tCustomerAppliedForCredit: function () {
-            return $t('You did not complete your TreviPay Credit Application. Please visit the TreviPay section to complete your credit application.').replaceAll('%1', this.getPaymentMethodName());
+            return $t('You did not complete your TreviPay Credit Application. Please visit the TreviPay section to re-apply.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tCustomerSuspended: function () {
@@ -379,7 +383,7 @@ define([
         },
 
         tCreditApplicationDeclined: function () {
-            return $t('Your TreviPay Credit Application has been declined. Please visit the TreviPay section to find more details').replaceAll('%1', this.getPaymentMethodName());
+            return $t('Your TreviPay Credit Application has been declined. Please visit the TreviPay section for further details.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tCreditApplicationCancelled: function () {
@@ -399,7 +403,7 @@ define([
         },
 
         tCreditApplicationPendingSetup: function () {
-            return $t('Your TreviPay Credit Application is pending setup. Please visit the TreviPay section to find more details.').replaceAll('%1', this.getPaymentMethodName());
+            return $t('Your TreviPay Credit Application has been approved, and pending setup. <strong>[ACTION REQUIRED]</strong> Please check your email (including spam/junk) to complete the activation via the link within. You can visit the TreviPay section for further detail.').replaceAll('%1', this.getPaymentMethodName());
         },
     });
 });

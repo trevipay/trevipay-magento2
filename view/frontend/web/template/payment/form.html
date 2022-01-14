@@ -121,8 +121,8 @@
                                 }}">
                                 <div class="modal-body-content">
                                     <h2 html="tApplyForTreviPay()"></h2>
-                                    <p data-bind="i18n: 'If you already have an account with us, please sign in instead of applying for a new credit application.'"></p>
-                                    <p data-bind="i18n: 'Your order status will be set to Pending and it will be processed after a successful credit application approval.'"></p>
+                                    <p data-bind="i18n: 'If you already have an account with us, please Sign In instead of applying for a new credit application.'"></p>
+                                    <p data-bind="i18n: 'Continuing to Apply will complete your checkout, placing the order as \'Pending\' and will be automatically processed after a successful credit application approval and activation.'"></p>
                                 </div>
                             </div>
                         </div>
@@ -197,59 +197,38 @@
 
                     <div class="actions-toolbar">
                         <div class="primary">
-                            <button class="action primary checkout"
-                                    type="button"
-                                    data-bind="
-                                            click: checkoutSignInToLinkBuyer,
-                                            attr: {title: $t('Sign In')},
-                                            css: {disabled: !isPlaceOrderActionAllowed()},
-                                            enable: (getCode() == isChecked())
+                            <div class="actions-toolbar">
+                                <div class="primary">
+                                    <button class="action primary checkout"
+                                            id="trevipay-reapply-for-credit-btn"
+                                            type="button"
+                                            data-bind="
+                                            click: treviPaySectionClick,
+                                            attr: {title: getPaymentMethodName()},
+                                            enable: (getCode() == isChecked()),
+                                            css: { disabled: !isPlaceOrderActionAllowed() }
                                             "
-                                    disabled>
-                                <span data-bind="i18n: 'Sign In'"></span>
-                            </button>
+                                            disabled>
+                                        <span html="getPaymentMethodName()"></span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="actions-toolbar">
                         <div class="primary">
                             <button class="action primary checkout"
-                                    id="trevipay-reapply-for-credit-btn"
                                     type="button"
-                                    data-trigger="trevipay-reapply-for-credit-modal-trigger"
                                     data-bind="
-                                            attr: { title: tApplyForTreviPay() },
-                                            css: { disabled: !isPlaceOrderActionAllowed() },
-                                            enable: (getCode() == isChecked())
-                                            "
+                                                        click: checkoutSignInToLinkBuyer,
+                                                        attr: {title: $t('Sign In')},
+                                                        css: {disabled: !isPlaceOrderActionAllowed()},
+                                                        enable: (getCode() == isChecked())
+                                                        "
                                     disabled>
-                                <span html="tApplyForTreviPay()"></span>
+                                <span data-bind="i18n: 'Sign In'"></span>
                             </button>
-                            <div id="trevipay-reapply-for-credit-modal"
-                                 data-bind="mageInit: {
-                                'Magento_Ui/js/modal/modal':{
-                                    'type': 'popup',
-                                    'trigger': '[data-trigger=trevipay-reapply-for-credit-modal-trigger]',
-                                    'responsive': true,
-                                    'buttons': [{
-                                        text: jQuery.mage.__('Close'),
-                                        class: 'action secondary',
-                                        click: function () {
-                                            this.closeModal();
-                                        }
-                                    }, {
-                                        text: tApplyForTreviPay(),
-                                        class: 'action primary',
-                                        type: 'submit',
-                                        click: window.trevipay.applyForCredit,
-                                    }]
-                                }}">
-                                <div class="modal-body-content">
-                                    <h2 html="tApplyForTreviPay()"></h2>
-                                    <p data-bind="i18n: 'If you already have an account with us, please sign in instead of applying for a new credit application.'"></p>
-                                    <p data-bind="i18n: 'Your order status will be set to Pending and it will be processed after a successful credit application approval.'"></p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 <!-- /ko -->

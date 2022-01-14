@@ -203,11 +203,9 @@ class UpdateCreatedWebhooksConfig
     {
         $webhookAuthTokenForCreatedWebhooks = '';
         $webhookAuthToken = null;
-        foreach ($webhooks as $webhookData) {
-            if ($webhookData->getAuthToken()) {
-                $webhookAuthToken = $webhookData->getAuthToken();
-                break;
-            }
+
+        if (!empty($webhooks)) {
+            $webhookAuthToken = $webhooks[0]->getAuthToken();
         }
 
         if ($webhookAuthToken) {

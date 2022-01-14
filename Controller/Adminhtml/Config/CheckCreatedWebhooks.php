@@ -20,6 +20,7 @@ use TreviPay\TreviPayMagento\Model\Webhook\CheckWebhooksStatus;
 use TreviPay\TreviPayMagento\Model\Webhook\Config\UpdateCreatedWebhooksConfig;
 use TreviPay\TreviPayMagento\Model\Webhook\DeleteAllWebhooks;
 use TreviPay\TreviPayMagento\Model\Webhook\ValidateApiKeyForCreatedWebhooks;
+use TreviPay\TreviPayMagento\Model\Webhook\FilterWebhooksByBaseUrl;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -83,6 +84,11 @@ class CheckCreatedWebhooks extends Action implements HttpGetActionInterface
     private $treviPayFactory;
 
     /**
+     * @var FilterWebhooksByBaseUrl
+     */
+    private $filterWebhooksByBaseUrl;
+
+    /**
      * @param Action\Context $context
      * @param JsonFactory $jsonResultFactory
      * @param CheckWebhooksStatus $checkWebhooksStatus
@@ -94,6 +100,7 @@ class CheckCreatedWebhooks extends Action implements HttpGetActionInterface
      * @param Json $serializer
      * @param MaskValue $maskValue
      * @param TreviPayFactory $treviPayFactory
+     * @param FilterWebhooksByBaseUrl $filterWebhooksByBaseUrl
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -107,7 +114,8 @@ class CheckCreatedWebhooks extends Action implements HttpGetActionInterface
         UpdateCreatedWebhooksConfig $updateCreatedWebhooksConfig,
         Json $serializer,
         MaskValue $maskValue,
-        TreviPayFactory $treviPayFactory
+        TreviPayFactory $treviPayFactory,
+        FilterWebhooksByBaseUrl $filterWebhooksByBaseUrl
     ) {
         parent::__construct($context);
         $this->jsonResultFactory = $jsonResultFactory;
@@ -120,6 +128,7 @@ class CheckCreatedWebhooks extends Action implements HttpGetActionInterface
         $this->serializer = $serializer;
         $this->maskValue = $maskValue;
         $this->treviPayFactory = $treviPayFactory;
+        $this->filterWebhooksByBaseUrl = $filterWebhooksByBaseUrl;
     }
 
     /**
@@ -142,12 +151,15 @@ class CheckCreatedWebhooks extends Action implements HttpGetActionInterface
                 $this->deleteAllWebhooks->execute($scope, $scopeId);
             }
             $webhooks = $treviPay->webhooks->list();
-            $this->updateCreatedWebhooksConfig->execute($webhooks, $scope, $scopeId);
+
+            $webhooksForBaseUrl = $this->filterWebhooksByBaseUrl->execute($webhooks, $scope, $scopeId);
+
+            $this->updateCreatedWebhooksConfig->execute($webhooksForBaseUrl, $scope, $scopeId);
             $this->reinitableConfig->reinit();
             $result = $this->checkWebhooksStatus->execute($scope, $scopeId);
             $result['status'] = 'success';
             $result['createdWebhooks'] = $this->maskValue->maskValues(
-                $this->serializer->unserialize($this->serializer->serialize($webhooks)),
+                $this->serializer->unserialize($this->serializer->serialize($webhooksForBaseUrl)),
                 WebhookApiCall::METHOD_NAME
             );
         } catch (Exception $exception) {

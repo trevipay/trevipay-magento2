@@ -22,7 +22,7 @@
                 <field id="sandbox_api_url" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Sandbox API URL</label>
                     <comment>
-                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://app.b2b.credit/]]>
+                        <![CDATA[Make sure the URL ends with '/' (slash). e.g. https://trevipay.app/]]>
                     </comment>
                     <depends>
                         <field id="sandbox">1</field>
@@ -33,7 +33,7 @@
                     <label>API URL</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>
-                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://app.b2b.credit/]]>
+                        <![CDATA[Make sure the URL ends with '/' (slash). e.g. https://trevipay.app/]]>
                     </comment>
                     <depends>
                         <field id="sandbox">0</field>
@@ -75,7 +75,7 @@
                 <field id="sandbox_program_url" translate="label" type="text" sortOrder="61" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Sandbox Program URL</label>
                     <comment>
-                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://<strong>my_program</strong>.b2b.credit/]]>
+                        <![CDATA[Make sure the URL ends with '/' (slash). e.g. https://<strong>my_program-sandbox</strong>.trevipay.app/ OR https://<strong>my_program-sandbox</strong>.b2b.credit/]]>
                     </comment>
                     <depends>
                         <field id="sandbox">1</field>
@@ -85,7 +85,7 @@
                 <field id="program_url" translate="label" type="text" sortOrder="62" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Program URL</label>
                     <comment>
-                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://<strong>my_program</strong>.b2b.credit/]]>
+                        <![CDATA[Make sure the URL ends with '/' (slash). e.g. https://<strong>my_program</strong>.trevipay.app/ OR https://<strong>my_program</strong>.b2b.credit/]]>
                     </comment>
                     <depends>
                         <field id="sandbox">0</field>
@@ -110,7 +110,7 @@
                 <field id="trevipay_checkout_app_url" translate="label comment" type="text" sortOrder="86" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>TreviPay Checkout App URL</label>
                     <comment>
-                        <![CDATA[Make sure the URL ends with '/' (slash), an example URL: https://checkout.b2b.credit/]]>
+                        <![CDATA[Make sure the URL ends with '/' (slash). e.g. https://checkout.b2b.credit/]]>
                     </comment>
                     <validate>validate-url</validate>
                 </field>
