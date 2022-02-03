@@ -7,6 +7,7 @@ namespace TreviPay\TreviPayMagento\Model\Checkout\Token\Output;
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
 use InvalidArgumentException;
 use TreviPay\TreviPayMagento\Exception\Checkout\CheckoutOutputTokenValidationException;

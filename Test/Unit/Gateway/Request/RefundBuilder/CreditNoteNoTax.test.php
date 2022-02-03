@@ -38,14 +38,7 @@ class CreditNoteNoTax extends AbstractRefundBuilder
                         'unit_price' => 2400,
                         'tax_amount' => 0,
                         'discount_amount' => 960,
-                        'subtotal' => 3840,
-                        'tax_details' => [
-                            new TaxDetail([
-                                'tax_type' => 'Item Tax',
-                                'tax_rate' => 10,
-                                'tax_amount' => 0
-                            ])
-                        ]
+                        'subtotal' => 3840
                     ])
                 ]
             ],

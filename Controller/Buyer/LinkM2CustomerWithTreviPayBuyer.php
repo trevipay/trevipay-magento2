@@ -134,7 +134,7 @@ class LinkM2CustomerWithTreviPayBuyer extends Action implements HttpGetActionInt
         }
 
         $this->messageManager->addSuccessMessage(
-            __('Successfully signed in to TreviPay Checkout.', $this->configProvider->getPaymentMethodName())
+            __('Your TreviPay account has been authorized.', $this->configProvider->getPaymentMethodName())
         );
         return $resultRedirect->setPath($m2CheckoutUrl);
     }

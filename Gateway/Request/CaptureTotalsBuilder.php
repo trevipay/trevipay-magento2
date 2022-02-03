@@ -238,6 +238,11 @@ class CaptureTotalsBuilder extends AbstractBuilder
             $ratePercent = (float)($taxRealAmountTotal > 0 ? $taxItem['real_amount'] / $taxRealAmountTotal : 0);
             $itemTaxAmount = (float)($ratePercent * $taxTotal);
 
+            // Don't include tax items that have zero amounts
+            if ((float)$itemTaxAmount === 0.0) {
+                continue;
+            }
+
             $details[] = [
                 'tax_type' => $taxItem['title'],
                 'tax_rate' => (float)$taxItem['tax_percent'],

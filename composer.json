@@ -18,7 +18,7 @@
         "magento/module-sales": "^102.0.3 || 103.0.*",
         "trevipay/trevipay-php": "^1.0.5",
         "ramsey/uuid": "^3.8 || ^4.0",
-        "firebase/php-jwt": "^5.4",
+        "firebase/php-jwt": "5.4",
         "paragonie/sodium_compat": "^1.17"
     },
     "require-dev": {
@@ -27,7 +27,7 @@
         "squizlabs/php_codesniffer": "3.*",
         "magento/magento-coding-standard": "^5.0"
     },
-    "version": "1.0.5",
+    "version": "1.0.6",
     "scripts": {
         "test": "./vendor/bin/phpunit -d xdebug.profiler_enable=on --log-junit junit-report.xml --coverage-cobertura cobertura-report.xml",
         "lint": "./vendor/squizlabs/php_codesniffer/bin/phpcs --standard=./vendor/magento/magento-coding-standard/Magento2 --ignore=./vendor/,./node_modules/,./Test/,./trevipay-php/ ."

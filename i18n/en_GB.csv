@@ -122,7 +122,7 @@ You are not yet a registered TreviPay user. You will be redirected to the TreviP
 "Refund Offline","Refund Offline"
 "There was an error processing your request.","There was an error processing your request."
 "There was an error trying to sign in to TreviPay Checkout.","There was an error trying to sign in to %1 Checkout."
-"Successfully signed in to TreviPay Checkout.","Successfully signed in to %1 Checkout."
+"Your TreviPay account has been authorized.","Your %1 account has been authorized."
 "TreviPay TreviPayMagento","TreviPay TreviPayMagento"
 Enabled,Enabled
 "Payment Action","Payment Action"

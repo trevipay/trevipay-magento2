@@ -353,7 +353,6 @@ class RefundBuilder extends AbstractBuilder
         $items = [];
         $this->addCreditmemoItemsToRefundDetails($creditmemo, $items);
         $this->addRefundAdjustmentItemsToRefundDetails($creditmemo, $items);
-        $this->addRefundAdjustmentItemsFromCreditMemos($creditmemo, $items);
 
         return $items;
     }
@@ -376,6 +375,11 @@ class RefundBuilder extends AbstractBuilder
         foreach ($orderItemTaxItems as $taxItem) {
             $ratePercent = (float)($taxRealAmountTotal > 0 ? $taxItem['real_amount'] / $taxRealAmountTotal : 0);
             $itemTaxAmount = (float)($ratePercent * $taxTotal);
+
+            // Don't include tax items that have zero amounts
+            if ((float)$itemTaxAmount === 0.0) {
+                continue;
+            }
 
             $details[] = [
                 'tax_type' => $taxItem['title'],
@@ -696,10 +700,11 @@ class RefundBuilder extends AbstractBuilder
                 'sku' => 'trevipay-adjustment-fee',
                 'description' => (string)__('Adjustment Fee'),
                 'quantity' => 1,
-                'unit_price' => (float)$adjustmentNegative,
+                'unit_price' => -(float)$adjustmentNegative,
                 'tax_amount' => 0,
                 'discount_amount' => 0,
-                'subtotal' => (float)$adjustmentNegative,
+                'subtotal' => -(float)$adjustmentNegative,
+                'tax_details' => [],
             ];
         }
 
@@ -709,10 +714,11 @@ class RefundBuilder extends AbstractBuilder
                 'sku' => 'trevipay-adjustment-refund',
                 'description' => (string)__('Adjustment Refund'),
                 'quantity' => 1,
-                'unit_price' => -(float)$adjustmentPositive,
+                'unit_price' => (float)$adjustmentPositive,
                 'tax_amount' => 0,
                 'discount_amount' => 0,
-                'subtotal' => -(float)$adjustmentPositive,
+                'subtotal' => (float)$adjustmentPositive,
+                'tax_details' => [],
             ];
         }
     }
@@ -896,24 +902,5 @@ class RefundBuilder extends AbstractBuilder
         }
 
         return $resultDetails;
-    }
-
-    /**
-     * @param CreditmemoInterface $creditMemo
-     * @param array $items
-     */
-    private function addRefundAdjustmentItemsFromCreditMemos(
-        CreditmemoInterface $creditMemo,
-        array &$items
-    ): void {
-        $invoiceCreditMemos = $this->getInvoiceCreditMemos($creditMemo->getInvoice());
-        /** @var CreditmemoInterface $invoiceCreditmemo */
-        foreach ($invoiceCreditMemos as $invoiceCreditmemo) {
-            if ($invoiceCreditmemo->getEntityId() == $creditMemo->getEntityId()) {
-                continue;
-            }
-
-            $this->addRefundAdjustmentItemsToRefundDetails($invoiceCreditmemo, $items);
-        }
     }
 }
