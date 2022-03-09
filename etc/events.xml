@@ -8,5 +8,9 @@
     <event name="checkout_multishipping_refund_all">
         <observer name="trevipay_magento" instance="TreviPay\TreviPayMagento\Observer\RefundForAllOrders" />
     </event>
+    <event name="checkout_cart_save_after">
+        <observer name="checkout_cart_save_after_observer"
+                  instance="TreviPay\TreviPayMagento\Observer\CheckoutCartUpdateItems" />
+    </event>
 </config>
 

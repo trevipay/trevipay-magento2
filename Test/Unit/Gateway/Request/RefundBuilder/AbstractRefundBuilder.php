@@ -24,6 +24,7 @@ use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection as CreditMemoC
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory;
 use Magento\Sales\Model\Order\Creditmemo\Item as CreditMemoItem;
 use TreviPay\TreviPayMagento\Gateway\Request\RefundBuilder;
+use TreviPay\TreviPayMagento\Model\ConfigProvider;
 use \Mockery;
 
 abstract class AbstractRefundBuilder extends \Mockery\Adapter\Phpunit\MockeryTestCase
@@ -50,6 +51,7 @@ abstract class AbstractRefundBuilder extends \Mockery\Adapter\Phpunit\MockeryTes
     protected $itemRepositoryMock;
     protected $paymentDataObjectMock;
     protected $loggerMock;
+    private $configProviderMock;
 
     public function mockClasses(): void
     {
@@ -79,6 +81,7 @@ abstract class AbstractRefundBuilder extends \Mockery\Adapter\Phpunit\MockeryTes
 
         $this->taxItemMock = Mockery::mock(TaxItem::class);
         $this->itemRepositoryMock = Mockery::mock(OrderItemRepositoryInterface::class);
+        $this->configProviderMock = Mockery::mock(ConfigProvider::class);
     }
 
     public function setRefundBuilder(): void
@@ -94,7 +97,8 @@ abstract class AbstractRefundBuilder extends \Mockery\Adapter\Phpunit\MockeryTes
             $this->taxDataMock,
             $this->taxItemMock,
             $this->itemRepositoryMock,
-            $this->loggerMock
+            $this->loggerMock,
+            $this->configProviderMock
         );
     }
 

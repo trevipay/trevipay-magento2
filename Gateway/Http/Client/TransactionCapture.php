@@ -79,6 +79,10 @@ class TransactionCapture extends AbstractTransaction
         /** @var CreateAChargeRequestInterface $createAChargeRequest */
         $createAChargeRequest = $this->createAChargeRequestFactory->create(['data' => $data]);
 
+        if (count($data['details']) === 0) {
+            throw new ClientException(__("The invoice can't be created without products. Add products and try again."));
+        }
+
         try {
             $treviPayFactory = $this->treviPayFactory->create();
             $chargeResponse = $treviPayFactory->charge->create($createAChargeRequest->getRequestData());

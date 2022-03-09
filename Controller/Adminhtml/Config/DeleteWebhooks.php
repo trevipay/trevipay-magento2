@@ -108,7 +108,6 @@ class DeleteWebhooks extends Action implements HttpGetActionInterface
 
         $result = [];
         try {
-
             $this->checkCreatedWebhooks->execute();
             $this->deleteAllWebhooks->execute($scope, $scopeId);
             $this->updateCreatedWebhooksConfig->execute([], $scope, $scopeId);

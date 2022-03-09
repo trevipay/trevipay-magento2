@@ -106,7 +106,7 @@ class LinkM2CustomerWithTreviPayBuyer extends Action implements HttpGetActionInt
         $rawCheckoutToken = $this->getRequest()->getParam('token');
         $isUserForciblyNavigatingToThisRoute = $rawCheckoutToken === null;
         if ($isUserForciblyNavigatingToThisRoute) {
-            $this->treviPayLogger->info('TreviPay Checkout output token is null');
+            $this->logger->info('TreviPay Checkout output token is null');
             return $resultRedirect->setPath($m2CheckoutUrl);
         }
 
@@ -125,7 +125,7 @@ class LinkM2CustomerWithTreviPayBuyer extends Action implements HttpGetActionInt
             | CheckoutOutputTokenValidationException | InputException | NoSuchEntityException | InputMismatchException
             | LocalizedException | InvalidStatusException | ApiClientException $e
         ) {
-            $this->treviPayLogger->critical($e->getMessage(), ['exception' => $e]);
+            $this->logger->critical($e->getMessage(), ['exception' => $e]);
             $errorMessage = __(
                 'There was an error trying to sign in to TreviPay Checkout.',
                 $this->configProvider->getPaymentMethodName()

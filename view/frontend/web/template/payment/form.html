@@ -129,8 +129,8 @@
                     </div>
                 <!-- /ko -->
 
-                <!-- ko if: (showCheckoutSignIn()) -->
-                    <div class="actions-toolbar">
+
+                    <div class="actions-toolbar" id="checkout-sign-in" data-bind="visible: showCheckoutSignIn()">
                         <div class="primary">
                             <button class="action primary checkout"
                                     type="button"
@@ -145,10 +145,10 @@
                             </button>
                         </div>
                     </div>
-                <!-- /ko -->
 
-                <!-- ko ifnot: (showCheckoutSignIn()) -->
-                    <div class="actions-toolbar">
+
+
+                    <div class="actions-toolbar" id="checkout-place-order" data-bind="visible: !showCheckoutSignIn()">
                         <div class="primary">
                             <button class="action primary checkout"
                                     type="submit"
@@ -163,7 +163,7 @@
                             </button>
                         </div>
                     </div>
-                <!-- /ko -->
+
             <!-- /ko -->
             <!-- ko ifnot: (isActiveBuyerOrUnlinkedM2Customer()) -->
                 <!-- ko if: (showViewForPreviouslyLinkedActiveBuyer()) -->

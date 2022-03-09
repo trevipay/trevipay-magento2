@@ -155,7 +155,6 @@ class ReCreateWebhooks extends Action implements HttpGetActionInterface
 
         $result = [];
         try {
-
             $this->checkCreatedWebhooks->execute();
             $this->deleteAllWebhooks->execute($scope, $scopeId);
             $this->createWebhooks->execute($scope, $scopeId);

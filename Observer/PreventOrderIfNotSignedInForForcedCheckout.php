@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TreviPay\TreviPayMagento\Observer;
 
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Area;
@@ -21,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use TreviPay\TreviPayMagento\Model\Buyer\Buyer;
 use TreviPay\TreviPayMagento\Model\ConfigProvider;
 use TreviPay\TreviPayMagento\Model\Order\WasTreviPayPaymentMethodUsed;
+use Magento\Framework\App\ResponseFactory;
 
 class PreventOrderIfNotSignedInForForcedCheckout implements ObserverInterface
 {
@@ -64,6 +66,16 @@ class PreventOrderIfNotSignedInForForcedCheckout implements ObserverInterface
      */
     private $logger;
 
+    /**
+     * @var ResponseFactory
+     */
+    private $responseFactory;
+
+    /**
+     * @var CustomerSession
+     */
+    private $customerSession;
+
     public function __construct(
         State $state,
         ConfigProvider $configProvider,
@@ -72,7 +84,9 @@ class PreventOrderIfNotSignedInForForcedCheckout implements ObserverInterface
         WasTreviPayPaymentMethodUsed $wasTreviPayPaymentMethodUsed,
         RedirectInterface $redirect,
         UrlInterface $url,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ResponseFactory $responseFactory,
+        CustomerSession $customerSession
     ) {
         $this->state = $state;
         $this->configProvider = $configProvider;
@@ -82,6 +96,8 @@ class PreventOrderIfNotSignedInForForcedCheckout implements ObserverInterface
         $this->redirect = $redirect;
         $this->urlBuilder = $url;
         $this->logger = $logger;
+        $this->responseFactory = $responseFactory;
+        $this->customerSession = $customerSession;
     }
 
     /**
@@ -172,12 +188,20 @@ class PreventOrderIfNotSignedInForForcedCheckout implements ObserverInterface
             $this->configProvider->getPaymentMethodName()
         ));
 
+        $m2Customer = $this->customerSession->getCustomer()->getDataModel();
+
+        $buyer = new Buyer($m2Customer);
+        $buyer->setSignedInForForceCheckout(false);
+
+        $this->m2CustomerRepository->save($m2Customer);
+
         $m2CheckoutUrl = $this->urlBuilder->getUrl('checkout', ['_fragment' => 'payment']);
         /** @var Action $controller */
-        $observer->getControllerAction()->getResponse()->setRedirect($m2CheckoutUrl);
+        $this->responseFactory->create()->setRedirect($m2CheckoutUrl)->sendResponse();
 
         throw new PaymentException(__(
-            'M2 Customer attempted to place order without signing in to TreviPay Checkout after modifying cart'
+            'Please sign-in in to TreviPay Checkout after modifying the cart.',
+            $this->configProvider->getPaymentMethodName()
         ));
     }
 

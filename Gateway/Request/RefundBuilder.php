@@ -33,6 +33,7 @@ use TreviPay\TreviPay\Api\Data\Charge\TaxDetailInterfaceFactory;
 use TreviPay\TreviPayMagento\Model\CurrencyConverter;
 use TreviPay\TreviPayMagento\Api\Data\Refund\RefundReasonInterface;
 use Psr\Log\LoggerInterface;
+use TreviPay\TreviPayMagento\Model\ConfigProvider;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -60,6 +61,11 @@ class RefundBuilder extends AbstractBuilder
     private const REFUND_REASON = 'refund_reason';
 
     private const DETAILS = 'details';
+
+    /**
+     * @var ConfigProvider
+     */
+    private $configProvider;
 
     /**
      * @var LoggerInterface
@@ -122,7 +128,8 @@ class RefundBuilder extends AbstractBuilder
         Data $taxHelper,
         TaxItem $taxItem,
         OrderItemRepositoryInterface $itemRepository,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ConfigProvider $configProvider
     ) {
         $this->subjectReader = $subjectReader;
         $this->creditMemoCollectionFactory = $creditMemoCollectionFactory;
@@ -136,6 +143,7 @@ class RefundBuilder extends AbstractBuilder
         $this->itemRepository = $itemRepository;
         $this->logger = $logger;
         parent::__construct($subjectReader);
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -697,7 +705,7 @@ class RefundBuilder extends AbstractBuilder
         $adjustmentNegative = $creditmemo->getAdjustmentNegative();
         if ((float)$adjustmentNegative) {
             $items[] = [
-                'sku' => 'trevipay-adjustment-fee',
+                'sku' => (string)__('trevipay-adjustment-fee', $this->configProvider->getPaymentMethodName()),
                 'description' => (string)__('Adjustment Fee'),
                 'quantity' => 1,
                 'unit_price' => -(float)$adjustmentNegative,
@@ -711,7 +719,7 @@ class RefundBuilder extends AbstractBuilder
         $adjustmentPositive = $creditmemo->getAdjustmentPositive();
         if ((float)$adjustmentPositive) {
             $items[] = [
-                'sku' => 'trevipay-adjustment-refund',
+                'sku' => (string)__('trevipay-adjustment-refund', $this->configProvider->getPaymentMethodName()),
                 'description' => (string)__('Adjustment Refund'),
                 'quantity' => 1,
                 'unit_price' => (float)$adjustmentPositive,

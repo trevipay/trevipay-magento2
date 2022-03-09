@@ -283,7 +283,7 @@ class CustomerTreviPay implements ArgumentInterface
             case TreviPayCustomerStatusInterface::DECLINED:
                 $message = __(
                     'Sorry, your application has been declined at this time. You are invited to reapply in 6 months' .
-                    ' from the initial application date, where we will re-review.',
+                    ' from the initial application date, where we will re-review.'
                 );
                 break;
             case TreviPayCustomerStatusInterface::INACTIVE:
