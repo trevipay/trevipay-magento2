@@ -112,6 +112,9 @@ class TransactionCapture extends AbstractTransaction
             throw new ClientException(__('Payment capturing error.'));
         }
 
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 500);
+        $this->logger->notice('TreviPay capture backtrace', $bt);
+
         return $chargeResponse->getRequestData();
     }
 }
