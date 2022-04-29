@@ -189,6 +189,14 @@
                     <!-- The folder created to add images after being saved in admin. -->
                     <base_url type="media" scope_info="1">trevipay/images</base_url>
                 </field>
+                <field id="automatic_adjustment_enabled" translate="label" type="select" sortOrder="300" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Automatic Adjustment Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Only required if using third party plugins that alter order totals without adding corresponding line items.]]></comment>
+                </field>
+                <field id="automatic_adjustment_text" translate="label" type="text" sortOrder="301" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Automatic Adjustment Title</label>
+                </field>
             </group>
         </section>
     </system>

@@ -7,7 +7,7 @@ namespace TreviPay\TreviPayMagento\Test\Unit\Gateway\Request\RefundBuilder;
 use TreviPay\TreviPay\Model\Data\Charge\ChargeDetail;
 use TreviPay\TreviPay\Model\Data\Charge\TaxDetail;
 
-class CreditNoteNoTax extends AbstractRefundBuilder
+class CreditNoteWithVarianceInRange extends AbstractRefundBuilder
 {
     /** @Setup */
     protected function setUp(): void
@@ -17,12 +17,16 @@ class CreditNoteNoTax extends AbstractRefundBuilder
         $this->setRefundBuilder();
     }
 
-    public function testCreditNoteReturnsCorrectValues()
+    /** @test */
+    public function testCreditNoteWhenVarianceIsOutsideOfAllowedRange()
     {
+        $this->configProviderMock->shouldReceive('getAutomaticAdjustmentEnabled')->andReturn(true);
+        $this->configProviderMock->shouldReceive('getAutomaticAdjustmentText')->andReturn('Automatic Adjustment');
+
         $result = $this->refundBuilder->build(['payment' => $this->paymentDataObjectMock]);
         $this->assertEquals(
             [
-                'total_amount' => 4840,
+                'total_amount' => 3840,
                 'tax_amount' => 0,
                 'shipping_amount' => 1000,
                 'discount_amount' => 960,
@@ -39,7 +43,49 @@ class CreditNoteNoTax extends AbstractRefundBuilder
                         'tax_amount' => 0,
                         'discount_amount' => 960,
                         'subtotal' => 3840
-                    ])
+                    ]),
+                    new ChargeDetail([
+                        'sku' => 'ADJ',
+                        'description' => 'Automatic Adjustment',
+                        'quantity' => 1.0,
+                        'unit_price' => -1000,
+                        'tax_amount' => 0,
+                        'tax_details' => [],
+                        'discount_amount' => 0,
+                        'subtotal' => -1000
+                    ]),
+                ]
+            ],
+            $result
+        );
+    }
+
+    /** @test */
+    public function testCreditNoteWhenVarianceIsOutsideOfAllowedRangeButAutomaticAdjustmentIsDisabled()
+    {
+        $this->configProviderMock->shouldReceive('getAutomaticAdjustmentEnabled')->andReturn(false);
+
+        $result = $this->refundBuilder->build(['payment' => $this->paymentDataObjectMock]);
+        $this->assertEquals(
+            [
+                'total_amount' => 3840,
+                'tax_amount' => 0,
+                'shipping_amount' => 1000,
+                'discount_amount' => 960,
+                'shipping_discount_amount' => 0,
+                'shipping_tax_amount' => 0,
+                'shipping_tax_details' => null,
+                'refund_reason' => 'Other',
+                'details' => [
+                    new ChargeDetail([
+                        'sku' => 'WSH07-28-Black',
+                        'description' => 'Echo Fit Compression Short',
+                        'quantity' => 2.0,
+                        'unit_price' => 2400,
+                        'tax_amount' => 0,
+                        'discount_amount' => 960,
+                        'subtotal' => 3840
+                    ]),
                 ]
             ],
             $result
@@ -51,9 +97,8 @@ class CreditNoteNoTax extends AbstractRefundBuilder
     public function assignMockValues(): void
     {
         $this->storeMock->allows(['getId' => 1, 'getBaseCurrencyCode' => 'AUD']);
-        $this->currencyConverterMock->allows(['getMultiplier' => 100]);
 
-        $this->configProviderMock->shouldReceive('getAutomaticAdjustmentEnabled')->andReturn(false);
+        $this->currencyConverterMock->allows(['getMultiplier' => 100]);
 
         $this->chargeDetailFactoryMock->shouldReceive('create')->andReturnUsing(function () {
             return new ChargeDetail();
@@ -68,7 +113,7 @@ class CreditNoteNoTax extends AbstractRefundBuilder
         ]);
         $this->subjectReaderMock->allows([
             'readPayment' => $this->paymentDataObjectMock,
-            'readAmount' => 48.4000
+            'readAmount' => 38.4000
         ]);
         $this->paymentDataObjectMock->allows([
             'getOrder' => $this->orderMock,

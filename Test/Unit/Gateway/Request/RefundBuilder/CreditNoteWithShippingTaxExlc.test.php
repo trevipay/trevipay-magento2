@@ -20,9 +20,10 @@ class CreditNoteWithShippingTaxExlc extends AbstractRefundBuilder
     public function testCreditNoteReturnsCorrectValues()
     {
         $result = $this->refundBuilder->build(['payment' => $this->paymentDataObjectMock]);
+
         $this->assertEquals(
             [
-                'total_amount' => 10626,
+                'total_amount' => 11979,
                 'tax_amount' => 816,
                 'shipping_amount' => 2730,
                 'discount_amount' => 2040,
@@ -62,6 +63,9 @@ class CreditNoteWithShippingTaxExlc extends AbstractRefundBuilder
     public function assignMockValues(): void
     {
         $this->storeMock->allows(['getId' => 1, 'getBaseCurrencyCode' => 'AUD']);
+
+        $this->configProviderMock->shouldReceive('getAutomaticAdjustmentEnabled')->andReturn(false);
+
         $this->currencyConverterMock->allows(['getMultiplier' => 100]);
 
         $this->chargeDetailFactoryMock->shouldReceive('create')->andReturnUsing(function () {
@@ -77,7 +81,7 @@ class CreditNoteWithShippingTaxExlc extends AbstractRefundBuilder
         ]);
         $this->subjectReaderMock->allows([
             'readPayment' => $this->paymentDataObjectMock,
-            'readAmount' => 106.26
+            'readAmount' => 119.79
         ]);
         $this->paymentDataObjectMock->allows([
             'getOrder' => $this->orderMock,

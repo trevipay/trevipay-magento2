@@ -63,11 +63,6 @@ class RefundBuilder extends AbstractBuilder
     private const DETAILS = 'details';
 
     /**
-     * @var ConfigProvider
-     */
-    private $configProvider;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -86,6 +81,11 @@ class RefundBuilder extends AbstractBuilder
      * @var StoreManagerInterface
      */
     private $storeManager;
+
+    /**
+     * @var ConfigProvider
+     */
+    private $configProvider;
 
     /**
      * @var CurrencyConverter
@@ -121,6 +121,7 @@ class RefundBuilder extends AbstractBuilder
         SubjectReader $subjectReader,
         CollectionFactory $creditMemoCollectionFactory,
         StoreManagerInterface $storeManager,
+        ConfigProvider $configProvider,
         CurrencyConverter $currencyConverter,
         ChargeDetailInterfaceFactory $chargeDetailFactory,
         TaxDetailInterfaceFactory $taxDetailFactory,
@@ -128,12 +129,12 @@ class RefundBuilder extends AbstractBuilder
         Data $taxHelper,
         TaxItem $taxItem,
         OrderItemRepositoryInterface $itemRepository,
-        LoggerInterface $logger,
-        ConfigProvider $configProvider
+        LoggerInterface $logger
     ) {
         $this->subjectReader = $subjectReader;
         $this->creditMemoCollectionFactory = $creditMemoCollectionFactory;
         $this->storeManager = $storeManager;
+        $this->configProvider = $configProvider;
         $this->currencyConverter = $currencyConverter;
         $this->chargeDetailFactory = $chargeDetailFactory;
         $this->taxDetailFactory = $taxDetailFactory;
@@ -143,7 +144,6 @@ class RefundBuilder extends AbstractBuilder
         $this->itemRepository = $itemRepository;
         $this->logger = $logger;
         parent::__construct($subjectReader);
-        $this->configProvider = $configProvider;
     }
 
     /**
@@ -777,7 +777,7 @@ class RefundBuilder extends AbstractBuilder
         $multipliedShippingTaxAmount = (int)round($shippingTaxAmount * $multiplier);
         $shippingTaxDetails = $this->calculateTaxDetailsFromShipping($shippingTaxAmount, $taxItems);
 
-        return [
+        $refundObject = [
             self::TOTAL_AMOUNT => (int)round($amount * $multiplier),
             self::TAX_AMOUNT => (int)round($taxAmount * $multiplier),
             self::SHIPPING_AMOUNT => (int)round($shippingAmount * $multiplier),
@@ -790,6 +790,53 @@ class RefundBuilder extends AbstractBuilder
             self::REFUND_REASON => RefundReasonInterface::OTHER,
             self::DETAILS => $this->createDetails($details, $multiplier),
         ];
+
+        $this->correctRefundVariances($refundObject);
+
+        return $refundObject;
+    }
+
+    /**
+     * @param array &$refundObject
+     */
+    protected function correctRefundVariances(array &$refundObject): void
+    {
+        $adjustmentEnabled = $this->configProvider->getAutomaticAdjustmentEnabled();
+
+        if (!$adjustmentEnabled) {
+            return;
+        }
+
+        $expectedDetailsSubtotal = $refundObject[self::TOTAL_AMOUNT]
+            - $refundObject[self::SHIPPING_AMOUNT]
+            - $refundObject[self::SHIPPING_TAX_AMOUNT]
+            + $refundObject[self::SHIPPING_DISCOUNT_AMOUNT];
+
+        $actualDetailsSubtotal = array_reduce($refundObject[self::DETAILS], function ($runningTotal, $detail) {
+            return ($runningTotal + $detail->getSubtotal());
+        }, 0);
+
+        $subtotalVariance = $actualDetailsSubtotal - $expectedDetailsSubtotal;
+
+        $toleratedVariance = count($refundObject[self::DETAILS]);
+
+        if ($subtotalVariance <= $toleratedVariance) {
+            return;
+        }
+
+        $adjustmentText = $this->configProvider->getAutomaticAdjustmentText();
+
+        $adjustmentDetail = $this->chargeDetailFactory->create();
+        $adjustmentDetail->setSku('ADJ');
+        $adjustmentDetail->setDescription($adjustmentText);
+        $adjustmentDetail->setQuantity(1);
+        $adjustmentDetail->setUnitPrice(($subtotalVariance * -1));
+        $adjustmentDetail->setTaxAmount(0);
+        $adjustmentDetail->setDiscountAmount(0);
+        $adjustmentDetail->setSubtotal(($subtotalVariance * -1));
+        $adjustmentDetail->setTaxDetails([]);
+
+        $refundObject[self::DETAILS][] = $adjustmentDetail;
     }
 
     /**

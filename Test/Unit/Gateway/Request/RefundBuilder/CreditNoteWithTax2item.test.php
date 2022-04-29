@@ -75,6 +75,9 @@ class CreditNoteWithTax2Item extends AbstractRefundBuilder
     public function assignMockValues(): void
     {
         $this->storeMock->allows(['getId' => 1, 'getBaseCurrencyCode' => 'AUD']);
+
+        $this->configProviderMock->shouldReceive('getAutomaticAdjustmentEnabled')->andReturn(false);
+
         $this->currencyConverterMock->allows(['getMultiplier' => 100]);
 
         $this->chargeDetailFactoryMock->shouldReceive('create')->andReturnUsing(function () {

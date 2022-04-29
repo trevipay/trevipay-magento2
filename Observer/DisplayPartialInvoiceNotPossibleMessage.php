@@ -47,22 +47,25 @@ class DisplayPartialInvoiceNotPossibleMessage implements ObserverInterface
      */
     public function execute(Observer $observer): void
     {
-        $order = $this->orderRepository->get((int)$this->request->getParam('order_id'));
+        // Temporary NOOP
+        return;
 
-        if ($order->getPayment()->getMethod() !== ConfigProvider::CODE) {
-            return;
-        }
+        // $order = $this->orderRepository->get((int)$this->request->getParam('order_id'));
 
-        if ($order->getBaseGiftCardsAmount() > 0) {
-            $this->messageManager->addWarningMessage(
-                __('Partial invoice is not possible because a Gift Card had been used.')
-            );
-        }
+        // if ($order->getPayment()->getMethod() !== ConfigProvider::CODE) {
+        //     return;
+        // }
 
-        if ($order->getBaseCustomerBalanceAmount() > 0) {
-            $this->messageManager->addWarningMessage(
-                __('Partial invoice is not possible because Store Credits had been used.')
-            );
-        }
+        // if ($order->getBaseGiftCardsAmount() > 0) {
+        //     $this->messageManager->addWarningMessage(
+        //         __('Partial invoice is not possible because a Gift Card had been used.')
+        //     );
+        // }
+
+        // if ($order->getBaseCustomerBalanceAmount() > 0) {
+        //     $this->messageManager->addWarningMessage(
+        //         __('Partial invoice is not possible because Store Credits had been used.')
+        //     );
+        // }
     }
 }

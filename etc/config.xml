@@ -40,6 +40,8 @@
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <can_edit>1</can_edit>
                 <webhook_auth_token_header_name>Authorization</webhook_auth_token_header_name>
+                <automatic_adjustment_enabled>0</automatic_adjustment_enabled>
+                <automatic_adjustment_text>Adjustment</automatic_adjustment_text>
             </trevipay_magento>
         </payment>
     </default>

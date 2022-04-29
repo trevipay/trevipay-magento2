@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace TreviPay\TreviPayMagento\Gateway\Request;
@@ -24,6 +25,7 @@ use TreviPay\TreviPay\Api\Data\Charge\ChargeDetailInterface;
 use TreviPay\TreviPay\Api\Data\Charge\ChargeDetailInterfaceFactory;
 use TreviPay\TreviPay\Api\Data\Charge\TaxDetailInterface;
 use TreviPay\TreviPay\Api\Data\Charge\TaxDetailInterfaceFactory;
+use TreviPay\TreviPayMagento\Model\ConfigProvider;
 use TreviPay\TreviPayMagento\Model\CurrencyConverter;
 
 /**
@@ -104,6 +106,7 @@ class CaptureTotalsBuilder extends AbstractBuilder
     public function __construct(
         SubjectReader $subjectReader,
         StoreManagerInterface $storeManager,
+        ConfigProvider $configProvider,
         CurrencyConverter $currencyConverter,
         UrlInterface $urlBuilder,
         ChargeDetailInterfaceFactory $chargeDetailFactory,
@@ -114,6 +117,7 @@ class CaptureTotalsBuilder extends AbstractBuilder
     ) {
         $this->subjectReader = $subjectReader;
         $this->storeManager = $storeManager;
+        $this->configProvider = $configProvider;
         $this->currencyConverter = $currencyConverter;
         $this->urlBuilder = $urlBuilder;
         $this->chargeDetailFactory = $chargeDetailFactory;
@@ -215,7 +219,52 @@ class CaptureTotalsBuilder extends AbstractBuilder
             );
         }
 
+        $this->correctChargeVariances($chargeObject);
+
         return $chargeObject;
+    }
+
+    /**
+     * @param array &$chargeObject
+     */
+    protected function correctChargeVariances(array &$chargeObject): void
+    {
+        $adjustmentEnabled = $this->configProvider->getAutomaticAdjustmentEnabled();
+
+        if (!$adjustmentEnabled) {
+            return;
+        }
+
+        $expectedDetailsSubtotal = $chargeObject[self::TOTAL_AMOUNT]
+            - $chargeObject[self::SHIPPING_AMOUNT]
+            - $chargeObject[self::SHIPPING_TAX_AMOUNT]
+            + $chargeObject[self::SHIPPING_DISCOUNT_AMOUNT];
+
+        $actualDetailsSubtotal = array_reduce($chargeObject[self::DETAILS], function ($runningTotal, $detail) {
+            return ($runningTotal + $detail->getSubtotal());
+        }, 0);
+
+        $subtotalVariance = $actualDetailsSubtotal - $expectedDetailsSubtotal;
+
+        $toleratedVariance = count($chargeObject[self::DETAILS]);
+
+        if ($subtotalVariance <= $toleratedVariance) {
+            return;
+        }
+
+        $adjustmentText = $this->configProvider->getAutomaticAdjustmentText();
+
+        $adjustmentDetail = $this->chargeDetailFactory->create();
+        $adjustmentDetail->setSku('ADJ');
+        $adjustmentDetail->setDescription($adjustmentText);
+        $adjustmentDetail->setQuantity(1);
+        $adjustmentDetail->setUnitPrice(($subtotalVariance * -1));
+        $adjustmentDetail->setTaxAmount(0);
+        $adjustmentDetail->setDiscountAmount(0);
+        $adjustmentDetail->setSubtotal(($subtotalVariance * -1));
+        $adjustmentDetail->setTaxDetails([]);
+
+        $chargeObject[self::DETAILS][] = $adjustmentDetail;
     }
 
     /**
@@ -456,7 +505,7 @@ class CaptureTotalsBuilder extends AbstractBuilder
             'description' => $description,
             'quantity' => $qty,
             'unit_price' => $shouldSubtract ? -$unitPrice : $unitPrice,
-            'tax_amount' => $shouldSubtract ? -($qty * $taxAmount) : $qty * $taxAmount,
+            'tax_amount' => $shouldSubtract ? - ($qty * $taxAmount) : $qty * $taxAmount,
             'discount_amount' => 0.0,
             'subtotal' => $shouldSubtract ? -$subtotal : $subtotal,
         ];
@@ -579,8 +628,7 @@ class CaptureTotalsBuilder extends AbstractBuilder
 
             if ($qty > 0
                 && $item->getBaseRowTotalInclTax() > 0
-                && (
-                    $isConfigurable
+                && ($isConfigurable
                     || ($isBundle && $isPriceFixedType)
                     || !$item->getHasChildren()
                 )

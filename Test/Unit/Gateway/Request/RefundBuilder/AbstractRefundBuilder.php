@@ -51,7 +51,7 @@ abstract class AbstractRefundBuilder extends \Mockery\Adapter\Phpunit\MockeryTes
     protected $itemRepositoryMock;
     protected $paymentDataObjectMock;
     protected $loggerMock;
-    private $configProviderMock;
+    protected $configProviderMock;
 
     public function mockClasses(): void
     {
@@ -90,6 +90,7 @@ abstract class AbstractRefundBuilder extends \Mockery\Adapter\Phpunit\MockeryTes
             $this->subjectReaderMock,
             $this->collectionFactoryMock,
             $this->storeManagerMock,
+            $this->configProviderMock,
             $this->currencyConverterMock,
             $this->chargeDetailFactoryMock,
             $this->taxDetailFactoryMock,
@@ -97,8 +98,7 @@ abstract class AbstractRefundBuilder extends \Mockery\Adapter\Phpunit\MockeryTes
             $this->taxDataMock,
             $this->taxItemMock,
             $this->itemRepositoryMock,
-            $this->loggerMock,
-            $this->configProviderMock
+            $this->loggerMock
         );
     }
 

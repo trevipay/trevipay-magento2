@@ -71,9 +71,13 @@ class ConfigProvider implements ConfigProviderInterface
     public const BASE_URL_FOR_CREATED_WEBHOOKS = 'payment/trevipay_magento/base_url_for_created_webhooks';
 
     public const WEBHOOK_AUTH_TOKEN_FOR_CREATED_WEBHOOKS =
-        'payment/trevipay_magento/webhook_auth_token_for_created_webhooks';
+    'payment/trevipay_magento/webhook_auth_token_for_created_webhooks';
 
     private const WEBHOOK_AUTH_TOKEN_HEADER_NAME = 'payment/trevipay_magento/webhook_auth_token_header_name';
+
+    public const AUTOMATIC_ADJUSTMENT_ENABLED = 'automatic_adjustment_enabled';
+
+    public const AUTOMATIC_ADJUSTMENT_TEXT = 'automatic_adjustment_text';
 
     /**
      * @var ScopeConfigInterface
@@ -312,6 +316,28 @@ class ConfigProvider implements ConfigProviderInterface
     public function getNewOrderStatus(string $scope = ScopeInterface::SCOPE_STORE, $scopeCode = null): ?string
     {
         return $this->scopeConfig->getValue(self::NEW_ORDER_STATUS, $scope, $scopeCode);
+    }
+
+    /**
+     * @param string $scope
+     * @param mixed|null $scopeCode
+     * @return bool|null
+     */
+    public function getAutomaticAdjustmentEnabled(
+        string $scope = ScopeInterface::SCOPE_STORE,
+        $scopeCode = null
+    ): ?string {
+        return $this->scopeConfig->getValue(self::AUTOMATIC_ADJUSTMENT_ENABLED, $scope, $scopeCode);
+    }
+
+    /**
+     * @param string $scope
+     * @param mixed|null $scopeCode
+     * @return string|null
+     */
+    public function getAutomaticAdjustmentText(string $scope = ScopeInterface::SCOPE_STORE, $scopeCode = null): ?string
+    {
+        return $this->scopeConfig->getValue(self::AUTOMATIC_ADJUSTMENT_TEXT, $scope, $scopeCode);
     }
 
     /**
