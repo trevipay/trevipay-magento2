@@ -10,7 +10,7 @@ class TreviPayFormatter extends LineFormatter
     /**
      * {@inheritdoc}
      */
-    public function stringify($data)
+    public function stringify($data) : string
     {
         if ($data === null || is_bool($data)) {
             // phpcs:ignore
@@ -28,7 +28,7 @@ class TreviPayFormatter extends LineFormatter
     /**
      * {@inheritdoc}
      */
-    public function format(array $record)
+    public function format(array $record): string
     {
         $output = parent::format($record);
         if (is_string($output)) {
