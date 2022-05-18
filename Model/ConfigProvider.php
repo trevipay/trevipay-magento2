@@ -124,7 +124,7 @@ class ConfigProvider implements ConfigProviderInterface
     /**
      * @param string $scope
      * @param mixed|null $scopeCode
-     * @return bool
+     * @return string
      */
     public function getPaymentMethodName(string $scope = ScopeInterface::SCOPE_STORE, $scopeCode = null): string
     {
@@ -134,7 +134,7 @@ class ConfigProvider implements ConfigProviderInterface
     /**
      * @param string $scope
      * @param mixed|null $scopeCode
-     * @return bool
+     * @return string
      */
     public function getPaymentMethodImageLocalPath(
         string $scope = ScopeInterface::SCOPE_STORE,
@@ -146,7 +146,7 @@ class ConfigProvider implements ConfigProviderInterface
             $scopeCode
         );
         if ($paymentMethodImagePath) {
-            return self::MEDIA_FOLDER . '/' . self::IMAGES_FOLDER . '/' . $paymentMethodImagePath;
+            return self::MEDIA_FOLDER . "/" . self::IMAGES_FOLDER . "/" . $paymentMethodImagePath;
         } else {
             return null;
         }

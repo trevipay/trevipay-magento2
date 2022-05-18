@@ -23,7 +23,13 @@ $featurePath3 = 'TreviPay_TreviPayMagento::images/feature-3.svg';
 $forgetMeLabel = __('Forget Me');
 ?>
 
-<?php if (!$isRegisteredCustomer): ?>
+<?php if ($viewModel->shouldDisplayMessageOnly() && $isRegisteredCustomer): ?>
+    <span class="trevipay-buyer-name"><?= $escaper->escapeHtml($viewModel->getBuyerName()) ?></span>
+    <div class="block-content massage-block">
+        <p><?= /* @noEscape */ $viewModel->getMessage() ?></p>
+    </div>
+<?php endif; ?>
+<?php if (!$isRegisteredCustomer || $viewModel->displayApplyNowBanner()): ?>
     <div class="trevipay-apply-wrapper">
         <div class="trevipay-apply-header">
             <?php if ($paymentMethodImagePath): ?>
@@ -38,7 +44,7 @@ $forgetMeLabel = __('Forget Me');
                 <?= $escaper->escapeHtml(__('Invoicing made easy')) ?>
             </h6>
             <a class="trevipay-apply-link"
-               href="<?= $escaper->escapeUrl($viewModel->getApplyForCreditUrl()) ?>">
+               href="<?= $escaper->escapeUrl($viewModel->getContextualApplicationUrl()) ?>">
                 <?= $escaper->escapeHtml(__('Apply Now')) ?>
             </a>
         </div>
@@ -109,12 +115,7 @@ $forgetMeLabel = __('Forget Me');
              </div>
          </div>
     </div>
-<?php elseif ($viewModel->shouldDisplayMessageOnly()): ?>
-    <span class="trevipay-buyer-name"><?= $escaper->escapeHtml($viewModel->getBuyerName()) ?></span>
-    <div class="block-content">
-        <p><?= /* @noEscape */ $viewModel->getMessage() ?></p>
-    </div>
-<?php else: ?>
+<?php elseif (!$viewModel->shouldDisplayMessageOnly()): ?>
     <div class="block block-dashboard-info">
         <div class="block-title"><strong><?= $escaper->escapeHtml(__('Credit Information')) ?></strong></div>
         <span class="trevipay-buyer-name"><?= $escaper->escapeHtml($viewModel->getBuyerName()) ?></span>

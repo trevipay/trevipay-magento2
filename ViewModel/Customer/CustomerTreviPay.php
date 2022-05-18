@@ -261,14 +261,40 @@ class CustomerTreviPay implements ArgumentInterface
     }
 
     /**
+     * @return boolean
+     */
+    public function displayApplyNowBanner(): bool
+    {
+        return in_array(
+            $this->getCustomerStatus(),
+            [
+                TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT,
+                TreviPayCustomerStatusInterface::WITHDRAWN,
+                TreviPayCustomerStatusInterface::CANCELLED,
+            ]
+        );
+    }
+
+    public function getContextualApplicationUrl(): string
+    {
+        if ($this->getCustomerStatus() === TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT) {
+            $didNotCompleteApplicationUrl = $this->getDidNotCompleteApplicationUrl();
+
+            return $didNotCompleteApplicationUrl;
+        }
+
+        $creditApplicationUrl = $this->getApplyForCreditUrl();
+
+        return $creditApplicationUrl;
+    }
+
+    /**
      * @return Phrase|null
      * @throws LocalizedException
      */
     public function getMessage(): ?Phrase
     {
         $programUrl = $this->getBuyerPortalUrl();
-        $creditApplicationUrl = $this->getApplyForCreditUrl();
-        $didNotCompleteApplicationUrl = $this->getDidNotCompleteApplicationUrl();
         $message = null;
         $paymentMethodName = $this->configProvider->getPaymentMethodName();
 
@@ -276,7 +302,7 @@ class CustomerTreviPay implements ArgumentInterface
             case TreviPayCustomerStatusInterface::CANCELLED:
                 $message = __(
                     'Sorry, your application has been cancelled. Please visit <a href="%1">%2</a> to resubmit.',
-                    $creditApplicationUrl,
+                    $this->getContextualApplicationUrl(),
                     $paymentMethodName
                 );
                 break;
@@ -329,16 +355,15 @@ class CustomerTreviPay implements ArgumentInterface
                 $message = __(
                     'You chose to withdraw your application. Change of mind? Visit <a href="%1">%2</a> to re-apply '
                         . 'at any time.',
-                    $creditApplicationUrl,
+                    $this->getContextualApplicationUrl(),
                     $paymentMethodName
                 );
                 break;
             case TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT:
                 $message = __(
                     'You did not complete your TreviPay Credit Application. '
-                    . 'Please fill out the form in its entirety, sign and submit at the end. '
-                    . '<span %4><a href="%1" %3>Apply</a></span>',
-                    $didNotCompleteApplicationUrl,
+                    . 'Please fill out the form in its entirety, sign and submit at the end. ',
+                    $this->getContextualApplicationUrl(),
                     $paymentMethodName,
                     'class="action primary" type="button" data-role="action"',
                     'class="apply-btn"'
