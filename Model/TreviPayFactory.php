@@ -85,6 +85,7 @@ class TreviPayFactory
         $treviPayOptions->setMaskValue($this->maskValue);
         $clientConfigProvider = $this->clientConfigProvider;
         $clientConfigProvider->setBaseUri($this->configProvider->getApiUrl($scope, $scopeCode));
+        $clientConfigProvider->setIntegrationInfo($this->configProvider->getIntegrationInfo());
         $treviPayRequest = $this->treviPayRequestFactory->create(['configProvider' => $clientConfigProvider]);
         $treviPayOptions->setRequestClass($treviPayRequest);
         $data['options'] = $treviPayOptions;

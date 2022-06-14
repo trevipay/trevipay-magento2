@@ -6,13 +6,17 @@ namespace TreviPay\TreviPayMagento\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\App\ProductMetadata;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 use TreviPay\TreviPay\Api\ConfigProviderInterface;
 use TreviPay\TreviPay\ApiClient;
 use TreviPay\TreviPay\Model\MaskValue;
+use Magento\Framework\Filesystem\Driver\File as DriverFile;
+use Psr\Log\LoggerInterface;
 
 class ConfigProvider implements ConfigProviderInterface
 {
@@ -75,9 +79,9 @@ class ConfigProvider implements ConfigProviderInterface
 
     private const WEBHOOK_AUTH_TOKEN_HEADER_NAME = 'payment/trevipay_magento/webhook_auth_token_header_name';
 
-    public const AUTOMATIC_ADJUSTMENT_ENABLED = 'automatic_adjustment_enabled';
+    public const AUTOMATIC_ADJUSTMENT_ENABLED = 'payment/trevipay_magento/automatic_adjustment_enabled';
 
-    public const AUTOMATIC_ADJUSTMENT_TEXT = 'automatic_adjustment_text';
+    public const AUTOMATIC_ADJUSTMENT_TEXT = 'payment/trevipay_magento/automatic_adjustment_text';
 
     /**
      * @var ScopeConfigInterface
@@ -99,16 +103,37 @@ class ConfigProvider implements ConfigProviderInterface
      */
     private $maskValue;
 
+    /**
+     * @var DriverFile
+     */
+    private $driver;
+
+    /**
+     * @var ProductMetadata
+     */
+    private $productMetadata;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         Json                 $serializer,
         RequestInterface     $request,
-        MaskValue            $maskValue
+        MaskValue            $maskValue,
+        DriverFile           $driver,
+        ProductMetadata      $productMetadata,
+        LoggerInterface      $logger
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->serializer = $serializer;
         $this->request = $request;
         $this->maskValue = $maskValue;
+        $this->driver = $driver;
+        $this->productMetadata = $productMetadata;
+        $this->logger = $logger;
     }
 
     /**
@@ -321,7 +346,7 @@ class ConfigProvider implements ConfigProviderInterface
     /**
      * @param string $scope
      * @param mixed|null $scopeCode
-     * @return bool|null
+     * @return string|null
      */
     public function getAutomaticAdjustmentEnabled(
         string $scope = ScopeInterface::SCOPE_STORE,
@@ -343,7 +368,7 @@ class ConfigProvider implements ConfigProviderInterface
     /**
      * @param string $scope
      * @param mixed|null $scopeCode
-     * @return string|null
+     * @return boolean|null
      */
     public function getApiKeyForCreatedWebhooks(string $scope = ScopeInterface::SCOPE_STORE, $scopeCode = null): ?string
     {
@@ -441,5 +466,27 @@ class ConfigProvider implements ConfigProviderInterface
         }
 
         return $apiEndpoint;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIntegrationInfo(): string
+    {
+        $composerVer = '0.0.0';
+        try {
+            $contents = json_decode($this->driver->
+            fileGetContents($this->driver->getRealPath(__DIR__ . '/../composer.json')), true);
+            if (is_array($contents)) {
+                if (isset($contents['version'])) {
+                    $composerVer = $contents['version'];
+                }
+            }
+        } catch (FileSystemException $exception) {
+            $this->logger->error($exception);
+        }
+
+        return 'magento/' . $this->productMetadata->getVersion() . ' (' .
+            $this->productMetadata->getEdition() . '), trevipay-magento/' . $composerVer;
     }
 }

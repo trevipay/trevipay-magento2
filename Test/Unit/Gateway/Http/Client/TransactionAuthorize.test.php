@@ -110,9 +110,10 @@ class TransactionAuthorizeTest extends MockeryTestCase
         ];
 
         $this->configProviderMock->allows([
-        "getApiKey" => 'apikey123',
-        "getApiUrl" => 'https://www.example.com',
-        "getUri" => 'https://www.example.com',
+            "getApiKey" => 'apikey123',
+            "getApiUrl" => 'https://www.example.com',
+            "getUri" => 'https://www.example.com',
+            "getIntegrationInfo" => "TreviPay Integration: Magento Community v2.4.3, TreviPay Ext: v1.1.3",
         ]);
 
         $this->objectManagerMock->allows([
@@ -158,9 +159,11 @@ class TransactionAuthorizeTest extends MockeryTestCase
         ]);
 
         $this->clientConfigProvider->allows([
-        "setBaseUri" => $this->clientConfigProvider,
-        "getBaseUri" => 'https://www.example.com',
-        "getUri" => 'https://www.example.com',
+            "setBaseUri" => $this->clientConfigProvider,
+            "getBaseUri" => 'https://www.example.com',
+            "getUri" => 'https://www.example.com',
+            "setIntegrationInfo" => $this->clientConfigProvider,
+            "getIntegrationInfo" => "TreviPay Integration: Magento Community v2.4.3, TreviPay Ext: v1.1.3",
         ]);
 
         $this->treviPayRequestFactory->allows([
