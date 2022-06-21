@@ -14,16 +14,22 @@ Adjustment Refund,Ausgleichs-Rückerstattung
 All customers,Alle Kunden
 "An error occurred with the following message: ""%1"". Please check the exception log for more details.",Bei der folgenden Meldung ist ein Fehler aufgetreten: „%1“. Weitere Details können Sie dem Ausnahmeprotokoll entnehmen.
 "An error occurred with the following message: ""%1"". Please enable the debug mode, try again and check the debug log for more details.","Bei der folgenden Meldung ist ein Fehler aufgetreten: „%1“. Bitte aktivieren Sie den Debug-Modus, versuchen Sie es erneut und schauen Sie im Debug-Protokoll nach, um weitere Details zu erfahren."
+"Any empty TreviPay fields will be populated when the Magento Customer signs in to the TreviPay Checkout App, or the TreviPay Customer and TreviPay Buyer status is no longer pending","Alle leeren TreviPay-Felder werden ausgefüllt, wenn sich der Magento-Kunde bei der TreviPay-Checkout-App anmeldet oder der Status als TreviPay-Kunde und TreviPay-Käufer nicht mehr anhängig ist"
 API Key,API-Schlüssel
 API key does not match your webhooks API key,API-Schlüssel stimmt nicht mit dem API-Schlüssel Ihres Webhooks überein
 API key matching webhooks,API-Schlüssel stimmt mit Webhooks überein
 API URL,API-URL
 API URL is not set.,Die API-URL ist nicht festgelegt.
+Apply for Credit,Kredit beantragen
 Apply Now,Jetzt anwenden
+"Apply for TreviPay","Bewerben für %1"
 Approval for a Line of Credit,Genehmigung für eine Kreditlinie
 Approved Limit,Genehmigtes Limit
 Are you sure you want to delete the webhooks?,"Sind Sie sicher, dass Sie die Webhooks löschen möchten?"
+authorization,Vorautorisierung
+Authorization transaction is required to void.,"Eine Vorautorisierungstransaktion ist erforderlich, um zu annullieren."
 Authorize Only,Nur autorisieren
+Authorized,Vorautorisiert
 Availability,Verfügbarkeit
 Available,Verfügbar
 Balance,Saldo
@@ -31,21 +37,23 @@ Base URL matching webhooks Base URL,Basis-URL stimmt mit Webhooks-Basis-URL übe
 Base URL not matching webhooks Base URL,Basis-URL stimmt nicht mit Webhooks-Basis-URL überein
 Business Name,Unternehmensname
 Buyer ID (first 8 characters),Käufer-ID (erste 8 Zeichen)
+"Cancel","Cancel"
 Cannot void the authorization transaction because its status is %1.,"Die Vorautorisierungstransaktion kann nicht annulliert werden, da ihr Status %1 ist."
 Cannot void the authorization transaction.,Die Vorautorisierungstransaktion kann nicht annulliert werden.
 charge,Gebühr
 Check Created Webhooks,Erstellte Webhooks prüfen
 Client Reference ID,Referenz-ID des Klienten
+"Close","Nah dran"
 Company Wide Purchasing,Unternehmensweiter Einkauf
 Connect with Purchase Orders,Mit Bestellungen verknüpfen
+"Continuing to Apply will complete your checkout, placing the order as 'Pending' and will be automatically processed after a successful credit application approval and activation.","Wenn Sie mit der Beantragung fortfahren, wird Ihr Checkout abgeschlossen, die Bestellung als "Ausstehend" platziert und nach erfolgreicher Genehmigung und Aktivierung des Kreditantrags automatisch verarbeitet."
 Core error occurred during TreviPay payment %1. Please check the exception log for details.,Bei der TreviPay-Zahlung %1 ist ein Core-Error aufgetreten. Details entnehmen Sie bitte dem Ausnahmeprotokoll.
-Could not assign a unique Client Reference ID to the Customer.,Konnte dem Kunden keine eindeutige Kundenreferenz-ID zuweisen.
+Could not assign an unique client reference id to the customer.,Dem Kunden konnte keine eindeutige Client-Referenz-ID zugewiesen werden.
 "Could not save an invoice, see error log for details","Konnte eine Rechnung nicht speichern, siehe Fehlerprotokoll für Details"
 Created Webhooks,Erstellte Webhooks
 Credit Information,Kreiditinformationen
 CreditMemo not found,CreditMemo nicht gefunden
 Currency,Währung
-Customer does not have the buyer ID assigned.,Dem Kunden wurde die Käufer-ID nicht zugewiesen.
 Customer redirected to the TreviPay credit application form.,Kunde wurde zum Kreditantragsformular von TreviPay weitergeleitet.
 Debug,Debuggen
 Delete Webhooks,Webhooks löschen
@@ -56,27 +64,22 @@ Error occurred during generating uuid,Fehler bei der Generierung eines uuid aufg
 Fast Approval,Schnelle Genehmigung
 Features,Funktionen
 Flexible Terms,Flexible Konditionen
+"Forget Me","Vergiss mich"
 "Hold on! You currently have insufficient credit, for this purchase. No worries, please visit %1 to request an increase to your credit line.","Stopp! Sie haben derzeit nicht genügend Guthaben für diesen Kauf. Keine Sorge, besuchen Sie bitte %1, um eine Erhöhung Ihres Kreditrahmens zu beantragen."
 How it works,Wie es funktioniert
+"If you already have an account with us, please Sign In instead of applying for a new credit application.","Wenn Sie bereits ein Konto bei uns haben, melden Sie sich bitte an, anstatt einen neuen Kreditantrag zu stellen."
+"If you have just applied and haven’t activated the account yet, any pending orders may not be processed correctly.","Wenn Sie sich gerade beworben und das Konto noch nicht aktiviert haben, werden ausstehende Bestellungen möglicherweise nicht korrekt verarbeitet."
 Invalid amount for a refund.,Ungültiger Betrag für eine Rückerstattung.
 Invalid amount for a refund. Refund amount can't be higher than the paid amount.,Ungültiger Betrag für eine Rückerstattung. Rückerstattungsbetrag kann nicht höher sein als der bezahlte Betrag.
 Invoice not found,Rechnung nicht gefunden
-TreviPay,TreviPay
-TreviPay authorized amount of %1.,TreviPay hat den Betrag in Höhe von %1 genehmigt.
-TreviPay captured amount of %1.,TreviPay hat den Betrag in Höhe von %1 erfasst.
-TreviPay payment %1 error: %2,TreviPay-Zahlung %1 Fehler: %2
-TreviPay payment method is currently not available to this customer as the customer is not registered in TreviPay yet.,"TreviPay-Zahlungsmethode steht diesem Kunden aktuell nicht zur Verfügung, da der Kunde nicht bei TreviPay registriert ist"
-"TreviPay payment method is currently not available to this customer as their TreviPay customer status is ""%1"".","Die Zahlungsmethode TreviPay ist für diesen Kunden derzeit nicht verfügbar, da sein TreviPay-Status „%1“ ist."
-TreviPay payment method is currently not available to you. Please visit the TreviPay section to find more details.,Die Zahlungsmethode %1 steht Ihnen derzeit nicht zur Verfügung. Bitte besuchen Sie den %1-Abschnitt für weitere Informationen.
-TreviPay Portal,%1 Portal
 Invoicing made easy,Rechnungslegung einfach gemacht
 Invoicing Your Way,Rechnungsstellung nach Ihren Wünschen
-"Make sure the URL ends with '/' (slash), an example URL: https://app.b2b.credit/","Stellen Sie sicher, dass die URL mit '/' (Schrägstrich) endet, eine Beispiel-URL: https://app.b2b.credit/"
+"Looking to unlink your TreviPay from this account? Please click <a %2><span>Forget Me</span></a>","Möchten Sie die Verknüpfung Ihres %1 mit diesem Konto aufheben? Bitte klicken Sie auf <a %2><span>Vergessen</span></a>"
+"M2 Customer does not have a TreviPay Buyer ID assigned.","Dem M2-Kunden ist keine TreviPay-Käufer-ID zugewiesen."
+"Make sure the URL ends with '/' (slash), an example text to be either my_program.b2b.credit/ OR my_program.trevipay.app/","Stellen Sie sicher, dass die URL mit '/' (Schrägstrich) endet, ein Beispieltext ist entweder mein_programm.b2b.credit/ ODER mein_programm.trevipay.app/"
 "Make sure to ""Save Config"" before using this button","Wählen Sie unbedingt ""Save Config"", bevor Sie den Button klicken."
 Maximum Order Total,Maximale Auftragssumme
 Minimum Order Total,Minimale Auftragssumme
-TreviPay TreviPayMagento,TreviPay TreviPayMagento
-TreviPay Support Number,TreviPay-Kundendienstnummer
 New Order Status,Neuer Auftragsstatus
 Notes,Bemerkungen
 "Oh no! Your TreviPay account is inactive. This can be for many reasons, please visit <a href=""%1"">%2</a> to resolve this matter.","Oh nein! Ihr %3-Konto ist inaktiv. Dies kann viele Gründe haben, bitte besuchen Sie <a href=""%1"">%2</a>, um diese Angelegenheit zu klären."
@@ -91,22 +94,24 @@ Payment capturing error.,Fehler bei der Zahlungserfassung.
 Payment from Applicable Countries,Zahlungen aus den jeweiligen Ländern
 Payment from Specific Countries,Zahlungen aus bestimmten Ländern
 Payment method is not enabled,Die Zahlungsmethode ist nicht aktiviert
+"Payment Method Logo","Zahlungsmethode-Logo"
 Payment not found,Zahlung nicht gefunden
 Payment refund error.,Fehler bei der Rückerstattung der Zahlung.
 Payment voiding error.,Fehler bei der Stornierung der Zahlung.
 Payment voiding error. Received status %1,Fehler bei der Annullierung der Zahlung. Empfangener Status %1
-Pending TreviPay,TreviPay ausstehend
+"Pending Application Approval","Ausstehende Antragsgenehmigung"
 Place Order,Bestellung aufgeben
+"Please confirm you want to unlink this account from Trevipay. You will be forced to log in again at next checkout when using this payment type.","Bitte bestätigen Sie, dass Sie die Verknüpfung dieses Kontos mit %1 aufheben möchten. Bei Verwendung dieser Zahlungsart müssen Sie sich beim nächsten Checkout erneut anmelden."
 Please log in before using this payment method.,"Bitte melden Sie sich an, um diese Zahlungsmethode zu verwenden."
 Please note the TreviPay payment method was used for the edited order. After editing the order a totally new payment transaction will be created and as a Seller you will be charged with fees as for any payment transaction.,"Bitte beachten Sie, dass für den bearbeiteten Auftrag die Zahlungsmethode TreviPay genutzt wurde. Nach der Bearbeitung der Bestellung wird eine völlig neue Zahlungstransaktion erstellt, und als Verkäufer werden Ihnen wie bei jeder Zahlungstransaktion Gebühren in Rechnung gestellt."
-authorization,Vorautorisierung
-Authorization transaction is required to void.,"Eine Vorautorisierungstransaktion ist erforderlich, um zu annullieren."
-Authorized,Vorautorisiert
+"Please sign in to TreviPay Checkout","Bitte melden Sie sich bei %1 Checkout an"
+"Please sign-in in to TreviPay Checkout after modifying the cart.","Bitte melden Sie sich bei %1 Checkout an, nachdem Sie den Einkaufswagen geändert haben."
 Program URL,Programm-URL
 Provide Business Info,Business-Infos zur Verfügung stellen
 Purchase Order Number,Bestellnummer
 Purchase Order number is invalid or does not match expected format,Die Bestellnummer ist ungültig oder entspricht nicht dem erwarteten Format
 Purchase Order number is required,Die Bestellnummer ist erforderlich
+"Re-apply for TreviPay","Bewerben Sie sich neu %1"
 Refund Offline,Offline erstatten
 Refund Offline is not available,Offline-Rückerstattung ist nicht verfügbar
 Refunded shipping '%1' is higher than captured shipping '%2',Rückerstatteter Versand '%1' ist höher als erfasster Versand '%2'.
@@ -120,6 +125,7 @@ Seller ID,Verkäufer-ID
 Sign In,Anmelden
 Something went wrong in the payment gateway.,Im Zahlungs-Gateway ist irgendetwas schief gelaufen.
 "Sorry, your application has been cancelled. Please visit <a href=""%1"">%2</a> to resubmit.","Es tut uns leid, Ihr Antrag wurde annulliert. Bitte besuchen Sie <a href=""%1"">%2</a>, um den Antrag erneut einzureichen."
+"Sorry, your application has been declined at this time. You are invited to reapply in 6 months from the initial application date, where we will re-review.","Entschuldigung, Ihre Bewerbung wurde zu diesem Zeitpunkt abgelehnt. Sie werden eingeladen, sich innerhalb von 6 Monaten nach dem ursprünglichen Bewerbungsdatum erneut zu bewerben, wo wir eine erneute Überprüfung vornehmen."
 "Sorry, your credit application has been denied. Please use another payment method for business purchases.","Es tut uns leid, Ihr Kreditantrag wurde abgelehnt. Bitte nutzen Sie eine andere Zahlungsmethode für gewerbliche Einkäufe."
 Sort Order,Bestellung sortieren
 Status,Status
@@ -127,14 +133,31 @@ Status of the transaction not found.,Status der Transaktion nicht gefunden.
 Status of the webhooks,Status der Webhooks
 Test exception,Test-Ausnahme
 The entity that was requested doesn't exist. Verify the entity and try again.,"Die Entität, die angefordert wurde, existiert nicht. Verifizieren Sie die Entität und versuchen Sie es noch einmal."
+"The invoice can't be created without products. Add products and try again.", "Die Rechnung kann nicht ohne Produkte erstellt werden. Fügen Sie Produkte hinzu und versuchen Sie es erneut."
+"There was an error forgetting your TreviPay Account. Please try again.","Beim Vergessen Ihres %1-Kontos ist ein Fehler aufgetreten. Bitte versuche es erneut."
 There was an error processing your request.,Bei der Bearbeitung Ihrer Anfrage ist ein Fehler aufgetreten.
-There was an error trying to apply for credit.,"Es gab einen Fehler beim Versuch, einen Kredit zu beantragen."
+"There was an error trying to apply for TreviPay.","Bei der Beantragung ist ein Fehler aufgetreten %1."
+"There was an error trying to sign in to TreviPay Checkout.","Beim Versuch, sich bei %1 Checkout anzumelden, ist ein Fehler aufgetreten."
 Title,Überschrift
+TreviPay,TreviPay
+TreviPay authorized amount of %1.,TreviPay hat den Betrag in Höhe von %1 genehmigt.
+TreviPay captured amount of %1.,TreviPay hat den Betrag in Höhe von %1 erfasst.
+"TreviPay does not support multishipping","TreviPay unterstützt kein Multishipping"
+TreviPay payment %1 error: %2,TreviPay-Zahlung %1 Fehler: %2
+TreviPay payment method is currently not available to this customer as the customer is not registered in TreviPay yet.,"TreviPay-Zahlungsmethode steht diesem Kunden aktuell nicht zur Verfügung, da der Kunde nicht bei TreviPay registriert ist"
+"TreviPay payment method is currently not available to this customer as their TreviPay buyer status is ""%1"".","Die TreviPay-Zahlungsmethode steht diesem Kunden derzeit nicht zur Verfügung, da sein TreviPay-Käuferstatus ""%1""."
+"TreviPay payment method is currently not available to this customer as their TreviPay customer status is ""%1"".","Die Zahlungsmethode TreviPay ist für diesen Kunden derzeit nicht verfügbar, da sein TreviPay-Status „%1“ ist."
+TreviPay payment method is currently not available to you. Please visit the TreviPay section to find more details.,Die Zahlungsmethode %1 steht Ihnen derzeit nicht zur Verfügung. Bitte besuchen Sie den %1-Abschnitt für weitere Informationen.
+TreviPay Portal,%1 Portal
+TreviPay Support Number,TreviPay-Kundendienstnummer
+TreviPay TreviPayMagento,TreviPay TreviPayMagento
+"trevipay-adjustment-fee","%1-Anpassungsgebühr"
+"trevipay-adjustment-refund","%1-Anpassungsrückerstattung"
 Unsupported payment action '%1' detected.,Nicht unterstützte Zahlungsaktion '%1' entdeckt.
 Up to 45 Days to Pay,Bis zu 45 Tage Zahlungsfrist
 View TreviPay Invoice,TreviPay-Rechnung ansehen
-"Visit the <a href=""%1"">TreviPay Portal</a> to view your invoices, increase your credit line, or make a payment.","Besuchen Sie das <a href=""%1"">TreviPay-Portal</a>, um Ihre Rechnungen einzusehen, Ihre Kreditlinie zu erhöhen oder eine Zahlung zu leisten."
 "Visit the '%1' Portal to view your invoices, increase your credit line, or make a payment.","Besuchen Sie das '%1' Portal, um Ihre Rechnungen einzusehen, Ihre Kreditlinie zu erhöhen oder eine Zahlung zu leisten."
+"Visit the <a href=""%1"">TreviPay Portal</a> to view your invoices, increase your credit line, or make a payment.","Besuchen Sie das <a href=""%1"">TreviPay-Portal</a>, um Ihre Rechnungen einzusehen, Ihre Kreditlinie zu erhöhen oder eine Zahlung zu leisten."
 "We are currently reviewing your enrollment application for TreviPay. This process normally takes around 4 business hours to complete. If we have any questions or an approval, we will reach out to you via email.","Wir prüfen derzeit Ihren Anmeldeantrag für %1. Dieser Prozess dauert normalerweise etwa 4 Geschäftsstunden. Wenn wir Fragen oder eine Genehmigung haben, werden wir uns per E-Mail an Sie wenden."
 We are not able to create a Credit Memo without an Invoice.,Ohne Rechnung können wir keine Gutschrift  erstellen.
 We are sorry! An error has occurred and we want to fix it. Please contact %1 at %2 or %3,Es tut uns leid! Es ist ein Fehler aufgetreten und wir möchten ihn beheben. Bitte kontaktieren Sie %1 unter %2 oder %3
@@ -147,5 +170,19 @@ Webhooks not created!,Webhooks nicht erstellt!
 "Whoops! Your TreviPay account has been suspended. This is likely due to past due payments or needing a credit line increase. Please visit <a href=""%1"">%2</a> to resolve this matter.","Hoppla! Ihr %3-Konto wurde gesperrt. Das ist wahrscheinlich auf überfällige Zahlungen oder die Notwendigkeit einer Erhöhung des Kreditrahmens zurückzuführen. Bitte besuchen Sie <a href=""%1"">%2</a>, um diese Angelegenheit zu klären."
 You are not yet a registered TreviPay user. You will be redirected to the TreviPay credit application form after placing this order. Your order will be processed after approval of your TreviPay credit application and TreviPay user account is created.,Sie sind noch kein registrierter %1 User. Sie werden nach dieser Bestellung zum %1 Kreditantragsformular umgeleitet. Ihre Bestellung wird nach der Genehmigung Ihres %1 Kreditantrags bearbeitet und das %1 Benutzerkonto wird erstellt.
 "You chose to withdraw your application. Change of mind? Visit <a href=""%1"">%2</a> to re-apply at any time.","Sie haben sich dafür entschieden, Ihren Antrag zurückzuziehen. Haben Sie Ihre Meinung geändert? Besuchen Sie <a href=""%1"">%2</a>, um jederzeit erneut einen Antrag einzureichen."
-"You have been approved to make purchases on terms! To activate your TreviPay account, please visit <a href=""%1"">%2</a> to complete your setup.","Es wurde Ihnen genehmigt, zu bestimmten Bedingungen Einkäufe zu tätigen! Um Ihr %3-Konto zu aktivieren, besuchen Sie bitte <a href=""%1"">%2</a>, um die Einrichtung abzuschließen."
+"You did not complete your TreviPay Credit Application. Please fill out the form in its entirety, sign and submit at the end.","Sie haben Ihren %2-Kreditantrag nicht ausgefüllt. Bitte füllen Sie das Formular vollständig aus, unterschreiben und senden Sie es am Ende ab."
+"You did not complete your TreviPay Credit Application. Please visit the TreviPay section to re-apply.","Sie haben Ihren %1-Kreditantrag nicht ausgefüllt. Bitte besuchen Sie den Abschnitt %1, um sich erneut zu bewerben."
+"You have been approved to make purchases on terms! <span %2>[ACTION REQUIRED]</span> Please now check your email for your activation link to complete the setup then your Trevipay credit line is ready for use. This link is valid for 7 days. If the email hasn't arrived, do check in your spam/junk mail folder.","Sie wurden genehmigt, um Einkäufe zu bestimmten Bedingungen zu tätigen! <span %2>[AKTION ERFORDERLICH]</span> Bitte überprüfen Sie jetzt Ihre E-Mail auf Ihren Aktivierungslink, um die Einrichtung abzuschließen, dann ist Ihr %1-Kreditrahmen einsatzbereit. Dieser Link ist 7 Tage gültig. Wenn die E-Mail nicht angekommen ist, sehen Sie in Ihrem Spam-/Junk-Mail-Ordner nach."
+"Your TreviPay account has been authorized.","Ihr %1-Konto wurde autorisiert."
+"Your TreviPay Account has been deleted. Please sign in again.","Ihr %1-Konto wurde gelöscht. Bitte neu anmelden."
+"Your TreviPay Account has been suspended. Please sign in again.","Ihr %1-Konto wurde gesperrt. Bitte neu anmelden."
+"Your TreviPay Account has been suspended. Please visit the TreviPay section to find more details.","Ihr %1-Konto wurde gesperrt. Weitere Einzelheiten finden Sie im Abschnitt %1."
+"Your TreviPay Checkout session has expired. Please sign in again.","Ihre %1 Checkout-Sitzung ist abgelaufen. Bitte neu anmelden."
+"Your TreviPay Credit Application has been approved, and pending setup. <strong>[ACTION REQUIRED]</strong> Please check your email (including spam/junk) to complete the activation via the link within. You can visit the TreviPay section for further detail.","Ihr %1-Kreditantrag wurde genehmigt und steht noch aus. <strong>[AKTION ERFORDERLICH]</strong> Bitte überprüfen Sie Ihre E-Mails (einschließlich Spam/Junk), um die Aktivierung über den darin enthaltenen Link abzuschließen. Weitere Einzelheiten finden Sie im Abschnitt %1."
+"Your TreviPay Credit Application has been cancelled. Please visit the TreviPay section to find more details.","Ihr Kreditantrag %1 wurde storniert. Weitere Einzelheiten finden Sie im Abschnitt %1."
+"Your TreviPay Credit Application has been declined. Please visit the TreviPay section for further details.","Ihr %1-Kreditantrag wurde abgelehnt. Weitere Einzelheiten finden Sie im Abschnitt %1."
+"Your TreviPay Credit Application has been withdrawn.","Ihr %1-Kreditantrag wurde zurückgezogen."
+"Your TreviPay Credit Application has been withdrawn. Please visit the TreviPay section to find more details.","Ihr %1-Kreditantrag wurde zurückgezogen. Weitere Einzelheiten finden Sie im Abschnitt %1."
+"Your TreviPay Credit Application is pending direct debit. Please visit the TreviPay section to find more details.","Ihr %1-Kreditantrag ist zur Lastschrift ausstehend. Weitere Einzelheiten finden Sie im Abschnitt %1."
+"Your TreviPay Credit Application is pending. Please visit the TreviPay section to find more details.","Ihr %1-Kreditantrag steht noch aus. Weitere Einzelheiten finden Sie im Abschnitt %1."
 Zero Friction,Reibungslosigkeit

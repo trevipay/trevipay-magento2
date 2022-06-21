@@ -362,7 +362,7 @@ class CustomerTreviPay implements ArgumentInterface
             case TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT:
                 $message = __(
                     'You did not complete your TreviPay Credit Application. '
-                    . 'Please fill out the form in its entirety, sign and submit at the end. ',
+                    . 'Please fill out the form in its entirety, sign and submit at the end.',
                     $this->getContextualApplicationUrl(),
                     $paymentMethodName,
                     'class="action primary" type="button" data-role="action"',

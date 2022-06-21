@@ -118,7 +118,7 @@ Available,Available
 "View TreviPay Invoice","View TreviPay Invoice"
 "TreviPay payment method is currently not available to you. Please visit the TreviPay section to find more details.","%1 payment method is currently not available to you. Please visit the %1 section to find more details."
 You are not yet a registered TreviPay user. You will be redirected to the TreviPay credit application form after placing this order. Your order will be processed after approval of your TreviPay credit application and TreviPay user account is created.,You are not yet a registered %1 user. You will be redirected to the %1 credit application form after placing this order. Your order will be processed after approval of your %1 credit application and %1 user account is created.
-"Place Order","Place Order"
+Place Order,Place Order
 "Please log in before using this payment method.","Please log in before using this payment method."
 "Sign In","Sign In"
 "Refund Offline","Refund Offline"
@@ -156,8 +156,8 @@ Status,Status
 "Buyer ID (first 8 characters)","Buyer ID (first 8 characters)"
 "Client Reference ID","Client Reference ID"
 Currency,Currency
-"Continuing to Apply will complete your checkout, placing the order as “Pending” and will be automatically processed after a successful credit application approval and activation.","Continuing to Apply will complete your checkout, placing the order as “Pending” and will be automatically processed after a successful credit application approval and activation."
-"If you already have an account with us, please sign in instead of applying for a new credit application.","If you already have an account with us, please sign in instead of applying for a new credit application."
+"Continuing to Apply will complete your checkout, placing the order as 'Pending' and will be automatically processed after a successful credit application approval and activation.","Continuing to Apply will complete your checkout, placing the order as “Pending” and will be automatically processed after a successful credit application approval and activation."
+"If you already have an account with us, please Sign In instead of applying for a new credit application.","If you already have an account with us, please sign in instead of applying for a new credit application."
 "Close","Close"
 "Cancel","Cancel"
 "Apply for TreviPay","Apply for %1"
