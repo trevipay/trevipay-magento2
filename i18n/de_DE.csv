@@ -7,7 +7,7 @@
 "<p>Please review the settings and once you confirm everything is set up correctly, click on the <strong>Check Created Webhooks</strong> button. Magento will fetch the webhooks created in TreviPay according to the currently configured <strong>API Key</strong> (or <strong>Sandbox API Key</strong> if the <strong>Sandbox Mode</strong> is set to ""Yes"")</p><p>If webhooks are not created in TreviPay, click on the <strong>(Re)Create Webhooks</strong> button. The webhooks will be re(created) according to the current TreviPay module's configuration.</p>","<p>Bitte prüfen Sie die Einstellungen und klicken Sie, sobald Sie sich versichert haben, dass alles korrekt eingerichtet ist, auf die Schaltfläche <strong>Erstellte Webhooks prüfen</strong>. Magento ruft die in TreviPay erstellten Webhooks gemäß dem aktuell konfigurierten <strong>API-Schlüssel</strong> (oder dem <strong>Sandbox-API-Schlüssel</strong>, wenn der <strong>Sandbox-Modus</strong> auf ""Ja"" gesetzt ist) ab.</p><p>Wenn die Webhooks nicht in TreviPay erstellt wurden, klicken Sie auf die Schaltfläche <strong>Webhooks (neu) erstellen</strong>. Die Webhooks werden gemäß der Konfiguration des aktuellen TreviPay-Moduls (neu) erstellt.</p>"
 A customer website ID wasn't specified. The ID must be specified to use the website scope.,"Es wurde keine Kunden-Website-ID angegeben. Die ID muss angegeben werden, um den ganzen Website-Umfang nutzen zu können."
 Accepted Currency,Akzeptierte Währungen
-Accounts Payable Integration,Kreditorenbuchhaltungs-Integration
+Accounts Payable Integration,Integration mit Buchhaltungssystemen
 Active buyers only,Nur aktive Käufer
 Adjustment Fee,Ausgleichsgebühr
 Adjustment Refund,Ausgleichs-Rückerstattung
@@ -21,9 +21,9 @@ API key matching webhooks,API-Schlüssel stimmt mit Webhooks überein
 API URL,API-URL
 API URL is not set.,Die API-URL ist nicht festgelegt.
 Apply for Credit,Kredit beantragen
-Apply Now,Jetzt anwenden
+Apply Now,Jetzt anmelden
 "Apply for TreviPay","Bewerben für %1"
-Approval for a Line of Credit,Genehmigung für eine Kreditlinie
+Approval for a Line of Credit,Zugriff auf den Kreditrahmen
 Approved Limit,Genehmigtes Limit
 Are you sure you want to delete the webhooks?,"Sind Sie sicher, dass Sie die Webhooks löschen möchten?"
 authorization,Vorautorisierung
@@ -45,7 +45,7 @@ Check Created Webhooks,Erstellte Webhooks prüfen
 Client Reference ID,Referenz-ID des Klienten
 "Close","Nah dran"
 Company Wide Purchasing,Unternehmensweiter Einkauf
-Connect with Purchase Orders,Mit Bestellungen verknüpfen
+Connect with Purchase Orders,Verfolgung von Bestellnummern
 "Continuing to Apply will complete your checkout, placing the order as 'Pending' and will be automatically processed after a successful credit application approval and activation.","Wenn Sie mit der Beantragung fortfahren, wird Ihr Checkout abgeschlossen, die Bestellung als "Ausstehend" platziert und nach erfolgreicher Genehmigung und Aktivierung des Kreditantrags automatisch verarbeitet."
 Core error occurred during TreviPay payment %1. Please check the exception log for details.,Bei der TreviPay-Zahlung %1 ist ein Core-Error aufgetreten. Details entnehmen Sie bitte dem Ausnahmeprotokoll.
 Could not assign an unique client reference id to the customer.,Dem Kunden konnte keine eindeutige Client-Referenz-ID zugewiesen werden.
@@ -185,4 +185,4 @@ You are not yet a registered TreviPay user. You will be redirected to the TreviP
 "Your TreviPay Credit Application has been withdrawn. Please visit the TreviPay section to find more details.","Ihr %1-Kreditantrag wurde zurückgezogen. Weitere Einzelheiten finden Sie im Abschnitt %1."
 "Your TreviPay Credit Application is pending direct debit. Please visit the TreviPay section to find more details.","Ihr %1-Kreditantrag ist zur Lastschrift ausstehend. Weitere Einzelheiten finden Sie im Abschnitt %1."
 "Your TreviPay Credit Application is pending. Please visit the TreviPay section to find more details.","Ihr %1-Kreditantrag steht noch aus. Weitere Einzelheiten finden Sie im Abschnitt %1."
-Zero Friction,Reibungslosigkeit
+Zero Friction,Reibungslose Bestellungen
