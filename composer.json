@@ -28,7 +28,7 @@
         "magento/magento-coding-standard": "^5.0",
         "fakerphp/faker": "v1.16.0"
     },
-    "version": "1.1.6",
+    "version": "1.1.7",
     "scripts": {
         "test": "./vendor/bin/phpunit -d xdebug.profiler_enable=on --log-junit junit-report.xml --coverage-cobertura cobertura-report.xml --coverage-text",
         "lint": "./vendor/squizlabs/php_codesniffer/bin/phpcs --standard=./vendor/magento/magento-coding-standard/Magento2 --ignore=./vendor/,./node_modules/,./Test/,./trevipay-php/ .",
