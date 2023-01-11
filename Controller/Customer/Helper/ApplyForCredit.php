@@ -12,20 +12,16 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\UrlInterface;
-use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 use TreviPay\TreviPayMagento\Api\Data\Buyer\BuyerStatusInterface;
 use TreviPay\TreviPayMagento\Api\Data\Customer\TreviPayCustomerStatusInterface;
 use TreviPay\TreviPayMagento\Model\Buyer\Buyer;
-use TreviPay\TreviPayMagento\Model\Cart\GetCustomerCurrentTransactionAmount;
 use TreviPay\TreviPayMagento\Model\ConfigProvider;
 use TreviPay\TreviPayMagento\Model\Customer\CanApplyForCredit;
 use TreviPay\TreviPayMagento\Model\Customer\GenerateUniqueClientReferenceId;
 use TreviPay\TreviPayMagento\Model\Customer\TreviPayCustomer;
 use TreviPay\TreviPayMagento\Model\M2Customer\GetOptionIdOfCustomerAttribute;
 use TreviPay\TreviPayMagento\Model\M2Customer\M2Customer;
-use TreviPay\TreviPayMagento\Model\Order\GetCustomerFirstTransactedDate;
-use TreviPay\TreviPayMagento\Model\Order\GetCustomerTransactedTotal;
 use TreviPay\TreviPayMagento\Model\Order\UpdateOrdersBeforeApplyForCredit;
 
 /**
@@ -49,21 +45,6 @@ class ApplyForCredit
     private $treviPayLogger;
 
     /**
-     * @var GetCustomerFirstTransactedDate
-     */
-    private $getCustomerFirstTransactedDate;
-
-    /**
-     * @var GetCustomerTransactedTotal
-     */
-    private $getCustomerTransactedTotal;
-
-    /**
-     * @var GetCustomerCurrentTransactionAmount
-     */
-    private $getCustomerCurrentTransactionAmount;
-
-    /**
      * @var GenerateUniqueClientReferenceId
      */
     private $generateUniqueClientReferenceId;
@@ -72,11 +53,6 @@ class ApplyForCredit
      * @var LoggerInterface
      */
     private $logger;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
 
     /**
      * @var UpdateOrdersBeforeApplyForCredit
@@ -112,12 +88,8 @@ class ApplyForCredit
         CustomerSession $customerSession,
         ConfigProvider $configProvider,
         LoggerInterface $treviPayLogger,
-        GetCustomerFirstTransactedDate $getCustomerFirstTransactedDate,
-        GetCustomerTransactedTotal $getCustomerTransactedTotal,
-        GetCustomerCurrentTransactionAmount $getCustomerCurrentTransactionAmount,
         GenerateUniqueClientReferenceId $generateUniqueClientReferenceId,
         LoggerInterface $logger,
-        StoreManagerInterface $storeManager,
         UpdateOrdersBeforeApplyForCredit $updateOrdersBeforeApplyForCredit,
         ManagerInterface $messageManager,
         CustomerRepository $customerRepository,
@@ -128,12 +100,8 @@ class ApplyForCredit
         $this->customerSession = $customerSession;
         $this->configProvider = $configProvider;
         $this->treviPayLogger = $treviPayLogger;
-        $this->getCustomerFirstTransactedDate = $getCustomerFirstTransactedDate;
-        $this->getCustomerTransactedTotal = $getCustomerTransactedTotal;
-        $this->getCustomerCurrentTransactionAmount = $getCustomerCurrentTransactionAmount;
         $this->generateUniqueClientReferenceId = $generateUniqueClientReferenceId;
         $this->logger = $logger;
-        $this->storeManager = $storeManager;
         $this->updateOrdersBeforeApplyForCredit = $updateOrdersBeforeApplyForCredit;
         $this->messageManager = $messageManager;
         $this->m2CustomerRepository = $customerRepository;
@@ -201,7 +169,6 @@ class ApplyForCredit
         string $clientReferenceCustomerId,
         string $clientReferenceBuyerId
     ): ?string {
-        $m2Customer = $this->customerSession->getCustomer();
 
         $programUrl = $this->configProvider->getProgramUrl();
         if (!$programUrl) {
@@ -220,27 +187,6 @@ class ApplyForCredit
             . '?client_reference_customer_id=' . $clientReferenceCustomerId
             . '&client_reference_buyer_id=' . $clientReferenceBuyerId
             . '&ecommerce_url=' . $this->url->getUrl($successPath, ['_secure' => true]);
-
-        $customerFirstTransactedDate = $this->getCustomerFirstTransactedDate->execute($m2Customer);
-        $includeTransactionCurrency = false;
-        if ($customerFirstTransactedDate) {
-            $applyForCreditUrl .= '&first_transacted_date=' . $customerFirstTransactedDate;
-            $customerTransactedTotal = $this->getCustomerTransactedTotal->execute($m2Customer);
-            if ($customerTransactedTotal) {
-                $applyForCreditUrl .= '&total_transacted_amount=' . $customerTransactedTotal;
-                $includeTransactionCurrency = true;
-            }
-        }
-
-        $customerCurrentTransactionAmount = $this->getCustomerCurrentTransactionAmount->execute();
-        if ($customerCurrentTransactionAmount) {
-            $applyForCreditUrl .= '&current_transaction_amount=' . $customerCurrentTransactionAmount;
-            $includeTransactionCurrency = true;
-        }
-
-        if ($includeTransactionCurrency) {
-            $applyForCreditUrl .= '&transaction_currency=' . $this->storeManager->getStore()->getBaseCurrencyCode();
-        }
 
         return $applyForCreditUrl;
     }
