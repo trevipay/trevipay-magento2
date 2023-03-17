@@ -23,18 +23,19 @@ class CreditNoteWithShippingTaxExlc extends AbstractRefundBuilder
 
         $this->assertEquals(
             [
-                'total_amount' => 11979,
-                'tax_amount' => 816,
-                'shipping_amount' => 2730,
                 'discount_amount' => 2040,
+                'idempotency_key' => 123,
+                'refund_reason' => 'Other',
+                'shipping_amount' => 2730,
                 'shipping_discount_amount' => 0,
                 'shipping_tax_amount' => 273,
+                'tax_amount' => 816,
+                'total_amount' => 11979,
                 'shipping_tax_details' => [new TaxDetail([
                     'tax_type' => 'SHIPTAX',
                     'tax_rate' => 10.0,
                     'tax_amount' => 273
                 ])],
-                'refund_reason' => 'Other',
                 'details' => [
                     new ChargeDetail([
                         'sku' => '24-MB01',
@@ -88,10 +89,11 @@ class CreditNoteWithShippingTaxExlc extends AbstractRefundBuilder
             'getPayment' => $this->paymentMock
         ]);
         $this->paymentMock->allows([
-            'getOrder' => $this->orderMock,
-            'getCreditmemo' => $this->creditMemoMock,
+            'getBaseAmountPaid' => 349.2000,
             'getBaseShippingAmount' => 27.3000,
-            'getBaseAmountPaid' => 349.2000
+            'getCreditmemo' => $this->creditMemoMock,
+            'getLastTransId' => 123,
+            'getOrder' => $this->orderMock,
         ]);
 
         $this->taxDataMock->allows([

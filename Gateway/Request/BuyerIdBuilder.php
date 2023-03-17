@@ -105,7 +105,7 @@ class BuyerIdBuilder extends AbstractBuilder
     {
 
         // $orderId is actually a string | null type
-        $orderId = (string) $paymentOrder->getId();
+        $orderId = $this->getOrderId($paymentOrder);
         // $customerId is actually a string type
         $customerId = (string) $paymentOrder->getCustomerId();
 
@@ -119,6 +119,21 @@ class BuyerIdBuilder extends AbstractBuilder
         }
 
         return $this->getBuyerIdFromM2Customer($customerId);
+    }
+
+    /**
+     * We need to wrap OrderAdapterInterface->getId in a try catch as the
+     * implementation for the function is wrongly typed as id is null before it
+     * is persisted. This fails in newer versions of php it throw a type
+     * exception.
+     */
+    private function getOrderId(OrderAdapterInterface $paymentOrder): string
+    {
+        try {
+            return (string) $paymentOrder->getId();
+        } catch (\TypeError $e) {
+            return "";
+        }
     }
 
     /**

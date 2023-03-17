@@ -9,6 +9,7 @@ use Magento\Payment\Gateway\Http\ClientException;
 use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Api\TransactionRepositoryInterface;
 use Magento\Sales\Model\Order\Payment\Transaction;
+use TreviPay\TreviPay\Model\Http\TreviPayRequest;
 use TreviPay\TreviPayMagento\Api\Data\Authorization\AuthorizationStatusInterface;
 
 class AuthorizationTransactionTxnBuilder extends AbstractBuilder
@@ -71,6 +72,7 @@ class AuthorizationTransactionTxnBuilder extends AbstractBuilder
 
         return [
             self::TXN_ID => $transaction->getTxnId(),
+            TreviPayRequest::IDEMPOTENCY_KEY => $transaction->getTxnId(),
         ];
     }
 }

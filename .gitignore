@@ -9,3 +9,4 @@ package-lock.json
 *-report.xml
 trevipay-php/
 .idea/*
+auth.json

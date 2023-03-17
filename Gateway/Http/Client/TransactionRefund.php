@@ -9,6 +9,7 @@ use Magento\Payment\Model\Method\Logger;
 use TreviPay\TreviPay\Api\Data\Refund\CreateMethod\CreateRefundRequestInterface;
 use TreviPay\TreviPay\Api\Data\Refund\CreateMethod\CreateRefundRequestInterfaceFactory;
 use TreviPay\TreviPay\Exception\ApiClientException;
+use TreviPay\TreviPay\Model\Http\TreviPayRequest;
 use TreviPay\TreviPayMagento\Api\Data\Refund\ResponseStatusInterface as CreditResponseStatusInterface;
 use TreviPay\TreviPayMagento\Model\TreviPayFactory;
 use Psr\Log\LoggerInterface;
@@ -73,7 +74,11 @@ class TransactionRefund extends AbstractTransaction
         $createRefundRequest->setRefundReason($data['refund_reason']);
 
         $treviPay = $this->treviPayFactory->create();
-        $processCreateRefund = $treviPay->refund->create($createRefundRequest->getRequestData());
+
+        $requestData = $createRefundRequest->getRequestData();
+        // set idempotent_key manually as refund above are set manually as well
+        $requestData[TreviPayRequest::IDEMPOTENCY_KEY] = $data[TreviPayRequest::IDEMPOTENCY_KEY];
+        $processCreateRefund = $treviPay->refund->create($requestData);
 
         if ($processCreateRefund->getStatus() !== CreditResponseStatusInterface::PAID) {
             throw new ClientException(__('Refund create error.'));

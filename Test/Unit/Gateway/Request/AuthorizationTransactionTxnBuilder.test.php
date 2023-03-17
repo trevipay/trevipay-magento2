@@ -49,7 +49,13 @@ class AuthorizationTransactionTxnBuilderTest extends MockeryTestCase
         ]);
 
         $result = $this->authorizationTransactionTxnBuilder->build(['payment' => $this->paymentDataObjectMock]);
-        $this->assertEquals(['txn_id' => 123], $result);
+        $this->assertEquals(
+            [
+                'txn_id' => 123,
+                'idempotency_key' => 123,
+            ],
+            $result
+        );
     }
 
     public function test_no_transaction_causes_exception(): void

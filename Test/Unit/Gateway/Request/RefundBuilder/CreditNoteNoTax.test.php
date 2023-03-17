@@ -22,14 +22,15 @@ class CreditNoteNoTax extends AbstractRefundBuilder
         $result = $this->refundBuilder->build(['payment' => $this->paymentDataObjectMock]);
         $this->assertEquals(
             [
-                'total_amount' => 4840,
-                'tax_amount' => 0,
-                'shipping_amount' => 1000,
                 'discount_amount' => 960,
+                'idempotency_key' => 123,
+                'refund_reason' => 'Other',
+                'shipping_amount' => 1000,
                 'shipping_discount_amount' => 0,
                 'shipping_tax_amount' => 0,
                 'shipping_tax_details' => null,
-                'refund_reason' => 'Other',
+                'tax_amount' => 0,
+                'total_amount' => 4840,
                 'details' => [
                     new ChargeDetail([
                         'sku' => 'WSH07-28-Black',
@@ -75,10 +76,11 @@ class CreditNoteNoTax extends AbstractRefundBuilder
             'getPayment' => $this->paymentMock
         ]);
         $this->paymentMock->allows([
-            'getOrder' => $this->orderMock,
-            'getCreditmemo' => $this->creditMemoMock,
+            'getBaseAmountPaid' => 363.0000,
             'getBaseShippingAmount' => 75.0000,
-            'getBaseAmountPaid' => 363.0000
+            'getCreditmemo' => $this->creditMemoMock,
+            'getLastTransId' => 123,
+            'getOrder' => $this->orderMock,
         ]);
 
         $this->taxDataMock->allows([

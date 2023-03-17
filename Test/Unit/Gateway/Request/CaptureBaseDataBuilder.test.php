@@ -25,7 +25,7 @@ class CaptureBaseDataBuilderTest extends MockeryTestCase
     private $captureBaseDataBuilder;
     private $orderMock;
 
-  /** @Setup */
+    /** @Setup */
     protected function setUp(): void
     {
         $this->storeManagerMock = Mockery::mock(StoreManagerInterface::class);
@@ -46,17 +46,18 @@ class CaptureBaseDataBuilderTest extends MockeryTestCase
         Mockery::close();
     }
 
-  /** @test */
+    /** @test */
     public function test_build_returns_correct_result()
     {
         $result = $this->captureBaseDataBuilder->build(['payment' => $this->paymentDataObjectMock]);
         $this->assertEquals([
-        'po_number' => 'po123',
-        "comment" => 'notes',
-        'previous_charge_id' => 333,
-        'authorization_id' => 222,
-        'order_number' => 321,
-        'order_url' => 'www.example.com'
+            "comment" => 'notes',
+            'authorization_id' => 222,
+            'idempotency_key' => 123,
+            'order_number' => 321,
+            'order_url' => 'www.example.com',
+            'po_number' => 'po123',
+            'previous_charge_id' => 333,
         ], $result);
     }
 
@@ -65,11 +66,12 @@ class CaptureBaseDataBuilderTest extends MockeryTestCase
         $this->paymentMock->shouldReceive("getParentTransactionId")->andReturn(null)->byDefault();
         $result = $this->captureBaseDataBuilder->build(['payment' => $this->paymentDataObjectMock]);
         $this->assertEquals([
-        'po_number' => 'po123',
-        'comment' => 'notes',
-        'previous_charge_id' => 333,
-        'order_number' => 321,
-        'order_url' => 'www.example.com'
+            'comment' => 'notes',
+            'idempotency_key' => 123,
+            'order_number' => 321,
+            'order_url' => 'www.example.com',
+            'po_number' => 'po123',
+            'previous_charge_id' => 333,
         ], $result);
     }
 
@@ -78,50 +80,52 @@ class CaptureBaseDataBuilderTest extends MockeryTestCase
         $this->transactionMock->shouldReceive("getTxnId")->andReturn(null)->byDefault();
         $result = $this->captureBaseDataBuilder->build(['payment' => $this->paymentDataObjectMock]);
         $this->assertEquals([
-        'po_number' => 'po123',
-        'comment' => 'notes',
-        'previous_charge_id' => null,
-        'authorization_id' => 222,
-        'order_number' => 321,
-        'order_url' => 'www.example.com'
+            'authorization_id' => 222,
+            'comment' => 'notes',
+            'idempotency_key' => 123,
+            'order_number' => 321,
+            'order_url' => 'www.example.com',
+            'po_number' => 'po123',
+            'previous_charge_id' => null,
         ], $result);
     }
 
-  /** @helper functions */
+    /** @helper functions */
 
     public function assignMockValues(): void
     {
         $this->subjectReaderMock->allows([
-        "readPayment" => $this->paymentDataObjectMock
+            "readPayment" => $this->paymentDataObjectMock
         ]);
         $this->paymentDataObjectMock->allows([
-        "getPayment" => $this->paymentMock,
-        "getOrder" => $this->orderMock
+            "getPayment" => $this->paymentMock,
+            "getOrder" => $this->orderMock
         ]);
         $this->orderMock->allows([
-        'getOrderIncrementId' => 321,
-        'getStoreId' => 999,
-        'getId' => 321,
+            'getOrderIncrementId' => 321,
+            'getStoreId' => 999,
+            'getId' => 321,
         ]);
 
         $this->storeMock->allows([
-        'getId' => 999
+            'getId' => 999
         ]);
         $this->paymentMock->allows([
-        "getId" => 123,
-        "getAdditionalInformation" => [
-        'trevipay_notes' => 'notes',
-        "trevipay_po_number" => 'po123'
-        ],
+            'getLastTransId' => 123,
+            "getId" => 123,
+            "getAdditionalInformation" => [
+                'trevipay_notes' => 'notes',
+                "trevipay_po_number" => 'po123'
+            ],
         ]);
         $this->storeManagerMock->allows([
-        'getStore' => $this->storeMock
+            'getStore' => $this->storeMock
         ]);
         $this->transactionRepositoryMock->allows([
-        "getByTransactionType" => $this->transactionMock
+            "getByTransactionType" => $this->transactionMock
         ]);
         $this->urlBuilderMock->allows([
-        'getUrl' => 'www.example.com'
+            'getUrl' => 'www.example.com'
         ]);
         $this->paymentMock->shouldReceive("getParentTransactionId")->andReturn(222)->byDefault();
         $this->transactionMock->shouldReceive("getTxnId")->andReturn(333)->byDefault();
