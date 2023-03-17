@@ -11,6 +11,7 @@ use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Api\TransactionRepositoryInterface;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Store\Model\StoreManagerInterface;
+use TreviPay\TreviPay\Model\Http\TreviPayRequest;
 
 class CaptureBaseDataBuilder extends AbstractBuilder
 {
@@ -96,6 +97,7 @@ class CaptureBaseDataBuilder extends AbstractBuilder
                 ]
             ),
             self::ORDER_NUMBER => $order->getOrderIncrementId(),
+            TreviPayRequest::IDEMPOTENCY_KEY => $payment->getLastTransId(),
         ];
 
         if ($payment->getParentTransactionId()) {

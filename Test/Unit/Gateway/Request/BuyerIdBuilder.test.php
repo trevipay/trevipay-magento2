@@ -73,6 +73,19 @@ class BuyerIdBuilderTest extends MockeryTestCase
         $this->assertEquals(['buyer_id' => '2'], $result);
     }
 
+    public function test_returns_correct_values_if_get_buyer_id_throws_type_error()
+    {
+        $willThrowTypeError = function (): int
+        {
+            return null;
+        };
+        $this->orderAdapterMock->shouldReceive("getId")->andReturnUsing($willThrowTypeError);
+
+        $result = $this->buildBuyerIdBuilder();
+
+        $this->assertEquals(['buyer_id' => '2'], $result);
+    }
+
     public function test_skipped_payment_action_returns_empty_array()
     {
         $this->paymentCaptureMock->shouldReceive("isSkipped")->andReturn(true)->byDefault();

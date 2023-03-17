@@ -23,14 +23,15 @@ class CreditNoteWithTax2Item extends AbstractRefundBuilder
         $result = $this->refundBuilder->build(['payment' => $this->paymentDataObjectMock]);
         $this->assertEquals(
             [
-                'total_amount' => 8040,
-                'tax_amount' => 640,
-                'shipping_amount' => 1000,
                 'discount_amount' => 1600,
+                'idempotency_key' => 123,
+                'refund_reason' => 'Other',
+                'shipping_amount' => 1000,
                 'shipping_discount_amount' => 0,
                 'shipping_tax_amount' => 0,
                 'shipping_tax_details' => null,
-                'refund_reason' => 'Other',
+                'tax_amount' => 640,
+                'total_amount' => 8040,
                 'details' => [
                     new ChargeDetail([
                         'sku' => 'MJ12-XS-Black',
@@ -100,10 +101,11 @@ class CreditNoteWithTax2Item extends AbstractRefundBuilder
             'getPayment' => $this->paymentMock
         ]);
         $this->paymentMock->allows([
-            'getOrder' => $this->orderMock,
-            'getCreditmemo' => $this->creditMemoMock,
+            'getBaseAmountPaid' => 277.0000,
             'getBaseShippingAmount' => 35.0000,
-            'getBaseAmountPaid' => 277.0000
+            'getCreditmemo' => $this->creditMemoMock,
+            'getLastTransId' => 123,
+            'getOrder' => $this->orderMock,
         ]);
 
         $this->taxDataMock->allows([

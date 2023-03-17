@@ -20,6 +20,7 @@ use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Model\Order\Creditmemo;
 use Magento\Sales\Model\Order\Creditmemo\Item;
 use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection;
 use Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory;
 use Magento\Sales\Model\ResourceModel\Order\Tax\Item as TaxItem;
@@ -30,6 +31,7 @@ use TreviPay\TreviPay\Api\Data\Charge\ChargeDetailInterface;
 use TreviPay\TreviPay\Api\Data\Charge\ChargeDetailInterfaceFactory;
 use TreviPay\TreviPay\Api\Data\Charge\TaxDetailInterface;
 use TreviPay\TreviPay\Api\Data\Charge\TaxDetailInterfaceFactory;
+use TreviPay\TreviPay\Model\Http\TreviPayRequest;
 use TreviPay\TreviPayMagento\Model\CurrencyConverter;
 use TreviPay\TreviPayMagento\Api\Data\Refund\RefundReasonInterface;
 use Psr\Log\LoggerInterface;
@@ -158,19 +160,9 @@ class RefundBuilder extends AbstractBuilder
         parent::build($buildSubject);
         $paymentDO = $this->subjectReader->readPayment($buildSubject);
         $this->validate($buildSubject, $paymentDO);
-
-        /** @var CreditmemoInterface $creditMemo */
-        $creditMemo = $paymentDO->getPayment()->getCreditmemo();
-        /** @var InvoiceInterface $invoice */
-        $invoice = $creditMemo->getInvoice();
         $amount = (float)$this->subjectReader->readAmount($buildSubject);
-        $remainingInvoiceDetails = $this->prepareRemainingInvoiceDetails($invoice);
 
-        $newTotalAmount = $remainingInvoiceDetails['base_grand_total'] - $amount;
-        $newTotalAmount = $this->removeMinorDecimalPlacesFromFloat($newTotalAmount);
-
-        $result = $this->buildCreditResponse($paymentDO, $amount);
-        return $result;
+        return $this->buildCreditResponse($paymentDO, $amount);
     }
 
     /**
@@ -789,6 +781,7 @@ class RefundBuilder extends AbstractBuilder
             ),
             self::REFUND_REASON => RefundReasonInterface::OTHER,
             self::DETAILS => $this->createDetails($details, $multiplier),
+            TreviPayRequest::IDEMPOTENCY_KEY => $paymentDO->getPayment()->getLastTransId(),
         ];
 
         $this->correctRefundVariances($refundObject);
