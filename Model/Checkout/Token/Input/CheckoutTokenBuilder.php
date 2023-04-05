@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TreviPay\TreviPayMagento\Model\Checkout\Token\Input;
 
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Locale\Resolver;

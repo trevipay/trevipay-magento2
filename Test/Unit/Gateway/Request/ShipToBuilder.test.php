@@ -90,6 +90,34 @@ class ShipToBuilderTest extends MockeryTestCase
         $this->assertEquals([], $result);
     }
 
+    public function test_null_postcode()
+    {
+        $this->orderAddressMock
+             ->shouldReceive('getPostcode')
+             ->andReturn(null);
+
+        $result = $this->shipToBuilder->build(['payment' => $this->paymentDataObjectMock]);
+
+        $this->assertEquals(['ship_to' => new ShipTo(
+            [
+                'recipient_name' => 'Example',
+                'company_name' => 'ExampleInc',
+                'company_address' => new CompanyAddress([
+                    'address_line1' => 'example st',
+                    'country' => 'AU',
+                    'city' => 'Exmpl',
+                    'state' => '123',
+                    'zip' => '',
+                ]),
+                'tracking' => new Tracking([
+                    'tracking_number' => '023',
+                    'tracking_url' => 'www.example.com',
+                    'carrier' => 'Example Co'
+                ])
+            ]
+        )], $result);
+    }
+
   /** @helper functions */
 
     public function assignMockValues(): void
@@ -102,16 +130,18 @@ class ShipToBuilderTest extends MockeryTestCase
         $this->orderMock->shouldReceive('getBillingAddress')->andReturn($this->orderAddressMock)->byDefault(); // test this is missing
         $this->trackMock->allows(['getNumber' => '023', 'getUrl' => 'www.example.com', 'getTitle' => 'Example Co']);
         $this->trackCollectionMock->allows(['getSize' => 1, 'getFirstItem' => $this->trackMock]);
-        $this->orderAddressMock->allows([
-        'getName' => 'Example', // TEST: name is over max length
-        'getCompany' => 'ExampleInc', // TEST: name is over max length,
-        'getStreet' => ['example st'],
-        'getCountryId' => 'AU',
-        'getCity' => 'Exmpl', // TEST: max length,
-        'getRegionCode' => '123',
-        'getRegion' => 'AU',
-        'getPostcode' => '3000'
-        ]);
+        $this->orderAddressMock
+             ->allows([
+                 'getName' => 'Example', // TEST: name is over max length
+                 'getCompany' => 'ExampleInc', // TEST: name is over max length,
+                 'getStreet' => ['example st'],
+                 'getCountryId' => 'AU',
+                 'getCity' => 'Exmpl', // TEST: max length,
+                 'getRegionCode' => '123',
+                 'getRegion' => 'AU',
+                 'getPostcode' => '3000'
+             ])
+             ->byDefault();
         $this->shipToFactoryMock->allows(['create' => new ShipTo()]);
         $this->companyAddressFactoryMock->allows(['create' => new CompanyAddress()]);
         $this->trackingFactoryMock->allows(['create' => new Tracking()]);
