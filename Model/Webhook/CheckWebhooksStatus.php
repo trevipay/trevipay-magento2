@@ -54,7 +54,7 @@ class CheckWebhooksStatus
         }
         $matchCurrentApiKey = $this->validateApiKeyForCreatedWebhooks->execute($scope, $scopeId);
         $matchCurrentBaseUrl = $this->validateBaseUrlForCreatedWebhooks->execute($scope, $scopeId);
-
+        
         $result = [];
         if ($areAllWebhooksCreated && $this->configProvider->isActive($scope, $scopeId)) {
             $result['statusCreated'] = 'success';
