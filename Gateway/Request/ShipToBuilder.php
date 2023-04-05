@@ -120,19 +120,11 @@ class ShipToBuilder extends AbstractBuilder
         /** @var ShipToInterface $shipTo */
         $shipTo = $this->shipToFactory->create();
         $shipTo->setRecipientName(
-            substr(
-                $address->getName(),
-                0,
-                self::RECIPIENT_NAME_MAXIMUM_LENGTH
-            )
+            $this->trimStr($address->getName(), self::RECIPIENT_NAME_MAXIMUM_LENGTH)
         );
         if ($address->getCompany()) {
             $shipTo->setCompanyName(
-                substr(
-                    $address->getCompany(),
-                    0,
-                    self::COMPANY_NAME_MAXIMUM_LENGTH
-                )
+                $this->trimStr($address->getCompany(), self::COMPANY_NAME_MAXIMUM_LENGTH)
             );
         }
         $companyAddress = $this->prepareCompanyAddress($address);
@@ -157,29 +149,17 @@ class ShipToBuilder extends AbstractBuilder
         $companyAddress = $this->companyAddressFactory->create();
         $street = $shippingAddress->getStreet();
         $companyAddress->setAddressLine1(
-            substr(
-                $street ? ($street[0] ?? '') : '',
-                0,
-                self::ADDRESS_LINE_MAXIMUM_LENGTH
-            )
+            $this->trimStr($street ? ($street[0] ?? '') : '', self::ADDRESS_LINE_MAXIMUM_LENGTH)
         );
         $street2 = $street ? ($street[1] ?? '') : '';
         if ($street2) {
             $companyAddress->setAddressLine2(
-                substr(
-                    $street2,
-                    0,
-                    self::ADDRESS_LINE_MAXIMUM_LENGTH
-                )
+                $this->trimStr($street2, self::ADDRESS_LINE_MAXIMUM_LENGTH)
             );
         }
         $companyAddress->setCountry($shippingAddress->getCountryId());
         $companyAddress->setCity(
-            substr(
-                $shippingAddress->getCity(),
-                0,
-                self::CITY_MAXIMUM_LENGTH
-            )
+            $this->trimStr($shippingAddress->getCity(), self::CITY_MAXIMUM_LENGTH)
         );
         $state = $shippingAddress->getRegionCode();
         if (!$state) {
@@ -187,19 +167,11 @@ class ShipToBuilder extends AbstractBuilder
         }
         if ($state) {
             $companyAddress->setState(
-                substr(
-                    $state,
-                    0,
-                    self::STATE_MAXIMUM_LENGTH
-                )
+                $this->trimStr($state, self::STATE_MAXIMUM_LENGTH)
             );
         }
         $companyAddress->setZip(
-            substr(
-                $shippingAddress->getPostcode(),
-                0,
-                self::ZIP_MAXIMUM_LENGTH
-            )
+            $this->trimStr($shippingAddress->getPostcode(), self::ZIP_MAXIMUM_LENGTH)
         );
 
         return $companyAddress;
@@ -216,30 +188,18 @@ class ShipToBuilder extends AbstractBuilder
         $tracking = $this->trackingFactory->create();
 
         $tracking->setTrackingNumber(
-            substr(
-                $trackData['number'],
-                0,
-                self::TRACKING_NUMBER_MAXIMUM_LENGTH
-            )
+            $this->trimStr($trackData['number'], self::TRACKING_NUMBER_MAXIMUM_LENGTH)
         );
         $trackingUrl = $trackData['url'];
         if ($trackingUrl) {
             $tracking->setTrackingUrl(
-                substr(
-                    $trackingUrl,
-                    0,
-                    self::TRACKING_URL_MAXIMUM_LENGTH
-                )
+                $this->trimStr($trackingUrl, self::TRACKING_URL_MAXIMUM_LENGTH)
             );
         }
         $carrier = $trackData['carrier'];
         if ($carrier) {
             $tracking->setCarrier(
-                substr(
-                    $carrier,
-                    0,
-                    self::CARRIER_MAXIMUM_LENGTH
-                )
+                $this->trimStr($carrier, self::CARRIER_MAXIMUM_LENGTH)
             );
         }
 
@@ -276,5 +236,10 @@ class ShipToBuilder extends AbstractBuilder
         }
 
         return null;
+    }
+
+    private function trimStr(string | null $str, $length): string
+    {
+        return $str ? substr($str, 0, $length) : '';
     }
 }

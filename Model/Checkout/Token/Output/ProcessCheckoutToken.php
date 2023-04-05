@@ -37,7 +37,20 @@ abstract class ProcessCheckoutToken
      */
     public function execute(string $rawCheckoutOutputToken, $treviPayPublicKey): CheckoutToken
     {
-        $checkoutPayload = (array)JWT::decode($rawCheckoutOutputToken, $treviPayPublicKey, ['RS256']);
+        // the Firebase\JWT\Key class only exists in version 6 and above
+        // version 6 requires us to wrap the key in the object
+        if (class_exists('Firebase\JWT\Key')) {
+            $checkoutPayload = (array)JWT::decode(
+                $rawCheckoutOutputToken,
+                new Key($treviPayPublicKey, 'RS256')
+            );
+        } else {
+            $checkoutPayload = (array)JWT::decode(
+                $rawCheckoutOutputToken,
+                $treviPayPublicKey,
+                ['RS256']
+            );
+        }
         $this->validateCheckoutToken->execute($checkoutPayload);
         return $this->checkoutTokenBuilder->map($checkoutPayload);
     }
