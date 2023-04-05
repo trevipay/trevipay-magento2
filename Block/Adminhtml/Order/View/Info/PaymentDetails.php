@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 namespace TreviPay\TreviPayMagento\Block\Adminhtml\Order\View\Info;
 
