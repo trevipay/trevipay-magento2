@@ -23,7 +23,7 @@
         "paragonie/sodium_compat": "^1.17",
         "php": ">=7.3",
         "ramsey/uuid": "^3.8 || ^4.0",
-        "trevipay/trevipay-php": "^1.0.8-alpha2"
+        "trevipay/trevipay-php": "^1.0.8-beta"
     },
     "require-dev": {
         "fakerphp/faker": "v1.16.0",
