@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 
 namespace TreviPay\TreviPayMagento\Test\Unit\Gateway\Request\RefundBuilder;
 
