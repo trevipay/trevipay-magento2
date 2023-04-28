@@ -474,6 +474,66 @@ class CaptureTotalsBuilderTest extends MockeryTestCase
     ], $result);
   }
 
+  public function test_returns_correct_values_if_get_buyer_id_throws_type_error()
+  {
+    $willThrowTypeError = function (): int
+    {
+      return null;
+    };
+    $this->orderMock->shouldReceive("getId")->andReturnUsing($willThrowTypeError);
+    $this->assignMockValues();
+    $this->invoiceCollectionMock->shouldReceive('getItems')->andReturn([$this->invoiceMock]);
+
+    $result = $this->captureTotalsBuilder->build(['payment' => $this->paymentDataObjectMock]);
+
+    $this->assertEquals([
+      'currency' => 'AUD',
+      'total_amount' => 115,
+      'tax_amount' => 10,
+      'discount_amount' => 0,
+      'shipping_amount' => 10,
+      'shipping_discount_amount' => 0,
+      'shipping_tax_amount' => 5,
+      'shipping_tax_details' => [
+        new TaxDetail([
+          'tax_type' => 'Shipping Tax',
+          'tax_rate' => 50.0000,
+          'tax_amount' => 5,
+        ]),
+      ],
+      'order_url' => 'www.example.com',
+      'order_number' => 333,
+      'details' => [
+        new ChargeDetail([
+          'sku' => 'Sku123',
+          'description' => 'Potatoes',
+          'quantity' => 1.0,
+          'unit_price' => 90,
+          'tax_amount' => 10,
+          'discount_amount' => 0,
+          'subtotal' => 100,
+          'tax_details' => [
+            new TaxDetail([
+              'tax_type' => 'Item Tax #1',
+              'tax_rate' => 7.5560,
+              'tax_amount' => 8,
+            ]),
+            new TaxDetail([
+              'tax_type' => 'Item Tax #2',
+              'tax_rate' => 2.2240,
+              'tax_amount' => 2,
+            ]),
+            new TaxDetail([
+              'tax_type' => 'Item Tax #3',
+              'tax_rate' => 0.2200,
+              'tax_amount' => 0,
+            ]),
+          ],
+        ]),
+      ],
+    ], $result);
+  }
+
   /** @helper functions */
 
   public function assignMockValues(array $mockValues = []): void
