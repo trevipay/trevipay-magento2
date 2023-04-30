@@ -143,7 +143,7 @@ class CaptureTotalsBuilder extends AbstractBuilder
         $orderEntity = $payment->getOrder();
         $invoice = $this->getInvoice($orderEntity);
 
-        $taxItems = $this->taxItem->getTaxItemsByOrderId($orderEntity->getId());
+        $taxItems = $this->taxItem->getTaxItemsByOrderId($this->getOrderId($orderEntity));
 
         if ($invoice) {
             $details = $this->prepareCaptureDetailsFromInvoice($invoice, $taxItems);
@@ -200,7 +200,7 @@ class CaptureTotalsBuilder extends AbstractBuilder
             self::ORDER_URL => $this->urlBuilder->getUrl(
                 'sales/order/view',
                 [
-                    'order_id' => $order->getId(),
+                    'order_id' => $this->getOrderId($order),
                     '_scope' => $this->storeManager->getStore($order->getStoreId())->getId(),
                 ]
             ),
@@ -221,6 +221,21 @@ class CaptureTotalsBuilder extends AbstractBuilder
         $this->correctChargeVariances($chargeObject);
 
         return $chargeObject;
+    }
+
+    /**
+     * We need to wrap getId in a try catch as the
+     * implementation for the function is wrongly typed as id is null before it
+     * is persisted. This fails in newer versions of php it throw a type
+     * exception.
+     */
+    private function getOrderId(Order $order): string
+    {
+        try {
+            return (string) $order->getId();
+        } catch (\TypeError $e) {
+            return "";
+        }
     }
 
     /**
