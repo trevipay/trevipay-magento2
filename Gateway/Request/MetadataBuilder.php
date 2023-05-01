@@ -89,12 +89,12 @@ class MetadataBuilder extends AbstractBuilder
         // $m2CustomerId is actually a string type
         $m2CustomerId = $order->getCustomerId();
         if ($m2CustomerId === null) {
-            $this->logger->critical('Order customerId is null for orderId: ' . $order->getId());
+            $this->logger->critical('Order customerId is null for orderId: ' . $this->getOrderId($order));
             return [];
         }
 
         // $orderId is actually a string | null type
-        $orderId = (string) $order->getId();
+        $orderId = $this->getOrderId($order);
         $isAdminOrder = $this->isAdminOrder($orderId);
         $metadata = [
             [
@@ -106,6 +106,21 @@ class MetadataBuilder extends AbstractBuilder
         return [
             self::METADATA => $metadata,
         ];
+    }
+
+    /**
+     * We need to wrap getId in a try catch as the
+     * implementation for the function is wrongly typed as id is null before it
+     * is persisted. This fails in newer versions of php it throw a type
+     * exception.
+     */
+    private function getOrderId($order): ?string
+    {
+        try {
+            return (string) $order->getId();
+        } catch (\TypeError $e) {
+            return null;
+        }
     }
 
     private function isAdminOrder(?string $orderId): bool
