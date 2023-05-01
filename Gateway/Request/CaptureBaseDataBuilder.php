@@ -91,7 +91,7 @@ class CaptureBaseDataBuilder extends AbstractBuilder
             self::ORDER_URL => $this->urlBuilder->getUrl(
                 'sales/order/view',
                 [
-                    'order_id' => $order->getId(),
+                    'order_id' => $this->getOrderId($order),
                     '_scope' => $this->storeManager->getStore($order->getStoreId())->getId(),
                 ]
             ),
@@ -115,5 +115,20 @@ class CaptureBaseDataBuilder extends AbstractBuilder
         }
 
         return $result;
+    }
+
+    /**
+     * We need to wrap getId in a try catch as the
+     * implementation for the function is wrongly typed as id is null before it
+     * is persisted. This fails in newer versions of php it throw a type
+     * exception.
+     */
+    private function getOrderId($order): string
+    {
+        try {
+            return (string) $order->getId();
+        } catch (\TypeError $e) {
+            return "";
+        }
     }
 }
