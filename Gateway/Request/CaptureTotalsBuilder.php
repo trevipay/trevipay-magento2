@@ -229,7 +229,7 @@ class CaptureTotalsBuilder extends AbstractBuilder
      * is persisted. This fails in newer versions of php it throw a type
      * exception.
      */
-    private function getOrderId(Order $order): string
+    private function getOrderId($order): string
     {
         try {
             return (string) $order->getId();
