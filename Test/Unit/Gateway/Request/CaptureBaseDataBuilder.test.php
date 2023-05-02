@@ -63,7 +63,7 @@ class CaptureBaseDataBuilderTest extends MockeryTestCase
 
     public function test_preauth_id_is_excluded_when_it_does_not_exist()
     {
-        $this->paymentMock->shouldReceive("getParentTransactionId")->andReturn(null)->byDefault();
+        $this->paymentMock->shouldReceive("getParentTransactionId")->andReturn(null);
         $result = $this->captureBaseDataBuilder->build(['payment' => $this->paymentDataObjectMock]);
         $this->assertEquals([
             'comment' => 'notes',
@@ -77,7 +77,7 @@ class CaptureBaseDataBuilderTest extends MockeryTestCase
 
     public function test_previous_charge_id_is_excluded_when_it_does_not_exist()
     {
-        $this->transactionMock->shouldReceive("getTxnId")->andReturn(null)->byDefault();
+        $this->transactionMock->shouldReceive("getTxnId")->andReturn(null);
         $result = $this->captureBaseDataBuilder->build(['payment' => $this->paymentDataObjectMock]);
         $this->assertEquals([
             'authorization_id' => 222,
@@ -87,6 +87,28 @@ class CaptureBaseDataBuilderTest extends MockeryTestCase
             'order_url' => 'www.example.com',
             'po_number' => 'po123',
             'previous_charge_id' => null,
+        ], $result);
+    }
+
+    /** @test */
+    public function test_returns_correct_values_if_get_order_id_throws_type_error()
+    {
+        $willThrowTypeError = function (): int
+        {
+            return null;
+        };
+        $this->orderMock->shouldReceive("getId")->andReturnUsing($willThrowTypeError);
+
+        $result = $this->captureBaseDataBuilder->build(['payment' => $this->paymentDataObjectMock]);
+
+        $this->assertEquals([
+            "comment" => 'notes',
+            'authorization_id' => 222,
+            'idempotency_key' => 123,
+            'order_number' => 321,
+            'order_url' => 'www.example.com',
+            'po_number' => 'po123',
+            'previous_charge_id' => 333,
         ], $result);
     }
 
@@ -104,8 +126,8 @@ class CaptureBaseDataBuilderTest extends MockeryTestCase
         $this->orderMock->allows([
             'getOrderIncrementId' => 321,
             'getStoreId' => 999,
-            'getId' => 321,
         ]);
+        $this->orderMock->shouldReceive("getId")->andReturn(333)->byDefault();
 
         $this->storeMock->allows([
             'getId' => 999

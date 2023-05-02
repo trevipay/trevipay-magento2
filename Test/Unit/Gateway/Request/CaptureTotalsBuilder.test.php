@@ -474,7 +474,7 @@ class CaptureTotalsBuilderTest extends MockeryTestCase
     ], $result);
   }
 
-  public function test_returns_correct_values_if_get_buyer_id_throws_type_error()
+  public function test_returns_correct_values_if_get_order_id_throws_type_error()
   {
     $willThrowTypeError = function (): int
     {
