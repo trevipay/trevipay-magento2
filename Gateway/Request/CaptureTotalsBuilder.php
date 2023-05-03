@@ -185,10 +185,13 @@ class CaptureTotalsBuilder extends AbstractBuilder
 
         $shippingTaxDetails = $this->calculateTaxDetailsFromShipping($shippingTaxAmount, $taxItems);
 
+        $chargeDetails = $this->createDetails($details, $multiplier);
+        $taxAmount = (int)round($this->removeMinorDecimalPlacesFromFloat($taxAmount) * $multiplier);
+
         $chargeObject = [
             self::CURRENCY => $currencyCode,
             self::TOTAL_AMOUNT => (int)round((float)$this->subjectReader->readAmount($buildSubject) * $multiplier),
-            self::TAX_AMOUNT => (int)round($this->removeMinorDecimalPlacesFromFloat($taxAmount) * $multiplier),
+            self::TAX_AMOUNT => $this->adjustTaxAmount($taxAmount, $chargeDetails),
             self::DISCOUNT_AMOUNT => (int)round(
                 $this->removeMinorDecimalPlacesFromFloat($discountAmount) * $multiplier
             ),
@@ -640,7 +643,8 @@ class CaptureTotalsBuilder extends AbstractBuilder
                 $isPriceFixedType = ($item->getProduct()->getPriceType() == Price::PRICE_TYPE_FIXED);
             }
 
-            if ($qty > 0
+            if (
+                $qty > 0
                 && $item->getBaseRowTotalInclTax() > 0
                 && ($isConfigurable
                     || ($isBundle && $isPriceFixedType)
@@ -795,5 +799,37 @@ class CaptureTotalsBuilder extends AbstractBuilder
         }
 
         return $currentInvoice;
+    }
+
+
+    /**
+     * Adjust tax amount if tax amount and charge details total tax amount is mismatched due to rounding issue
+     */
+    private function adjustTaxAmount(int $taxAmount, array $chargeDetails): int
+    {
+        $totalTaxAmount = $this->getChargeDetailsTotalTaxAmount($chargeDetails);
+        $diffIsOne = fn (int $menuend, int $subtrahend): bool => abs($menuend - $subtrahend) == 1;
+
+        if (
+            $totalTaxAmount != $taxAmount &&
+            $diffIsOne($taxAmount, $totalTaxAmount)
+        ) {
+            return $totalTaxAmount;
+        }
+
+        return $taxAmount;
+    }
+
+
+    /**
+     * Sum up all charge details tax amount
+     */
+    private function getChargeDetailsTotalTaxAmount(array $chargeDetails): int
+    {
+        return array_reduce(
+            $chargeDetails,
+            fn ($runningTotal, $detail) => $runningTotal + $detail->getTaxAmount(),
+            0
+        );
     }
 }
