@@ -4,7 +4,7 @@ namespace TreviPay\TreviPayMagento\Model;
 
 use Magento\Framework\Locale\CurrencyInterface;
 use TreviPay\TreviPayMagento\Model\CurrencyInterface as TreviPayMagentoCurrencyInterface;
-use Zend_Currency_Exception;
+use Magento\Framework\Currency\Exception\CurrencyException;
 
 class PriceFormatter
 {
@@ -23,7 +23,7 @@ class PriceFormatter
      * @param float $price
      * @param string|null $currency
      * @return string
-     * @throws Zend_Currency_Exception
+     * @throws CurrencyException
      */
     public function getPriceFormatted(float $price, ?string $currency): string
     {

@@ -23,7 +23,7 @@ use TreviPay\TreviPayMagento\Model\Customer\IsRegisteredTreviPayCustomer;
 use TreviPay\TreviPayMagento\Model\Customer\IsTreviPayCustomerStatusAppliedForCredit;
 use TreviPay\TreviPayMagento\Model\Order\ArePendingOrdersPossible;
 use TreviPay\TreviPayMagento\Model\PriceFormatter;
-use Zend_Currency_Exception;
+use Magento\Framework\Currency\Exception\CurrencyException;
 
 /**
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
@@ -169,7 +169,7 @@ class CustomerTreviPay implements ArgumentInterface
 
     /**
      * @throws NoSuchEntityException
-     * @throws Zend_Currency_Exception
+     * @throws CurrencyException
      * @throws LocalizedException
      */
     public function getTreviPayM2CreditLimit(): ?string
@@ -191,7 +191,7 @@ class CustomerTreviPay implements ArgumentInterface
 
     /**
      * @throws NoSuchEntityException
-     * @throws Zend_Currency_Exception
+     * @throws CurrencyException
      * @throws LocalizedException
      */
     public function getTreviPayM2CreditAvailable(): ?string
@@ -203,7 +203,7 @@ class CustomerTreviPay implements ArgumentInterface
     }
 
     /**
-     * @throws Zend_Currency_Exception
+     * @throws CurrencyException
      * @throws NoSuchEntityException
      * @throws LocalizedException
      */
@@ -217,7 +217,7 @@ class CustomerTreviPay implements ArgumentInterface
 
     /**
      * @throws NoSuchEntityException
-     * @throws Zend_Currency_Exception
+     * @throws CurrencyException
      * @throws LocalizedException
      */
     public function getTreviPayM2CreditAuthorized(): ?string
