@@ -107,6 +107,11 @@ class RefundBuilder extends AbstractBuilder
      * @var Data
      */
     private $taxHelper;
+    
+    /**
+     * @var TaxDetailInterfaceFactory
+     */
+    private $taxDetailFactory;
 
     /**
      * @var TaxItem
