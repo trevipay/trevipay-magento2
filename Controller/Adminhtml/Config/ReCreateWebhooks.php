@@ -45,6 +45,11 @@ class ReCreateWebhooks extends Action implements HttpGetActionInterface
     private $deleteAllWebhooks;
 
     /**
+     * @var CheckCreatedWebhooks
+     */
+    private $checkCreatedWebhooks;
+
+    /**
      * @var CreateWebhooks
      */
     private $createWebhooks;

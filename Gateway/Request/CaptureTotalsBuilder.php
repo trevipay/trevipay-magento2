@@ -58,6 +58,11 @@ class CaptureTotalsBuilder extends AbstractBuilder
     private const DETAILS = 'details';
 
     /**
+     * @var ConfigProvider
+     */
+    private $configProvider;
+
+    /**
      * @var SubjectReader
      */
     private $subjectReader;
