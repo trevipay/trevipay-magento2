@@ -458,10 +458,7 @@ class ConfigProvider implements ConfigProviderInterface
                 $id = $this->maskValue->mask((string)$id);
             }
 
-            $apiEndpoint .= '/' . $id;
-            if ($methodName === ApiClient::API_PATH_BUYERS) {
-                $apiEndpoint .= '/status';
-            }
+            $apiEndpoint .= '/' . $id; 
         }
 
         return $apiEndpoint;

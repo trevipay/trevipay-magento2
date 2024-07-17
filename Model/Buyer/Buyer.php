@@ -29,15 +29,8 @@ class Buyer
 
     public const NULL_STATUS = '0';
 
-    /**
-     * @var CustomerInterface
-     */
-    private $m2Customer;
-
-    /**
-     * @var GetCustomAttributeValue
-     */
-    private $getCustomAttributeValue;
+    private CustomerInterface $m2Customer;
+    private GetCustomAttributeValue $getCustomAttributeValue;
 
     public function __construct(
         CustomerInterface $m2Customer
