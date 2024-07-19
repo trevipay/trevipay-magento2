@@ -46,6 +46,7 @@ class CustomerTreviPay implements ArgumentInterface
     private GetBuyerStatus $getBuyerStatus;
     private BuyerApiCall $buyerApiCall;
     private LoggerInterface $logger;
+    private ?BuyerResponseInterface $buyer;
 
     public function __construct(
         Session $customerSession,
@@ -75,6 +76,7 @@ class CustomerTreviPay implements ArgumentInterface
         $this->getBuyerStatus = $getBuyerStatus;
         $this->buyerApiCall = $buyerApiCall;
         $this->logger = $logger;
+        $this->buyer = null;
     }
 
     /**
@@ -97,7 +99,7 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getBuyerName(): ?string
     {
-        return $this->getTrevipayBuyer()->getName();
+        return $this->getTrevipayBuyer()?->getName();
     }
 
     /**
@@ -109,9 +111,17 @@ class CustomerTreviPay implements ArgumentInterface
         return new Buyer($this->getM2CustomerData());
     }
 
-    private function getTrevipayBuyer(): BuyerResponseInterface
+    private function getTrevipayBuyer(): ?BuyerResponseInterface
     {
-        return $this->buyerApiCall->retrieve($this->getBuyer()->getId());
+        // Use cached buyer if available
+        if ($this->buyer) return $this->buyer;
+
+        // Get buyer if exists
+        $buyerId = $this->getBuyer()->getId();
+        if ($buyerId) $this->buyer = $this->buyerApiCall->retrieve($buyerId);
+        else $this->buyer = null;
+
+        return $this->buyer;
     }
 
     /**
@@ -137,8 +147,8 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2CreditLimit(): ?string
     {
-        return $this->priceFormatter->getPriceFormatted(
-            $this->getTrevipayBuyer()->getCreditLimit(),
+        return $this->priceFormatter->getPriceFormattedFromCents(
+            $this->getTrevipayBuyer()?->getCreditLimit(),
             $this->getTreviPayM2Currency()
         );
     }
@@ -149,7 +159,7 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2Currency(): ?string
     {
-        return $this->getTrevipayBuyer()->getCurrency();
+        return $this->getTrevipayBuyer()?->getCurrency();
     }
 
     /**
@@ -159,8 +169,8 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2CreditAvailable(): ?string
     {
-        return $this->priceFormatter->getPriceFormatted(
-            $this->getTrevipayBuyer()->getCreditAvailable(),
+        return $this->priceFormatter->getPriceFormattedFromCents(
+            $this->getTrevipayBuyer()?->getCreditAvailable(),
             $this->getTreviPayM2Currency()
         );
     }
@@ -172,8 +182,8 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2CreditBalance(): ?string
     {
-        return $this->priceFormatter->getPriceFormatted(
-            $this->getTrevipayBuyer()->getCreditBalance(),
+        return $this->priceFormatter->getPriceFormattedFromCents(
+            $this->getTrevipayBuyer()?->getCreditBalance(),
             $this->getTreviPayM2Currency()
         );
     }
@@ -185,8 +195,8 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2CreditAuthorized(): ?string
     {
-        return $this->priceFormatter->getPriceFormatted(
-            $this->getTrevipayBuyer()->getCreditAuthorized(),
+        return $this->priceFormatter->getPriceFormattedFromCents(
+            $this->getTrevipayBuyer()?->getCreditAuthorized(),
             $this->getTreviPayM2Currency()
         );
     }
