@@ -105,53 +105,52 @@ class DataProviderWithDefaultAddressesPlugin
             $data[Buyer::ID] = substr($this->trevipayBuyer->getId(), 0, 8);
         }
 
-        if (!empty($this->trevipayCustomer->getCustomerStatus())) {
-            $data[TreviPayCustomer::STATUS] = $this->trevipayCustomer->getCustomerStatus();
+        if (!empty($this->trevipayCustomer)) {
+            if (!empty($this->trevipayCustomer->getCustomerStatus())) {
+                $data[TreviPayCustomer::STATUS] = $this->trevipayCustomer->getCustomerStatus();
+            }
+
+            if (!empty($this->trevipayCustomer->getClientReferenceCustomerId())) {
+                $data[TreviPayCustomer::CLIENT_REFERENCE_CUSTOMER_ID] = $this->trevipayCustomer->getClientReferenceCustomerId();
+            }
         }
 
-        if (!empty($this->trevipayBuyer->getBuyerStatus())) {
-            $data[Buyer::STATUS] = $this->trevipayBuyer->getBuyerStatus();
-        }
+        if (!empty($this->trevipayBuyer)) {
+            if (!empty($this->trevipayBuyer->getBuyerStatus())) {
+                $data[Buyer::STATUS] = $this->trevipayBuyer->getBuyerStatus();
+            }
 
-        if (!empty($this->trevipayBuyer->getClientReferenceBuyerId())) {
-            $data[Buyer::CLIENT_REFERENCE_BUYER_ID] = $this->trevipayBuyer->getClientReferenceBuyerId();
-        }
+            if (!empty($this->trevipayBuyer->getClientReferenceBuyerId())) {
+                $data[Buyer::CLIENT_REFERENCE_BUYER_ID] = $this->trevipayBuyer->getClientReferenceBuyerId();
+            }
 
-        if (!empty($this->trevipayCustomer->getClientReferenceCustomerId())) {
-            $data[TreviPayCustomer::CLIENT_REFERENCE_CUSTOMER_ID] = $this->trevipayCustomer->getClientReferenceCustomerId();
-        }
+            if ($this->trevipayBuyer->getCreditLimit() !== null) {
+                $data[Buyer::CREDIT_LIMIT] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
+                    (float) $this->trevipayBuyer->getCreditLimit(),
+                    $this->trevipayBuyer->getCurrency()
+                );
+            }
 
-        $currency = '';
-        if (!empty($this->trevipayBuyer->getCurrency())) {
-            $currency = $this->trevipayBuyer->getCurrency();
-        }
+            if ($this->trevipayBuyer->getCreditAvailable() !== null) {
+                $data[Buyer::CREDIT_AVAILABLE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
+                    (float) $this->trevipayBuyer->getCreditAvailable(),
+                    $this->trevipayBuyer->getCurrency()
+                );
+            }
 
-        if ($this->trevipayBuyer->getCreditLimit() !== null) {
-            $data[Buyer::CREDIT_LIMIT] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                (float) $this->trevipayBuyer->getCreditLimit(),
-                $currency
-            );
-        }
+            if ($this->trevipayBuyer->getCreditBalance() !== null) {
+                $data[Buyer::CREDIT_BALANCE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
+                    (float) $this->trevipayBuyer->getCreditBalance(),
+                    $this->trevipayBuyer->getCurrency()
+                );
+            }
 
-        if ($this->trevipayBuyer->getCreditAvailable() !== null) {
-            $data[Buyer::CREDIT_AVAILABLE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                (float) $this->trevipayBuyer->getCreditAvailable(),
-                $currency
-            );
-        }
-
-        if ($this->trevipayBuyer->getCreditBalance() !== null) {
-            $data[Buyer::CREDIT_BALANCE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                (float) $this->trevipayBuyer->getCreditBalance(),
-                $currency
-            );
-        }
-
-        if ($this->trevipayBuyer->getCreditAuthorized() !== null) {
-            $data[Buyer::CREDIT_AUTHORIZED] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                (float) $this->trevipayBuyer->getCreditAuthorized(),
-                $currency
-            );
+            if ($this->trevipayBuyer->getCreditAuthorized() !== null) {
+                $data[Buyer::CREDIT_AUTHORIZED] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
+                    (float) $this->trevipayBuyer->getCreditAuthorized(),
+                    $this->trevipayBuyer->getCurrency()
+                );
+            }
         }
 
         return $data;
