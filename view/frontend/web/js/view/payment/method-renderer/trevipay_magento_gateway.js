@@ -68,12 +68,18 @@ define([
         },
 
         buyerName: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.name;
+
             return customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_name')
                 ?  customer.customerData.custom_attributes.trevipay_m2_buyer_name.value : null;
         },
 
         creditCurrencyCode: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.currencyCode;
+
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_currency')) {
                 return;
@@ -83,6 +89,9 @@ define([
         },
 
         creditApprovedLimit: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.creditLimit;
+
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_credit_limit')) {
                 return 0;
@@ -92,15 +101,22 @@ define([
         },
 
         creditBalance: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.creditBalance;
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_credit_balance')) {
+
                 return 0;
             }
 
             return customer.customerData.custom_attributes.trevipay_m2_buyer_credit_balance.value;
+
         },
 
         creditAuthorized: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.creditAuthorized;
+
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_credit_authorized')) {
                 return 0;
@@ -110,6 +126,9 @@ define([
         },
 
         creditAvailable: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.creditAvailable;
+
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_credit_available')) {
                 return 0;
@@ -405,5 +424,26 @@ define([
         tCreditApplicationPendingSetup: function () {
             return $t('Your TreviPay Credit Application has been approved, and pending setup. <strong>[ACTION REQUIRED]</strong> Please check your email (including spam/junk) to complete the activation via the link within. You can visit the TreviPay section for further detail.').replaceAll('%1', this.getPaymentMethodName());
         },
+
+        formatTrevipayAmount: function (amount) {
+            const amountStr = amount.toString();
+            return amountStr.endsWith('00')
+                ? amountStr.substring(0, amountStr.length - 2)
+                : amountStr;
+        },
+
+        getTreviPayBuyer: function() {
+            const buyerDetails = window.checkoutConfig.payment.trevipay_magento.buyerDetails;
+            if (!buyerDetails) return null;
+
+            return {
+                creditLimit: this.formatTrevipayAmount(buyerDetails.creditLimit),
+                creditAuthorized: this.formatTrevipayAmount(buyerDetails.creditAuthorized),
+                creditAvailable: this.formatTrevipayAmount(buyerDetails.creditAvailable),
+                creditBalance: this.formatTrevipayAmount(buyerDetails.creditBalance),
+                name: buyerDetails.buyerName,
+                currencyCode: buyerDetails.currencyCode,
+            }
+        }
     });
 });
