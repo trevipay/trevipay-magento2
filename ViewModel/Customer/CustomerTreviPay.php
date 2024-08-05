@@ -26,6 +26,7 @@ use TreviPay\TreviPayMagento\Model\PriceFormatter;
 use Magento\Framework\Currency\Exception\CurrencyException;
 use TreviPay\TreviPay\Api\Data\Buyer\BuyerResponseInterface;
 use TreviPay\TreviPay\Model\Buyer\BuyerApiCall;
+use TreviPay\TreviPay\Model\Customer\CustomerApiCall;
 
 /**
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
@@ -45,6 +46,7 @@ class CustomerTreviPay implements ArgumentInterface
     private IsTreviPayCustomerStatusAppliedForCredit $hasTreviPayCustomerAppliedForCredit;
     private GetBuyerStatus $getBuyerStatus;
     private BuyerApiCall $buyerApiCall;
+    private CustomerApiCall $customerApiCall;
     private LoggerInterface $logger;
     private ?BuyerResponseInterface $buyer;
 
@@ -61,6 +63,7 @@ class CustomerTreviPay implements ArgumentInterface
         IsTreviPayCustomerStatusAppliedForCredit $hasTreviPayCustomerAppliedForCredit,
         GetBuyerStatus $getBuyerStatus,
         BuyerApiCall $buyerApiCall,
+        CustomerApiCall $customerApiCall,
         LoggerInterface $logger
     ) {
         $this->customerSession = $customerSession;
@@ -75,6 +78,7 @@ class CustomerTreviPay implements ArgumentInterface
         $this->hasTreviPayCustomerAppliedForCredit = $hasTreviPayCustomerAppliedForCredit;
         $this->getBuyerStatus = $getBuyerStatus;
         $this->buyerApiCall = $buyerApiCall;
+        $this->customerApiCall = $customerApiCall;
         $this->logger = $logger;
         $this->buyer = null;
     }
@@ -124,11 +128,22 @@ class CustomerTreviPay implements ArgumentInterface
         return $this->buyer;
     }
 
+    private function getTrevipayCustomerStatus(): ?string
+    {
+        $trevipayCustomerId = $this->getTrevipayBuyer()->getCustomerId();
+        if ($trevipayCustomerId) return $this->customerApiCall->retrieve($trevipayCustomerId)->getCustomerStatus();
+
+        return null;
+    }
+
     /**
      * @throws LocalizedException
      */
     public function getCustomerStatus(): ?string
     {
+        $trevipayCustomerStatus = $this->getTrevipayCustomerStatus();
+        if ($trevipayCustomerStatus) return $trevipayCustomerStatus;
+
         return $this->getCustomerStatus->execute($this->getM2Customer());
     }
 
@@ -137,6 +152,9 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getBuyerStatus(): ?string
     {
+        $trevipayBuyerStatus = $this->getTrevipayBuyer()->getBuyerStatus();
+        if ($trevipayBuyerStatus) return $trevipayBuyerStatus;
+
         return $this->getBuyerStatus->execute($this->getM2Customer());
     }
 

@@ -386,11 +386,11 @@ define([
         },
 
         tBuyerDeleted: function () {
-            return $t('Your TreviPay account has been deleted. Please sign in again.').replaceAll('%1', this.getPaymentMethodName());
+            return $t('Your TreviPay Account has been deleted. Please sign in again.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tBuyerSuspended: function () {
-            return $t('Your TreviPay account has been suspended. Please sign in again.').replaceAll('%1', this.getPaymentMethodName());
+            return $t('Your TreviPay Account has been suspended. Please sign in again.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tCustomerAppliedForCredit: function () {
@@ -398,7 +398,7 @@ define([
         },
 
         tCustomerSuspended: function () {
-            return $t('Your TreviPay account has been suspended. Please visit the TreviPay section to find more details.').replaceAll('%1', this.getPaymentMethodName());
+            return $t('Your TreviPay Account has been suspended. Please visit the TreviPay section to find more details.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tCreditApplicationDeclined: function () {
