@@ -130,7 +130,7 @@ class CustomerTreviPay implements ArgumentInterface
 
     private function getTrevipayCustomerStatus(): ?string
     {
-        $trevipayCustomerId = $this->getTrevipayBuyer()->getCustomerId();
+        $trevipayCustomerId = $this->getTrevipayBuyer()?->getCustomerId();
         if ($trevipayCustomerId) return $this->customerApiCall->retrieve($trevipayCustomerId)->getCustomerStatus();
 
         return null;
@@ -152,7 +152,7 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getBuyerStatus(): ?string
     {
-        $trevipayBuyerStatus = $this->getTrevipayBuyer()->getBuyerStatus();
+        $trevipayBuyerStatus = $this->getTrevipayBuyer()?->getBuyerStatus();
         if ($trevipayBuyerStatus) return $trevipayBuyerStatus;
 
         return $this->getBuyerStatus->execute($this->getM2Customer());
