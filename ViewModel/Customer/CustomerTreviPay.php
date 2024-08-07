@@ -14,6 +14,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
+use TreviPay\TreviPayMagento\Api\Data\Buyer\BuyerStatusInterface;
 use TreviPay\TreviPayMagento\Api\Data\Customer\TreviPayCustomerStatusInterface;
 use TreviPay\TreviPayMagento\Model\Buyer\Buyer;
 use TreviPay\TreviPayMagento\Model\Buyer\GetBuyerStatus;
@@ -141,10 +142,16 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getCustomerStatus(): ?string
     {
-        $trevipayCustomerStatus = $this->getTrevipayCustomerStatus();
-        if ($trevipayCustomerStatus) return $trevipayCustomerStatus;
+        $buyerStatus = $this->getBuyerStatus();
+        $customerStatus = $this->getTrevipayCustomerStatus() ?? $this->getCustomerStatus->execute($this->getM2Customer());
 
-        return $this->getCustomerStatus->execute($this->getM2Customer());
+        $activeCustomer = $customerStatus == TreviPayCustomerStatusInterface::ACTIVE;
+        $inActiveBuyer = $buyerStatus != BuyerStatusInterface::ACTIVE;
+
+        // Use buyer status if customer is active and buyer status in not active - DX-1673
+        if ($activeCustomer && $inActiveBuyer) return $buyerStatus;
+
+        return $customerStatus;
     }
 
     /**
@@ -152,10 +159,7 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getBuyerStatus(): ?string
     {
-        $trevipayBuyerStatus = $this->getTrevipayBuyer()?->getBuyerStatus();
-        if ($trevipayBuyerStatus) return $trevipayBuyerStatus;
-
-        return $this->getBuyerStatus->execute($this->getM2Customer());
+        return $this->getTrevipayBuyer()?->getBuyerStatus() ?? $this->getBuyerStatus->execute($this->getM2Customer());
     }
 
     /**
