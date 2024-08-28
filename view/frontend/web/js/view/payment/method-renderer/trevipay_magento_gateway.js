@@ -181,6 +181,8 @@ define([
         },
 
         showCheckoutSignIn: function () {
+            if (this.isBuyerSuspended()) return false;
+
             return !this.isRegisteredCustomer()
                 || this.isForceCheckout() && !this.isSignedIn();
         },
@@ -319,8 +321,7 @@ define([
         },
 
         showViewForPreviouslyLinkedActiveBuyer: function () {
-            return (this.isBuyerDeleted() || this.isBuyerSuspended())
-                && this.isActiveCustomerStatus();
+            return this.isBuyerDeleted() && this.isActiveCustomerStatus();
         },
 
         messageForPreviouslyLinkedActiveBuyer: function () {
@@ -360,7 +361,7 @@ define([
                 return this.tCreditApplicationPendingSetup();
             } else if (this.isCreditApplicationPendingDirectDebit()) {
                 return this.tCreditApplicationPendingDirectDebit();
-            } else if (this.isCustomerSuspended()) {
+            } else if (this.isCustomerSuspended() || this.isBuyerSuspended()) {
                 return this.tCustomerSuspended();
             } else if (this.hasAppliedForCredit()) {
                 return this.tCustomerAppliedForCredit();
@@ -390,7 +391,7 @@ define([
         },
 
         tBuyerSuspended: function () {
-            return $t('Your TreviPay Account has been suspended. Please sign in again.').replaceAll('%1', this.getPaymentMethodName());
+            return $t('Your TreviPay Account has been suspended. Please visit the TreviPay section to find more details.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tCustomerAppliedForCredit: function () {

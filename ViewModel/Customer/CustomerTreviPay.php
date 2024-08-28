@@ -338,7 +338,7 @@ class CustomerTreviPay implements ArgumentInterface
                 break;
             case TreviPayCustomerStatusInterface::SUSPENDED:
                 $message = __(
-                    'Whoops! Your TreviPay account has been suspended. This is likely due to past due payments or '
+                    'Your TreviPay account has been suspended. This is likely due to past due payments or '
                         . 'needing a credit line increase. Please visit <a href="%1">%2</a> to resolve this matter.',
                     $programUrl,
                     $paymentMethodName,
