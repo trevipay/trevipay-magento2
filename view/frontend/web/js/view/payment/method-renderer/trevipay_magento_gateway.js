@@ -426,22 +426,15 @@ define([
             return $t('Your TreviPay Credit Application has been approved, and pending setup. <strong>[ACTION REQUIRED]</strong> Please check your email (including spam/junk) to complete the activation via the link within. You can visit the TreviPay section for further detail.').replaceAll('%1', this.getPaymentMethodName());
         },
 
-        formatTrevipayAmount: function (amount) {
-            const amountStr = amount.toString();
-            return amountStr.endsWith('00')
-                ? amountStr.substring(0, amountStr.length - 2)
-                : amountStr;
-        },
-
         getTreviPayBuyer: function() {
             const buyerDetails = window.checkoutConfig.payment.trevipay_magento.buyerDetails;
             if (!buyerDetails) return null;
 
             return {
-                creditLimit: this.formatTrevipayAmount(buyerDetails.creditLimit),
-                creditAuthorized: this.formatTrevipayAmount(buyerDetails.creditAuthorized),
-                creditAvailable: this.formatTrevipayAmount(buyerDetails.creditAvailable),
-                creditBalance: this.formatTrevipayAmount(buyerDetails.creditBalance),
+                creditLimit: buyerDetails.creditLimit,
+                creditAuthorized: buyerDetails.creditAuthorized,
+                creditAvailable: buyerDetails.creditAvailable,
+                creditBalance: buyerDetails.creditBalance,
                 name: buyerDetails.buyerName,
                 currencyCode: buyerDetails.currencyCode,
             }

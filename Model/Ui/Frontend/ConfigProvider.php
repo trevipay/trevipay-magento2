@@ -17,6 +17,7 @@ use TreviPay\TreviPayMagento\Model\Buyer\GetBuyerStatusOptionId;
 use TreviPay\TreviPayMagento\Model\ConfigProvider as Config;
 use TreviPay\TreviPayMagento\Model\Customer\GetTreviPayCustomerStatusOptionId;
 use TreviPay\TreviPay\Model\Buyer\BuyerApiCall;
+use TreviPay\TreviPayMagento\Model\PriceFormatter;
 
 /**
  * This class constructs the `window.checkoutConfig.payment.trevipay_magento` object that is available
@@ -32,6 +33,7 @@ class ConfigProvider implements ConfigProviderInterface
     private GetBuyerStatusOptionId $getBuyerStatusOptionId;
     private GetTreviPayCustomerStatusOptionId $getTreviPayCustomerStatusOptionId;
     protected UrlInterface $urlBuilder;
+    private PriceFormatter $priceFormatter;
 
     public function __construct(
         UrlInterface $urlBuilder,
@@ -41,6 +43,7 @@ class ConfigProvider implements ConfigProviderInterface
         CustomerSession $customerSession,
         Config $configProvider,
         BuyerApiCall $buyerApiCall,
+        PriceFormatter $priceFormatter,
     ) {
         $this->urlBuilder = $urlBuilder;
         $this->customerResourceModel = $customerResourceModel;
@@ -50,6 +53,7 @@ class ConfigProvider implements ConfigProviderInterface
         $this->configProvider = $configProvider;
         $this->trevipayBuyerAPI = $buyerApiCall;
         $this->trevipayBuyer = $this->getTreviPayBuyer();
+        $this->priceFormatter = $priceFormatter;
     }
 
     /**
@@ -156,10 +160,22 @@ class ConfigProvider implements ConfigProviderInterface
         if (!$this->trevipayBuyer) return null;
 
         return [
-            'creditLimit' => $this->trevipayBuyer->getCreditLimit(),
-            'creditAuthorized' => $this->trevipayBuyer->getCreditAuthorized(),
-            'creditAvailable' => $this->trevipayBuyer->getCreditAvailable(),
-            'creditBalance' => $this->trevipayBuyer->getCreditBalance(),
+            'creditLimit' => $this->priceFormatter->getPriceFormattedFromCents(
+                $this->trevipayBuyer->getCreditLimit(),
+                $this->trevipayBuyer->getCurrency()
+            ),
+            'creditAuthorized' => $this->priceFormatter->getPriceFormattedFromCents(
+                $this->trevipayBuyer->getCreditAuthorized(),
+                $this->trevipayBuyer->getCurrency()
+            ),
+            'creditAvailable' => $this->priceFormatter->getPriceFormattedFromCents(
+                $this->trevipayBuyer->getCreditAvailable(),
+                $this->trevipayBuyer->getCurrency()
+            ),
+            'creditBalance' => $this->priceFormatter->getPriceFormattedFromCents(
+                $this->trevipayBuyer->getCreditBalance(),
+                $this->trevipayBuyer->getCurrency()
+            ),
             'buyerName' => $this->trevipayBuyer->getName(),
             'currencyCode' => $this->trevipayBuyer->getCurrency()
         ];
