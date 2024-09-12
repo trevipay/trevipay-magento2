@@ -17,7 +17,7 @@ define([
       if (isHidden) {
         setTimeout(function() {
           $(this.selector).hide('blind', {}, this.hideSpeed);
-        }.bind(this), 10000); // Increase display time from 3 secs to 10 seconds
+        }.bind(this), 15000); // Increase display time from 3 secs to 15 seconds
       }
     }
   };
