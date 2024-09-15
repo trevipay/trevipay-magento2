@@ -8,6 +8,7 @@ use Magento\Customer\Model\ResourceModel\Customer as CustomerResourceModel;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\UrlInterface;
+use TreviPay\TreviPay\Api\Data\Buyer\BuyerResponseInterface;
 use TreviPay\TreviPayMagento\Api\Data\Buyer\BuyerStatusInterface;
 use TreviPay\TreviPayMagento\Api\Data\Customer\TreviPayCustomerStatusInterface;
 use TreviPay\TreviPayMagento\Gateway\Request\TransactionDetails;
@@ -15,8 +16,8 @@ use TreviPay\TreviPayMagento\Model\Buyer\Buyer;
 use TreviPay\TreviPayMagento\Model\Buyer\GetBuyerStatusOptionId;
 use TreviPay\TreviPayMagento\Model\ConfigProvider as Config;
 use TreviPay\TreviPayMagento\Model\Customer\GetTreviPayCustomerStatusOptionId;
-use TreviPay\TreviPayMagento\Model\Customer\TreviPayCustomer;
-use TreviPay\TreviPayMagento\Model\M2Customer\GetOptionIdOfCustomerAttribute;
+use TreviPay\TreviPay\Model\Buyer\BuyerApiCall;
+use TreviPay\TreviPayMagento\Model\PriceFormatter;
 
 /**
  * This class constructs the `window.checkoutConfig.payment.trevipay_magento` object that is available
@@ -24,35 +25,15 @@ use TreviPay\TreviPayMagento\Model\M2Customer\GetOptionIdOfCustomerAttribute;
  */
 class ConfigProvider implements ConfigProviderInterface
 {
-    /**
-     * @var UrlInterface
-     */
-    protected $urlBuilder;
-
-    /**
-     * @var CustomerResourceModel
-     */
-    private $customerResourceModel;
-
-    /**
-     * @var Config
-     */
-    private $configProvider;
-
-    /**
-     * @var CustomerSession
-     */
-    private $customerSession;
-
-    /**
-     * @var GetBuyerStatusOptionId
-     */
-    private $getBuyerStatusOptionId;
-
-    /**
-     * @var GetTreviPayCustomerStatusOptionId
-     */
-    private $getTreviPayCustomerStatusOptionId;
+    private BuyerApiCall $trevipayBuyerAPI;
+    private ?BuyerResponseInterface $trevipayBuyer;
+    private Config $configProvider;
+    private CustomerResourceModel $customerResourceModel;
+    private CustomerSession $customerSession;
+    private GetBuyerStatusOptionId $getBuyerStatusOptionId;
+    private GetTreviPayCustomerStatusOptionId $getTreviPayCustomerStatusOptionId;
+    protected UrlInterface $urlBuilder;
+    private PriceFormatter $priceFormatter;
 
     public function __construct(
         UrlInterface $urlBuilder,
@@ -60,7 +41,9 @@ class ConfigProvider implements ConfigProviderInterface
         GetBuyerStatusOptionId $getBuyerStatusOptionId,
         GetTreviPayCustomerStatusOptionId $getTreviPayCustomerStatusOptionId,
         CustomerSession $customerSession,
-        Config $configProvider
+        Config $configProvider,
+        BuyerApiCall $buyerApiCall,
+        PriceFormatter $priceFormatter,
     ) {
         $this->urlBuilder = $urlBuilder;
         $this->customerResourceModel = $customerResourceModel;
@@ -68,6 +51,9 @@ class ConfigProvider implements ConfigProviderInterface
         $this->getTreviPayCustomerStatusOptionId = $getTreviPayCustomerStatusOptionId;
         $this->customerSession = $customerSession;
         $this->configProvider = $configProvider;
+        $this->trevipayBuyerAPI = $buyerApiCall;
+        $this->trevipayBuyer = $this->getTreviPayBuyer();
+        $this->priceFormatter = $priceFormatter;
     }
 
     /**
@@ -117,6 +103,7 @@ class ConfigProvider implements ConfigProviderInterface
         return [
             'payment' => [
                 Config::CODE => [
+                    'buyerDetails'  => $this->getBuyerDetails(),
                     'buyerStatusAppliedForCreditOptionId' => $buyerStatusAppliedForCreditOptionId,
                     'buyerStatusActiveOptionId' => $buyerStatusActiveOptionId,
                     'buyerStatusDeletedOptionId' => $buyerStatusDeletedOptionId,
@@ -154,6 +141,43 @@ class ConfigProvider implements ConfigProviderInterface
                     ],
                 ],
             ],
+        ];
+    }
+
+    private function getTreviPayBuyer(): ?BuyerResponseInterface
+    {
+        $m2Buyer = new Buyer($this->customerSession->getCustomerDataObject());
+
+        $m2BuyerId = $m2Buyer->getId();
+        if ($m2BuyerId) $this->trevipayBuyer = $this->trevipayBuyerAPI->retrieve($m2BuyerId);
+        else $this->trevipayBuyer = null;
+
+        return $this->trevipayBuyer;
+    }
+
+    private  function getBuyerDetails(): array | null
+    {
+        if (!$this->trevipayBuyer) return null;
+
+        return [
+            'creditLimit' => $this->priceFormatter->getPriceFormattedFromCents(
+                $this->trevipayBuyer->getCreditLimit(),
+                $this->trevipayBuyer->getCurrency()
+            ),
+            'creditAuthorized' => $this->priceFormatter->getPriceFormattedFromCents(
+                $this->trevipayBuyer->getCreditAuthorized(),
+                $this->trevipayBuyer->getCurrency()
+            ),
+            'creditAvailable' => $this->priceFormatter->getPriceFormattedFromCents(
+                $this->trevipayBuyer->getCreditAvailable(),
+                $this->trevipayBuyer->getCurrency()
+            ),
+            'creditBalance' => $this->priceFormatter->getPriceFormattedFromCents(
+                $this->trevipayBuyer->getCreditBalance(),
+                $this->trevipayBuyer->getCurrency()
+            ),
+            'buyerName' => $this->trevipayBuyer->getName(),
+            'currencyCode' => $this->trevipayBuyer->getCurrency()
         ];
     }
 }

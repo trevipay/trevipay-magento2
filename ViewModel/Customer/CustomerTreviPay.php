@@ -14,6 +14,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
+use TreviPay\TreviPayMagento\Api\Data\Buyer\BuyerStatusInterface;
 use TreviPay\TreviPayMagento\Api\Data\Customer\TreviPayCustomerStatusInterface;
 use TreviPay\TreviPayMagento\Model\Buyer\Buyer;
 use TreviPay\TreviPayMagento\Model\Buyer\GetBuyerStatus;
@@ -24,6 +25,9 @@ use TreviPay\TreviPayMagento\Model\Customer\IsTreviPayCustomerStatusAppliedForCr
 use TreviPay\TreviPayMagento\Model\Order\ArePendingOrdersPossible;
 use TreviPay\TreviPayMagento\Model\PriceFormatter;
 use Magento\Framework\Currency\Exception\CurrencyException;
+use TreviPay\TreviPay\Api\Data\Buyer\BuyerResponseInterface;
+use TreviPay\TreviPay\Model\Buyer\BuyerApiCall;
+use TreviPay\TreviPay\Model\Customer\CustomerApiCall;
 
 /**
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
@@ -31,65 +35,21 @@ use Magento\Framework\Currency\Exception\CurrencyException;
  */
 class CustomerTreviPay implements ArgumentInterface
 {
-    /**
-     * @var Session
-     */
-    private $customerSession;
-
-    /**
-     * @var ConfigProvider
-     */
-    private $configProvider;
-
-    /**
-     * @var ScopeConfigInterface
-     */
-    private $scopeConfig;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
-     * @var UrlInterface
-     */
-    private $urlBuilder;
-
-    /**
-     * @var PriceFormatter
-     */
-    private $priceFormatter;
-
-    /**
-     * @var GetCustomerStatus
-     */
-    private $getCustomerStatus;
-
-    /**
-     * @var IsRegisteredTreviPayCustomer
-     */
-    private $isRegisteredTreviPayCustomer;
-
-    /**
-     * @var ArePendingOrdersPossible
-     */
-    private $arePendingOrdersPossible;
-
-    /**
-     * @var IsTreviPayCustomerStatusAppliedForCredit
-     */
-    private $hasTreviPayCustomerAppliedForCredit;
-
-    /**
-     * @var GetBuyerStatus
-     */
-    private $getBuyerStatus;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private Session $customerSession;
+    private ConfigProvider $configProvider;
+    private ScopeConfigInterface $scopeConfig;
+    private StoreManagerInterface $storeManager;
+    private UrlInterface $urlBuilder;
+    private PriceFormatter $priceFormatter;
+    private GetCustomerStatus $getCustomerStatus;
+    private IsRegisteredTreviPayCustomer $isRegisteredTreviPayCustomer;
+    private ArePendingOrdersPossible $arePendingOrdersPossible;
+    private IsTreviPayCustomerStatusAppliedForCredit $hasTreviPayCustomerAppliedForCredit;
+    private GetBuyerStatus $getBuyerStatus;
+    private BuyerApiCall $buyerApiCall;
+    private CustomerApiCall $customerApiCall;
+    private LoggerInterface $logger;
+    private ?BuyerResponseInterface $buyer;
 
     public function __construct(
         Session $customerSession,
@@ -103,6 +63,8 @@ class CustomerTreviPay implements ArgumentInterface
         ArePendingOrdersPossible $arePendingOrdersPossible,
         IsTreviPayCustomerStatusAppliedForCredit $hasTreviPayCustomerAppliedForCredit,
         GetBuyerStatus $getBuyerStatus,
+        BuyerApiCall $buyerApiCall,
+        CustomerApiCall $customerApiCall,
         LoggerInterface $logger
     ) {
         $this->customerSession = $customerSession;
@@ -116,7 +78,10 @@ class CustomerTreviPay implements ArgumentInterface
         $this->arePendingOrdersPossible = $arePendingOrdersPossible;
         $this->hasTreviPayCustomerAppliedForCredit = $hasTreviPayCustomerAppliedForCredit;
         $this->getBuyerStatus = $getBuyerStatus;
+        $this->buyerApiCall = $buyerApiCall;
+        $this->customerApiCall = $customerApiCall;
         $this->logger = $logger;
+        $this->buyer = null;
     }
 
     /**
@@ -139,7 +104,7 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getBuyerName(): ?string
     {
-        return $this->getBuyer()->getName();
+        return $this->getTrevipayBuyer()?->getName();
     }
 
     /**
@@ -151,12 +116,42 @@ class CustomerTreviPay implements ArgumentInterface
         return new Buyer($this->getM2CustomerData());
     }
 
+    private function getTrevipayBuyer(): ?BuyerResponseInterface
+    {
+        // Use cached buyer if available
+        if ($this->buyer) return $this->buyer;
+
+        // Get buyer if exists
+        $buyerId = $this->getBuyer()->getId();
+        if ($buyerId) $this->buyer = $this->buyerApiCall->retrieve($buyerId);
+        else $this->buyer = null;
+
+        return $this->buyer;
+    }
+
+    private function getTrevipayCustomerStatus(): ?string
+    {
+        $trevipayCustomerId = $this->getTrevipayBuyer()?->getCustomerId();
+        if ($trevipayCustomerId) return $this->customerApiCall->retrieve($trevipayCustomerId)->getCustomerStatus();
+
+        return null;
+    }
+
     /**
      * @throws LocalizedException
      */
     public function getCustomerStatus(): ?string
     {
-        return $this->getCustomerStatus->execute($this->getM2Customer());
+        $buyerStatus = $this->getBuyerStatus();
+        $customerStatus = $this->getTrevipayCustomerStatus() ?? $this->getCustomerStatus->execute($this->getM2Customer());
+
+        $activeCustomer = $customerStatus == TreviPayCustomerStatusInterface::ACTIVE;
+        $inActiveBuyer = $buyerStatus != BuyerStatusInterface::ACTIVE;
+
+        // Use buyer status if customer is active and buyer status in not active - DX-1673
+        if ($activeCustomer && $inActiveBuyer) return $buyerStatus;
+
+        return $customerStatus;
     }
 
     /**
@@ -164,7 +159,7 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getBuyerStatus(): ?string
     {
-        return $this->getBuyerStatus->execute($this->getM2Customer());
+        return $this->getTrevipayBuyer()?->getBuyerStatus() ?? $this->getBuyerStatus->execute($this->getM2Customer());
     }
 
     /**
@@ -174,8 +169,8 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2CreditLimit(): ?string
     {
-        return $this->priceFormatter->getPriceFormatted(
-            $this->getBuyer()->getCreditLimit(),
+        return $this->priceFormatter->getPriceFormattedFromCents(
+            $this->getTrevipayBuyer()?->getCreditLimit(),
             $this->getTreviPayM2Currency()
         );
     }
@@ -186,7 +181,7 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2Currency(): ?string
     {
-        return $this->getBuyer()->getCurrency();
+        return $this->getTrevipayBuyer()?->getCurrency();
     }
 
     /**
@@ -196,8 +191,8 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2CreditAvailable(): ?string
     {
-        return $this->priceFormatter->getPriceFormatted(
-            $this->getBuyer()->getCreditAvailable(),
+        return $this->priceFormatter->getPriceFormattedFromCents(
+            $this->getTrevipayBuyer()?->getCreditAvailable(),
             $this->getTreviPayM2Currency()
         );
     }
@@ -209,8 +204,8 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2CreditBalance(): ?string
     {
-        return $this->priceFormatter->getPriceFormatted(
-            $this->getBuyer()->getCreditBalance(),
+        return $this->priceFormatter->getPriceFormattedFromCents(
+            $this->getTrevipayBuyer()?->getCreditBalance(),
             $this->getTreviPayM2Currency()
         );
     }
@@ -222,8 +217,8 @@ class CustomerTreviPay implements ArgumentInterface
      */
     public function getTreviPayM2CreditAuthorized(): ?string
     {
-        return $this->priceFormatter->getPriceFormatted(
-            $this->getBuyer()->getCreditAuthorized(),
+        return $this->priceFormatter->getPriceFormattedFromCents(
+            $this->getTrevipayBuyer()?->getCreditAuthorized(),
             $this->getTreviPayM2Currency()
         );
     }
@@ -308,7 +303,7 @@ class CustomerTreviPay implements ArgumentInterface
             case TreviPayCustomerStatusInterface::DECLINED:
                 $message = __(
                     'Sorry, your application has been declined at this time. You are invited to reapply in 6 months' .
-                    ' from the initial application date, where we will re-review.'
+                        ' from the initial application date, where we will re-review.'
                 );
                 break;
             case TreviPayCustomerStatusInterface::INACTIVE:
@@ -333,17 +328,17 @@ class CustomerTreviPay implements ArgumentInterface
             case TreviPayCustomerStatusInterface::PENDING_SETUP:
                 $message = __(
                     'You have been approved to make purchases on terms! ' .
-                    '<span %2>[ACTION REQUIRED]</span> Please now check your ' .
-                    'email for your activation link to complete the setup then your Trevipay credit line is ready ' .
-                    'for use. This link is valid for 7 days. If the email hasn\'t arrived, do check in your ' .
-                    'spam/junk mail folder.',
+                        '<span %2>[ACTION REQUIRED]</span> Please now check your ' .
+                        'email for your activation link to complete the setup then your Trevipay credit line is ready ' .
+                        'for use. This link is valid for 7 days. If the email hasn\'t arrived, do check in your ' .
+                        'spam/junk mail folder.',
                     $paymentMethodName,
                     'class="lbl-bold"'
                 );
                 break;
             case TreviPayCustomerStatusInterface::SUSPENDED:
                 $message = __(
-                    'Whoops! Your TreviPay account has been suspended. This is likely due to past due payments or '
+                    'Your TreviPay account has been suspended. This is likely due to past due payments or '
                         . 'needing a credit line increase. Please visit <a href="%1">%2</a> to resolve this matter.',
                     $programUrl,
                     $paymentMethodName,
@@ -361,7 +356,7 @@ class CustomerTreviPay implements ArgumentInterface
             case TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT:
                 $message = __(
                     'You did not complete your TreviPay Credit Application. '
-                    . 'Please fill out the form in its entirety, sign and submit at the end.',
+                        . 'Please fill out the form in its entirety, sign and submit at the end.',
                     $this->getContextualApplicationUrl(),
                     $paymentMethodName,
                     'class="action primary" type="button" data-role="action"',

@@ -68,12 +68,18 @@ define([
         },
 
         buyerName: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.name;
+
             return customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_name')
                 ?  customer.customerData.custom_attributes.trevipay_m2_buyer_name.value : null;
         },
 
         creditCurrencyCode: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.currencyCode;
+
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_currency')) {
                 return;
@@ -83,6 +89,9 @@ define([
         },
 
         creditApprovedLimit: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.creditLimit;
+
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_credit_limit')) {
                 return 0;
@@ -92,15 +101,22 @@ define([
         },
 
         creditBalance: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.creditBalance;
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_credit_balance')) {
+
                 return 0;
             }
 
             return customer.customerData.custom_attributes.trevipay_m2_buyer_credit_balance.value;
+
         },
 
         creditAuthorized: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.creditAuthorized;
+
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_credit_authorized')) {
                 return 0;
@@ -110,6 +126,9 @@ define([
         },
 
         creditAvailable: function () {
+            const buyer = this.getTreviPayBuyer();
+            if (buyer) return buyer.creditAvailable;
+
             if (!customer.customerData.hasOwnProperty('custom_attributes')
                 && customer.customerData.custom_attributes.hasOwnProperty('trevipay_m2_buyer_credit_available')) {
                 return 0;
@@ -162,6 +181,8 @@ define([
         },
 
         showCheckoutSignIn: function () {
+            if (this.isBuyerSuspended()) return false;
+
             return !this.isRegisteredCustomer()
                 || this.isForceCheckout() && !this.isSignedIn();
         },
@@ -300,8 +321,7 @@ define([
         },
 
         showViewForPreviouslyLinkedActiveBuyer: function () {
-            return (this.isBuyerDeleted() || this.isBuyerSuspended())
-                && this.isActiveCustomerStatus();
+            return this.isBuyerDeleted() && this.isActiveCustomerStatus();
         },
 
         messageForPreviouslyLinkedActiveBuyer: function () {
@@ -341,7 +361,7 @@ define([
                 return this.tCreditApplicationPendingSetup();
             } else if (this.isCreditApplicationPendingDirectDebit()) {
                 return this.tCreditApplicationPendingDirectDebit();
-            } else if (this.isCustomerSuspended()) {
+            } else if (this.isCustomerSuspended() || this.isBuyerSuspended()) {
                 return this.tCustomerSuspended();
             } else if (this.hasAppliedForCredit()) {
                 return this.tCustomerAppliedForCredit();
@@ -367,11 +387,11 @@ define([
         },
 
         tBuyerDeleted: function () {
-            return $t('Your TreviPay account has been deleted. Please sign in again.').replaceAll('%1', this.getPaymentMethodName());
+            return $t('Your TreviPay Account has been deleted. Please sign in again.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tBuyerSuspended: function () {
-            return $t('Your TreviPay account has been suspended. Please sign in again.').replaceAll('%1', this.getPaymentMethodName());
+            return $t('Your TreviPay Account has been suspended. Please visit the TreviPay section to find more details.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tCustomerAppliedForCredit: function () {
@@ -379,7 +399,7 @@ define([
         },
 
         tCustomerSuspended: function () {
-            return $t('Your TreviPay account has been suspended. Please visit the TreviPay section to find more details.').replaceAll('%1', this.getPaymentMethodName());
+            return $t('Your TreviPay Account has been suspended. Please visit the TreviPay section to find more details.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tCreditApplicationDeclined: function () {
@@ -405,5 +425,19 @@ define([
         tCreditApplicationPendingSetup: function () {
             return $t('Your TreviPay Credit Application has been approved, and pending setup. <strong>[ACTION REQUIRED]</strong> Please check your email (including spam/junk) to complete the activation via the link within. You can visit the TreviPay section for further detail.').replaceAll('%1', this.getPaymentMethodName());
         },
+
+        getTreviPayBuyer: function() {
+            const buyerDetails = window.checkoutConfig.payment.trevipay_magento.buyerDetails;
+            if (!buyerDetails) return null;
+
+            return {
+                creditLimit: buyerDetails.creditLimit,
+                creditAuthorized: buyerDetails.creditAuthorized,
+                creditAvailable: buyerDetails.creditAvailable,
+                creditBalance: buyerDetails.creditBalance,
+                name: buyerDetails.buyerName,
+                currencyCode: buyerDetails.currencyCode,
+            }
+        }
     });
 });

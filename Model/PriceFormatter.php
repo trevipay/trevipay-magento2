@@ -1,5 +1,6 @@
 <?php
 
+
 namespace TreviPay\TreviPayMagento\Model;
 
 use Magento\Framework\Locale\CurrencyInterface;
@@ -29,8 +30,22 @@ class PriceFormatter
     {
         $localeCurrency = $this->localeCurrency->getCurrency($currency);
         $options = ['precision' => $this->getNumberOfDecimalPlaces($currency), 'symbol' => ''];
-
         return $localeCurrency->toCurrency($price, $options) . ' ' . $currency;
+    }
+
+    /**
+     * Convert price from cents to dollar amount in the currency's format
+     *
+     * @param integer $price
+     * @param string|null $currency
+     * @return string
+     * @throws CurrencyException
+     */
+    public function getPriceFormattedFromCents(int $price, ?string $currency): string
+    {
+        $precision = $this->getNumberOfDecimalPlaces($currency);
+        $price = $price / pow(10, $precision);
+        return $this->getPriceFormatted($price, $currency);
     }
 
     /**

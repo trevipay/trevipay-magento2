@@ -10,17 +10,27 @@ use TreviPay\TreviPayMagento\Model\Customer\TreviPayCustomer;
 use TreviPay\TreviPayMagento\Model\M2Customer\M2Customer;
 use TreviPay\TreviPayMagento\Model\PriceFormatter;
 
+use TreviPay\TreviPay\Api\Data\Buyer\BuyerResponseInterface;
+use TreviPay\TreviPay\Api\Data\Customer\CustomerResponseInterface;
+use TreviPay\TreviPay\Model\Buyer\BuyerApiCall;
+use TreviPay\TreviPay\Model\Customer\CustomerApiCall;
+
 class DataProviderWithDefaultAddressesPlugin
 {
-    /**
-     * @var PriceFormatter
-     */
-    private $priceFormatter;
+    private PriceFormatter $priceFormatter;
+    private BuyerApiCall $trevipayBuyerAPI;
+    private BuyerResponseInterface $trevipayBuyer;
+    private CustomerApiCall $trevipayCustomerAPI;
+    private CustomerResponseInterface $trevipayCustomer;
 
     public function __construct(
-        PriceFormatter $priceFormatter
+        PriceFormatter $priceFormatter,
+        BuyerApiCall $buyerApiCall,
+        CustomerApiCall $customerApiCall,
     ) {
         $this->priceFormatter = $priceFormatter;
+        $this->trevipayBuyerAPI = $buyerApiCall;
+        $this->trevipayCustomerAPI = $customerApiCall;
     }
 
     /**
@@ -54,13 +64,13 @@ class DataProviderWithDefaultAddressesPlugin
             $data = $customerData['customer'];
             $currentCustomer = $customers[$customerId];
 
-            $result[$customerId]['customer'] = $this->prepareM2CustomerData($data, $currentCustomer);
+            $result[$customerId]['customer'] = $this->prepareCustomerData($data, $currentCustomer);
         }
 
         return $result;
     }
 
-    private function prepareM2CustomerData(array $data, Customer $customer): array
+    private function prepareCustomerData(array $data, Customer $customer): array
     {
         $data[M2Customer::EMPTY_TREVIPAY_FIELDS_MESSAGE] = __(
             'Any empty TreviPay fields will be populated when the Magento Customer signs in to the ' .
@@ -86,72 +96,61 @@ class DataProviderWithDefaultAddressesPlugin
         }
 
         if (!empty($data[TreviPayCustomer::ID])) {
-            $customerId = $data[TreviPayCustomer::ID];
-            $data[TreviPayCustomer::ID] = substr($customerId, 0, 8);
+            $this->trevipayCustomer = $this->trevipayCustomerAPI->retrieve($data[TreviPayCustomer::ID]);
+            $data[TreviPayCustomer::ID] = substr($this->trevipayCustomer->getId(), 0, 8);
         }
 
         if (!empty($data[Buyer::ID])) {
-            $buyerId = $data[Buyer::ID];
-            $data[Buyer::ID] = substr($buyerId, 0, 8);
+            $this->trevipayBuyer = $this->trevipayBuyerAPI->retrieve($data[Buyer::ID]);
+            $data[Buyer::ID] = substr($this->trevipayBuyer->getId(), 0, 8);
         }
 
-        if (!empty($data[TreviPayCustomer::STATUS])) {
-            $data[TreviPayCustomer::STATUS] = $customer->getAttribute(TreviPayCustomer::STATUS)
-                ->getFrontend()
-                ->getValue($customer);
+        if (!empty($this->trevipayCustomer)) {
+            if (!empty($this->trevipayCustomer->getCustomerStatus())) {
+                $data[TreviPayCustomer::STATUS] = $this->trevipayCustomer->getCustomerStatus();
+            }
+
+            if (!empty($this->trevipayCustomer->getClientReferenceCustomerId())) {
+                $data[TreviPayCustomer::CLIENT_REFERENCE_CUSTOMER_ID] = $this->trevipayCustomer->getClientReferenceCustomerId();
+            }
         }
 
-        if (!empty($data[Buyer::STATUS])) {
-            $data[Buyer::STATUS] = $customer->getAttribute(Buyer::STATUS)
-                ->getFrontend()
-                ->getValue($customer);
-        }
+        if (!empty($this->trevipayBuyer)) {
+            if (!empty($this->trevipayBuyer->getBuyerStatus())) {
+                $data[Buyer::STATUS] = $this->trevipayBuyer->getBuyerStatus();
+            }
 
-        if (!empty($data[Buyer::CLIENT_REFERENCE_BUYER_ID])) {
-            $data[Buyer::CLIENT_REFERENCE_BUYER_ID] = $customer
-                ->getAttribute(Buyer::CLIENT_REFERENCE_BUYER_ID)
-                ->getFrontend()
-                ->getValue($customer);
-        }
+            if (!empty($this->trevipayBuyer->getClientReferenceBuyerId())) {
+                $data[Buyer::CLIENT_REFERENCE_BUYER_ID] = $this->trevipayBuyer->getClientReferenceBuyerId();
+            }
 
-        if (!empty($data[TreviPayCustomer::CLIENT_REFERENCE_CUSTOMER_ID])) {
-            $data[TreviPayCustomer::CLIENT_REFERENCE_CUSTOMER_ID] = $customer
-                ->getAttribute(TreviPayCustomer::CLIENT_REFERENCE_CUSTOMER_ID)
-                ->getFrontend()
-                ->getValue($customer);
-        }
+            if ($this->trevipayBuyer->getCreditLimit() !== null) {
+                $data[Buyer::CREDIT_LIMIT] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
+                    (float) $this->trevipayBuyer->getCreditLimit(),
+                    $this->trevipayBuyer->getCurrency()
+                );
+            }
 
-        $currency = '';
-        if (!empty($data[Buyer::CURRENCY])) {
-            $currency = $data[Buyer::CURRENCY];
-        }
+            if ($this->trevipayBuyer->getCreditAvailable() !== null) {
+                $data[Buyer::CREDIT_AVAILABLE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
+                    (float) $this->trevipayBuyer->getCreditAvailable(),
+                    $this->trevipayBuyer->getCurrency()
+                );
+            }
 
-        if (isset($data[Buyer::CREDIT_LIMIT])) {
-            $data[Buyer::CREDIT_LIMIT] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                (float) $data[Buyer::CREDIT_LIMIT],
-                $currency
-            );
-        }
+            if ($this->trevipayBuyer->getCreditBalance() !== null) {
+                $data[Buyer::CREDIT_BALANCE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
+                    (float) $this->trevipayBuyer->getCreditBalance(),
+                    $this->trevipayBuyer->getCurrency()
+                );
+            }
 
-        if (isset($data[Buyer::CREDIT_AVAILABLE])) {
-            $data[Buyer::CREDIT_AVAILABLE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                (float) $data[Buyer::CREDIT_AVAILABLE],
-                $currency
-            );
-        }
-
-        if (isset($data[Buyer::CREDIT_BALANCE])) {
-            $data[Buyer::CREDIT_BALANCE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                (float) $data[Buyer::CREDIT_BALANCE],
-                $currency
-            );
-        }
-
-        if (isset($data[Buyer::CREDIT_AUTHORIZED])) {
-            $data[Buyer::CREDIT_AUTHORIZED] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                (float)$data[Buyer::CREDIT_AUTHORIZED],
-                $currency
-            );
+            if ($this->trevipayBuyer->getCreditAuthorized() !== null) {
+                $data[Buyer::CREDIT_AUTHORIZED] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
+                    (float) $this->trevipayBuyer->getCreditAuthorized(),
+                    $this->trevipayBuyer->getCurrency()
+                );
+            }
         }
 
         return $data;
