@@ -19,6 +19,22 @@ final class PriceFormatterTest extends MockeryTestCase
     $this->priceFormatter = new PriceFormatter((object)$this->currencyInterfaceMock);
   }
 
+  protected function setupMock(
+      float|int $price,
+      int $precision,
+      string $expect,
+      string $currency
+  ): void
+  {
+      $currencyObjectMock = Mockery::mock();
+      $currencyObjectMock->shouldReceive('toCurrency')
+          ->with($price, ['precision' => $precision, 'symbol' => ''])
+          ->andReturn($expect);
+      $this->currencyInterfaceMock->shouldReceive('getCurrency')
+          ->with($currency)
+          ->andReturn($currencyObjectMock);
+  }
+
   /**
    * @dataProvider priceFormattingDataProvider
    */
@@ -28,16 +44,24 @@ final class PriceFormatterTest extends MockeryTestCase
     int $precision,
     string $expect
   ) {
-    $currencyObjectMock = Mockery::mock();
-    $currencyObjectMock->shouldReceive('toCurrency')
-      ->with($price, ['precision' => $precision, 'symbol' => ''])
-      ->andReturn($expect);
-    $this->currencyInterfaceMock->shouldReceive('getCurrency')
-      ->with($currency)
-      ->andReturn($currencyObjectMock);
 
+    $this->setupMock($price, $precision, $expect, $currency);
     $result = $this->priceFormatter->getPriceFormatted($price, $currency);
     $this->assertEquals($expect . ' ' . $currency, $result);
+  }
+
+/**
+ * @dataProvider priceFormattingDataProvider
+ */
+  public function testGetPriceFormattedWithOutCurrency(
+    float $price,
+    string $currency,
+    int $precision,
+    string $expect
+  ) {
+    $this->setupMock($price, $precision, $expect, $currency);
+    $result = $this->priceFormatter->getPriceFormatted($price, $currency, false);
+    $this->assertEquals($expect, $result);
   }
 
   public function priceFormattingDataProvider()
@@ -59,16 +83,24 @@ final class PriceFormatterTest extends MockeryTestCase
     int $precision,
     string $expect
   ) {
-    $currencyObjectMock = Mockery::mock();
-    $currencyObjectMock->shouldReceive('toCurrency')
-      ->with($floatPrice, ['precision' => $precision, 'symbol' => ''])
-      ->andReturn($expect);
-    $this->currencyInterfaceMock->shouldReceive('getCurrency')
-      ->with($currency)
-      ->andReturn($currencyObjectMock);
-
+    $this->setupMock($floatPrice, $precision, $expect, $currency);
     $result = $this->priceFormatter->getPriceFormattedFromCents($price, $currency);
     $this->assertEquals($expect . ' ' . $currency, $result);
+  }
+
+    /**
+     * @dataProvider priceFormattingFromCentsDataProvider
+     */
+  public function testGetPriceFormattedFromCentsWithoutCurrency(
+    int $price,
+    float $floatPrice,
+    string $currency,
+    int $precision,
+    string $expect
+  ) {
+    $this->setupMock($floatPrice, $precision, $expect, $currency);
+    $result = $this->priceFormatter->getPriceFormattedFromCents($price, $currency, false);
+    $this->assertEquals($expect, $result);
   }
 
   public function priceFormattingFromCentsDataProvider()

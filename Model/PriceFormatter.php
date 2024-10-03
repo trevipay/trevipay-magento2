@@ -26,11 +26,12 @@ class PriceFormatter
      * @return string
      * @throws CurrencyException
      */
-    public function getPriceFormatted(float $price, ?string $currency): string
+    public function getPriceFormatted(float $price, ?string $currency, $appendCurrency = true): string
     {
         $localeCurrency = $this->localeCurrency->getCurrency($currency);
         $options = ['precision' => $this->getNumberOfDecimalPlaces($currency), 'symbol' => ''];
-        return $localeCurrency->toCurrency($price, $options) . ' ' . $currency;
+
+        return $localeCurrency->toCurrency($price, $options) . ($appendCurrency ? ' '.$currency : '');
     }
 
     /**
@@ -41,11 +42,11 @@ class PriceFormatter
      * @return string
      * @throws CurrencyException
      */
-    public function getPriceFormattedFromCents(int $price, ?string $currency): string
+    public function getPriceFormattedFromCents(int $price, ?string $currency, $appendCurrency = true): string
     {
         $precision = $this->getNumberOfDecimalPlaces($currency);
         $price = $price / pow(10, $precision);
-        return $this->getPriceFormatted($price, $currency);
+        return $this->getPriceFormatted($price, $currency, $appendCurrency);
     }
 
     /**
