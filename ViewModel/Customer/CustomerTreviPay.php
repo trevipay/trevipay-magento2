@@ -138,12 +138,13 @@ class CustomerTreviPay implements ArgumentInterface
     }
 
     /**
+     * 
      * @throws LocalizedException
      */
-    public function getCustomerStatus(): ?string
+    public function getCustomerAndBuyerStatus(): ?string
     {
         $buyerStatus = $this->getBuyerStatus();
-        $customerStatus = $this->getTrevipayCustomerStatus() ?? $this->getCustomerStatus->execute($this->getM2Customer());
+        $customerStatus = $this->getTrevipayCustomerStatus() ?? $this->getCustomerStatus();
 
         $activeCustomer = $customerStatus == TreviPayCustomerStatusInterface::ACTIVE;
         $inActiveBuyer = $buyerStatus != BuyerStatusInterface::ACTIVE;
@@ -152,6 +153,14 @@ class CustomerTreviPay implements ArgumentInterface
         if ($activeCustomer && $inActiveBuyer) return $buyerStatus;
 
         return $customerStatus;
+    }
+
+    /**
+     * @throws LocalizedException
+     */
+    public function getCustomerStatus(): ?string
+    {
+        return $this->getTrevipayCustomerStatus() ?? $this->getCustomerStatus->execute($this->getM2Customer());
     }
 
     /**
@@ -238,7 +247,7 @@ class CustomerTreviPay implements ArgumentInterface
     public function shouldDisplayMessageOnly(): bool
     {
         return in_array(
-            $this->getCustomerStatus(),
+            $this->getCustomerAndBuyerStatus(),
             [
                 TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT,
                 TreviPayCustomerStatusInterface::CANCELLED,
@@ -260,7 +269,7 @@ class CustomerTreviPay implements ArgumentInterface
     public function displayApplyNowBanner(): bool
     {
         return in_array(
-            $this->getCustomerStatus(),
+            $this->getCustomerAndBuyerStatus(),
             [
                 TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT,
                 TreviPayCustomerStatusInterface::WITHDRAWN,
@@ -271,7 +280,7 @@ class CustomerTreviPay implements ArgumentInterface
 
     public function getContextualApplicationUrl(): string
     {
-        if ($this->getCustomerStatus() === TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT) {
+        if ($this->getCustomerAndBuyerStatus() === TreviPayCustomerStatusInterface::APPLIED_FOR_CREDIT) {
             $didNotCompleteApplicationUrl = $this->getDidNotCompleteApplicationUrl();
 
             return $didNotCompleteApplicationUrl;
@@ -292,7 +301,17 @@ class CustomerTreviPay implements ArgumentInterface
         $message = null;
         $paymentMethodName = $this->configProvider->getPaymentMethodName();
 
-        switch ($this->getCustomerStatus()) {
+        if ($this->getCustomerStatus() === TreviPayCustomerStatusInterface::SUSPENDED) {
+            return __(
+                'Your TreviPay account has been suspended. This is likely due to past due payments or '
+                    . 'needing a credit line increase. Please visit <a href="%1">%2</a> to resolve this matter.',
+                $programUrl,
+                $paymentMethodName,
+                $paymentMethodName
+            );
+        }
+
+        switch ($this->getCustomerAndBuyerStatus()) {
             case TreviPayCustomerStatusInterface::CANCELLED:
                 $message = __(
                     'Sorry, your application has been cancelled. Please visit <a href="%1">%2</a> to resubmit.',
@@ -338,11 +357,8 @@ class CustomerTreviPay implements ArgumentInterface
                 break;
             case TreviPayCustomerStatusInterface::SUSPENDED:
                 $message = __(
-                    'Your TreviPay account has been suspended. This is likely due to past due payments or '
-                        . 'needing a credit line increase. Please visit <a href="%1">%2</a> to resolve this matter.',
-                    $programUrl,
+                    'Your TreviPay buyer account has been suspended. Please contact your company admin to resolve this matter.',
                     $paymentMethodName,
-                    $paymentMethodName
                 );
                 break;
             case TreviPayCustomerStatusInterface::WITHDRAWN:

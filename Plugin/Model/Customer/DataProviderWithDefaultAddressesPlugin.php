@@ -125,30 +125,34 @@ class DataProviderWithDefaultAddressesPlugin
             }
 
             if ($this->trevipayBuyer->getCreditLimit() !== null) {
-                $data[Buyer::CREDIT_LIMIT] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                    (float) $this->trevipayBuyer->getCreditLimit(),
-                    $this->trevipayBuyer->getCurrency()
+                $data[Buyer::CREDIT_LIMIT] = $this->priceFormatter->getPriceFormattedFromCents(
+                    $this->trevipayBuyer->getCreditLimit(),
+                    $this->trevipayBuyer->getCurrency(),
+                    false
                 );
             }
 
             if ($this->trevipayBuyer->getCreditAvailable() !== null) {
-                $data[Buyer::CREDIT_AVAILABLE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                    (float) $this->trevipayBuyer->getCreditAvailable(),
-                    $this->trevipayBuyer->getCurrency()
+                $data[Buyer::CREDIT_AVAILABLE] = $this->priceFormatter->getPriceFormattedFromCents(
+                    $this->trevipayBuyer->getCreditAvailable(),
+                    $this->trevipayBuyer->getCurrency(),
+                    false
                 );
             }
 
             if ($this->trevipayBuyer->getCreditBalance() !== null) {
-                $data[Buyer::CREDIT_BALANCE] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                    (float) $this->trevipayBuyer->getCreditBalance(),
-                    $this->trevipayBuyer->getCurrency()
+                $data[Buyer::CREDIT_BALANCE] = $this->priceFormatter->getPriceFormattedFromCents(
+                    $this->trevipayBuyer->getCreditBalance(),
+                    $this->trevipayBuyer->getCurrency(),
+                    false
                 );
             }
 
             if ($this->trevipayBuyer->getCreditAuthorized() !== null) {
-                $data[Buyer::CREDIT_AUTHORIZED] = $this->priceFormatter->getPriceFormattedInEasyToCopyFormat(
-                    (float) $this->trevipayBuyer->getCreditAuthorized(),
-                    $this->trevipayBuyer->getCurrency()
+                $data[Buyer::CREDIT_AUTHORIZED] = $this->priceFormatter->getPriceFormattedFromCents(
+                    $this->trevipayBuyer->getCreditAuthorized(),
+                    $this->trevipayBuyer->getCurrency(),
+                    false
                 );
             }
         }
