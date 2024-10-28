@@ -14,10 +14,13 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
+use TreviPay\TreviPay\ApiClient;
 use TreviPay\TreviPayMagento\Api\Data\Buyer\BuyerStatusInterface;
+use TreviPay\TreviPayMagento\Api\Data\Checkout\CheckoutInputTokenSubInterface;
 use TreviPay\TreviPayMagento\Api\Data\Customer\TreviPayCustomerStatusInterface;
 use TreviPay\TreviPayMagento\Model\Buyer\Buyer;
 use TreviPay\TreviPayMagento\Model\Buyer\GetBuyerStatus;
+use TreviPay\TreviPayMagento\Model\Checkout\Token\Input\CheckoutTokenBuilder;
 use TreviPay\TreviPayMagento\Model\ConfigProvider;
 use TreviPay\TreviPayMagento\Model\Customer\GetCustomerStatus;
 use TreviPay\TreviPayMagento\Model\Customer\IsRegisteredTreviPayCustomer;
@@ -28,6 +31,7 @@ use Magento\Framework\Currency\Exception\CurrencyException;
 use TreviPay\TreviPay\Api\Data\Buyer\BuyerResponseInterface;
 use TreviPay\TreviPay\Model\Buyer\BuyerApiCall;
 use TreviPay\TreviPay\Model\Customer\CustomerApiCall;
+use TreviPay\TreviPayMagento\Util\MultilineKey;
 
 /**
  * @SuppressWarnings(PHPMD.CookieAndSessionMisuse)
@@ -50,6 +54,7 @@ class CustomerTreviPay implements ArgumentInterface
     private CustomerApiCall $customerApiCall;
     private LoggerInterface $logger;
     private ?BuyerResponseInterface $buyer;
+    private CheckoutTokenBuilder $checkoutTokenBuilder;
 
     public function __construct(
         Session $customerSession,
@@ -65,7 +70,8 @@ class CustomerTreviPay implements ArgumentInterface
         GetBuyerStatus $getBuyerStatus,
         BuyerApiCall $buyerApiCall,
         CustomerApiCall $customerApiCall,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CheckoutTokenBuilder $checkoutTokenBuilder
     ) {
         $this->customerSession = $customerSession;
         $this->configProvider = $configProvider;
@@ -82,6 +88,7 @@ class CustomerTreviPay implements ArgumentInterface
         $this->customerApiCall = $customerApiCall;
         $this->logger = $logger;
         $this->buyer = null;
+        $this->checkoutTokenBuilder = $checkoutTokenBuilder;
     }
 
     /**
@@ -401,6 +408,28 @@ class CustomerTreviPay implements ArgumentInterface
     public function getDidNotCompleteApplicationUrl(): ?string
     {
         return $this->urlBuilder->getUrl('trevipay_magento/buyer/forgetMeThenApplyForCredit');
+    }
+
+    public function getCheckoutAppUrl(): ?string
+    {
+        $clientMultilineKey = new MultilineKey($this->configProvider->getClientPrivateKey());
+        $privateKey = $clientMultilineKey->toMultilineKey();
+        try {
+            $payloadJwt = $this->checkoutTokenBuilder->execute(
+                $privateKey,
+                $this->urlBuilder->getUrl('*/buyer/buyerAuthSuccessRedirect', ['_secure' => true]),
+                $this->urlBuilder->getUrl('*/buyer/buyerAuthCancelRedirect', ['_secure' => true]),
+                CheckoutInputTokenSubInterface::BUYER_AUTHENTICATION
+            );
+
+            return $this->configProvider->getTreviPayCheckoutAppUrl()
+                . ApiClient::CHECKOUT_APP_API_PATH
+                . "authenticate-buyer?token=" . $payloadJwt;
+
+        } catch (NoSuchEntityException $e) {
+            $this->logger->critical($e->getMessage(), ['exception' => $e]);
+            return $this->urlBuilder->getUrl('trevipay_magento/customer');
+        }
     }
 
     private function getM2Customer(): Customer

@@ -52,6 +52,16 @@
             <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>
         </arguments>
     </type>
+    <type name="TreviPay\TreviPayMagento\Controller\Buyer\BuyerAuthCancelRedirect">
+        <arguments>
+            <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>
+        </arguments>
+    </type>
+    <type name="TreviPay\TreviPayMagento\Controller\Buyer\BuyerAuthSuccessRedirect">
+        <arguments>
+            <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>
+        </arguments>
+    </type>
     <type name="TreviPay\TreviPayMagento\Controller\Webhook">
         <arguments>
             <argument name="treviPayLogger" xsi:type="object">TreviPayMagentoLogger</argument>

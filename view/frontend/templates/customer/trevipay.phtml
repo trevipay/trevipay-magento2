@@ -42,10 +42,17 @@ $forgetMeLabel = __('Forget Me');
             <h6 class="trevipay-apply-title">
                 <?= $escaper->escapeHtml(__('Invoicing made easy')) ?>
             </h6>
-            <a class="trevipay-apply-link"
-               href="<?= $escaper->escapeUrl($viewModel->getContextualApplicationUrl()) ?>">
-                <?= $escaper->escapeHtml(__('Apply Now')) ?>
-            </a>
+            <div>
+                <a class="trevipay-apply-link"
+                   href="<?= $escaper->escapeUrl($viewModel->getContextualApplicationUrl()) ?>">
+                    <?= $escaper->escapeHtml(__('Apply Now')) ?>
+                </a>
+                <br />
+                Already have account?
+                <a href="<?= $escaper->escapeUrl($viewModel->getCheckoutAppUrl()) ?>">
+                    <?= $escaper->escapeHtml(__('SIGN IN')) ?>
+                </a>
+            </div>
         </div>
         <div class="trevipay-apply-section trevipay-apply-section-features">
             <h6 class="trevipay-apply-section-title"><?= $escaper->escapeHtml(__('Features')) ?></h6>

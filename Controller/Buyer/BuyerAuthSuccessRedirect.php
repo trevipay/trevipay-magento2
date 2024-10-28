@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace TreviPay\TreviPayMagento\Controller\Buyer;
 
@@ -21,39 +22,19 @@ use Psr\Log\LoggerInterface;
 use TreviPay\TreviPay\Exception\ApiClientException;
 use TreviPay\TreviPayMagento\Exception\Checkout\CheckoutOutputTokenValidationException;
 use TreviPay\TreviPayMagento\Exception\Webhook\InvalidStatusException;
-use TreviPay\TreviPayMagento\Model\Buyer\LinkM2CustomerWithTreviPayBuyer as LinkM2CustomerWithTreviPayBuyerHelper;
+use TreviPay\TreviPayMagento\Model\Buyer\LinkM2CustomerWithTreviPayBuyer;
 use TreviPay\TreviPayMagento\Model\Checkout\Token\Output\Success\ProcessCheckoutToken;
 use TreviPay\TreviPayMagento\Model\ConfigProvider;
 use TreviPay\TreviPayMagento\Util\MultilineKey;
 use UnexpectedValueException;
 
-class LinkM2CustomerWithTreviPayBuyer extends Action implements HttpGetActionInterface
+class BuyerAuthSuccessRedirect extends Action implements HttpGetActionInterface
 {
-    /**
-     * @var ConfigProvider
-     */
-    private $configProvider;
-
-    /**
-     * @var ProcessCheckoutToken
-     */
-    private $processCheckoutOutputToken;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var UrlInterface
-     */
-    private $url;
-
-    /**
-     * @var LinkM2CustomerWithTreviPayBuyerHelper
-     */
-    private $linkM2CustomerWithTreviPayBuyer;
-
+    private ConfigProvider $configProvider;
+    private ProcessCheckoutToken $processCheckoutOutputToken;
+    private LoggerInterface $logger;
+    private UrlInterface $url;
+    private LinkM2CustomerWithTreviPayBuyer $linkM2CustomerWithTreviPayBuyer;
 
     public function __construct(
         Context $context,
@@ -61,7 +42,7 @@ class LinkM2CustomerWithTreviPayBuyer extends Action implements HttpGetActionInt
         ProcessCheckoutToken $processCheckoutOutputToken,
         LoggerInterface $logger,
         UrlInterface $url,
-        LinkM2CustomerWithTreviPayBuyerHelper $linkM2CustomerWithTreviPayBuyer
+        LinkM2CustomerWithTreviPayBuyer $linkM2CustomerWithTreviPayBuyer
     ) {
         parent::__construct($context);
 
@@ -77,43 +58,42 @@ class LinkM2CustomerWithTreviPayBuyer extends Action implements HttpGetActionInt
      */
     public function execute()
     {
-        $resultRedirect = $this->resultRedirectFactory->create();
-        $m2CheckoutUrl = $this->url->getUrl('checkout', ['_fragment' => 'payment']);
+        $redirect = $this->resultRedirectFactory->create();
+        $buyerAuthRedirectUrl = $this->url->getUrl('trevipay_magento/customer');
 
-        $rawCheckoutToken = $this->getRequest()->getParam('token');
-        $isUserForciblyNavigatingToThisRoute = $rawCheckoutToken === null;
-        if ($isUserForciblyNavigatingToThisRoute) {
-            $this->logger->info('TreviPay Checkout output token is null');
-            return $resultRedirect->setPath($m2CheckoutUrl);
+        $token = $this->getRequest()->getParam('token');
+        if ($token === null) {
+            $this->logger->info('TreviPay account token is null');
+            return $redirect->setPath($buyerAuthRedirectUrl);
         }
 
         $treviPayMultilineKey = new MultilineKey($this->configProvider->getTreviPayCheckoutAppPublicKey());
         $treviPayPublicKey = $treviPayMultilineKey->toMultilineKey();
         try {
-            $checkoutPayload = $this->processCheckoutOutputToken->execute($rawCheckoutToken, $treviPayPublicKey);
+            $checkoutPayload = $this->processCheckoutOutputToken->execute($token, $treviPayPublicKey);
             $this->linkM2CustomerWithTreviPayBuyer->execute($checkoutPayload);
         } catch (ExpiredException $e) {
-             $errorMessage = __(
-                 'Your session has expired. Please sign in again.',
-                 $this->configProvider->getPaymentMethodName()
-             );
-            return $this->redirectToMagentoCheckoutWithError($resultRedirect, $m2CheckoutUrl, $errorMessage);
+            $errorMessage = __(
+                'Your session has expired. Please sign in again.',
+                $this->configProvider->getPaymentMethodName()
+            );
+            return $this->redirectToMagentoCheckoutWithError($redirect, $buyerAuthRedirectUrl, $errorMessage);
         } catch (InvalidArgumentException | UnexpectedValueException |  SignatureInvalidException | BeforeValidException
-            | CheckoutOutputTokenValidationException | InputException | NoSuchEntityException | InputMismatchException
-            | LocalizedException | InvalidStatusException | ApiClientException $e
+        | CheckoutOutputTokenValidationException | InputException | NoSuchEntityException | InputMismatchException
+        | LocalizedException | InvalidStatusException | ApiClientException $e
         ) {
             $this->logger->critical($e->getMessage(), ['exception' => $e]);
             $errorMessage = __(
                 'There was an error trying to sign in. Please contact support',
                 $this->configProvider->getPaymentMethodName()
             );
-            return $this->redirectToMagentoCheckoutWithError($resultRedirect, $m2CheckoutUrl, $errorMessage);
+            return $this->redirectToMagentoCheckoutWithError($redirect, $buyerAuthRedirectUrl, $errorMessage);
         }
 
         $this->messageManager->addSuccessMessage(
             __('Your TreviPay account has been authorized and linked.', $this->configProvider->getPaymentMethodName())
         );
-        return $resultRedirect->setPath($m2CheckoutUrl);
+        return $redirect->setPath($buyerAuthRedirectUrl);
     }
 
     private function redirectToMagentoCheckoutWithError(
