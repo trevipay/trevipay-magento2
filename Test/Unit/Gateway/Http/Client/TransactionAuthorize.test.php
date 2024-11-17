@@ -43,6 +43,7 @@ class TransactionAuthorizeTest extends MockeryTestCase
     private $httpRequest;
     private $treviPayMock;
     private $authorizationApiCallMock;
+    private $treviPayOptions;
 
   /** @Setup */
     protected function setUp(): void

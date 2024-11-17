@@ -51,6 +51,10 @@ abstract class AbstractRefundBuilder extends \Mockery\Adapter\Phpunit\MockeryTes
     protected $paymentDataObjectMock;
     protected $loggerMock;
     protected $configProviderMock;
+    protected $collectionFactoryMock;
+    protected $priceCurrencyMock;
+    protected $creditMemoMock;
+    protected $refundBuilder;
 
     public function mockClasses(): void
     {

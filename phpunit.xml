@@ -8,6 +8,7 @@
       <directory suffix=".php">./Model</directory>
       <directory suffix=".php">./Observer</directory>
       <directory suffix=".php">./Setup</directory>
+      <directory suffix=".php">./Util</directory>
     </include>
   </coverage>
   <testsuite name="TreviPay Magento 2 Unit Tests">

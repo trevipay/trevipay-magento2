@@ -12,6 +12,7 @@ class TransactionDetailsTest extends MockeryTestCase
     private $subjectReaderMock;
     private $paymentDataObjectMock;
     private $configProviderMock;
+    private $paymentMock;
 
   /** @Setup */
     protected function setUp(): void
