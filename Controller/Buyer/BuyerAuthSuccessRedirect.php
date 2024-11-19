@@ -66,7 +66,7 @@ class BuyerAuthSuccessRedirect extends Action implements HttpGetActionInterface
             return $redirect->setPath($buyerAuthRedirectUrl);
         }
 
-        $treviPayMultilineKey = new MultilineKey($this->configProvider->getTreviPayCheckoutAppPublicKey());
+        $treviPayMultilineKey = new MultilineKey($this->configProvider->getTreviPayCheckoutAppPublicKey(), $this->logger);
         $treviPayPublicKey = $treviPayMultilineKey->toMultilineKey();
         try {
             $checkoutPayload = $this->processCheckoutOutputToken->execute($token, $treviPayPublicKey);
@@ -77,9 +77,10 @@ class BuyerAuthSuccessRedirect extends Action implements HttpGetActionInterface
                 $this->configProvider->getPaymentMethodName()
             );
             return $this->redirectToMagentoCheckoutWithError($redirect, $buyerAuthRedirectUrl, $errorMessage);
-        } catch (InvalidArgumentException | UnexpectedValueException |  SignatureInvalidException | BeforeValidException
-        | CheckoutOutputTokenValidationException | InputException | NoSuchEntityException | InputMismatchException
-        | LocalizedException | InvalidStatusException | ApiClientException $e
+        } catch (
+            InvalidArgumentException | UnexpectedValueException |  SignatureInvalidException | BeforeValidException
+            | CheckoutOutputTokenValidationException | InputException | NoSuchEntityException | InputMismatchException
+            | LocalizedException | InvalidStatusException | ApiClientException $e
         ) {
             $this->logger->critical($e->getMessage(), ['exception' => $e]);
             $errorMessage = __(

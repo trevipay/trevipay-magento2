@@ -412,7 +412,7 @@ class CustomerTreviPay implements ArgumentInterface
 
     public function getCheckoutAppUrl(): ?string
     {
-        $clientMultilineKey = new MultilineKey($this->configProvider->getClientPrivateKey());
+        $clientMultilineKey = new MultilineKey($this->configProvider->getClientPrivateKey(), $this->logger);
         $privateKey = $clientMultilineKey->toMultilineKey();
         try {
             $payloadJwt = $this->checkoutTokenBuilder->execute(
@@ -425,7 +425,6 @@ class CustomerTreviPay implements ArgumentInterface
             return $this->configProvider->getTreviPayCheckoutAppUrl()
                 . ApiClient::CHECKOUT_APP_API_PATH
                 . "authenticate-buyer?token=" . $payloadJwt;
-
         } catch (NoSuchEntityException $e) {
             $this->logger->critical($e->getMessage(), ['exception' => $e]);
             return $this->urlBuilder->getUrl('trevipay_magento/customer');

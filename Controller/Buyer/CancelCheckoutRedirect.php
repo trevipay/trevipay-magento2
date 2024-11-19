@@ -72,7 +72,7 @@ class CancelCheckoutRedirect extends Action implements HttpGetActionInterface
             return $resultRedirect->setPath($m2CheckoutUrl);
         }
 
-        $treviPayMultilineKey = new MultilineKey($this->configProvider->getTreviPayCheckoutAppPublicKey());
+        $treviPayMultilineKey = new MultilineKey($this->configProvider->getTreviPayCheckoutAppPublicKey(), $this->logger);
         $treviPayPublicKey = $treviPayMultilineKey->toMultilineKey();
         try {
             $checkoutPayload = $this->processCheckoutOutputToken->execute($rawCheckoutToken, $treviPayPublicKey);
@@ -84,7 +84,8 @@ class CancelCheckoutRedirect extends Action implements HttpGetActionInterface
                 )
             );
             return $resultRedirect->setPath($m2CheckoutUrl);
-        } catch (InvalidArgumentException | UnexpectedValueException | SignatureInvalidException | BeforeValidException
+        } catch (
+            InvalidArgumentException | UnexpectedValueException | SignatureInvalidException | BeforeValidException
             | CheckoutOutputTokenValidationException $e
         ) {
             $this->logger->critical($e->getMessage(), ['exception' => $e]);

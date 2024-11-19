@@ -57,7 +57,7 @@ class BuyerAuthCancelRedirect extends Action implements HttpGetActionInterface
             return $redirect->setPath($buyerAuthRedirectUrl);
         }
 
-        $treviPayMultilineKey = new MultilineKey($this->configProvider->getTreviPayCheckoutAppPublicKey());
+        $treviPayMultilineKey = new MultilineKey($this->configProvider->getTreviPayCheckoutAppPublicKey(), $this->logger);
         $treviPayPublicKey = $treviPayMultilineKey->toMultilineKey();
         try {
             $buyerPayload = $this->processCheckoutOutputToken->execute($token, $treviPayPublicKey);
@@ -69,8 +69,9 @@ class BuyerAuthCancelRedirect extends Action implements HttpGetActionInterface
                 )
             );
             return $redirect->setPath($buyerAuthRedirectUrl);
-        } catch (InvalidArgumentException | UnexpectedValueException | SignatureInvalidException | BeforeValidException
-        | CheckoutOutputTokenValidationException $e
+        } catch (
+            InvalidArgumentException | UnexpectedValueException | SignatureInvalidException | BeforeValidException
+            | CheckoutOutputTokenValidationException $e
         ) {
             $this->logger->critical($e->getMessage(), ['exception' => $e]);
             return $this->redirectToMagentoCheckoutWithError($redirect, $buyerAuthRedirectUrl);

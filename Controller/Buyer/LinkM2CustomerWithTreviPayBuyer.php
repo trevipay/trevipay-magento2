@@ -87,18 +87,19 @@ class LinkM2CustomerWithTreviPayBuyer extends Action implements HttpGetActionInt
             return $resultRedirect->setPath($m2CheckoutUrl);
         }
 
-        $treviPayMultilineKey = new MultilineKey($this->configProvider->getTreviPayCheckoutAppPublicKey());
+        $treviPayMultilineKey = new MultilineKey($this->configProvider->getTreviPayCheckoutAppPublicKey(), $this->logger);
         $treviPayPublicKey = $treviPayMultilineKey->toMultilineKey();
         try {
             $checkoutPayload = $this->processCheckoutOutputToken->execute($rawCheckoutToken, $treviPayPublicKey);
             $this->linkM2CustomerWithTreviPayBuyer->execute($checkoutPayload);
         } catch (ExpiredException $e) {
-             $errorMessage = __(
-                 'Your session has expired. Please sign in again.',
-                 $this->configProvider->getPaymentMethodName()
-             );
+            $errorMessage = __(
+                'Your session has expired. Please sign in again.',
+                $this->configProvider->getPaymentMethodName()
+            );
             return $this->redirectToMagentoCheckoutWithError($resultRedirect, $m2CheckoutUrl, $errorMessage);
-        } catch (InvalidArgumentException | UnexpectedValueException |  SignatureInvalidException | BeforeValidException
+        } catch (
+            InvalidArgumentException | UnexpectedValueException |  SignatureInvalidException | BeforeValidException
             | CheckoutOutputTokenValidationException | InputException | NoSuchEntityException | InputMismatchException
             | LocalizedException | InvalidStatusException | ApiClientException $e
         ) {
