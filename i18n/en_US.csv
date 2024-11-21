@@ -92,7 +92,6 @@ charge,charge
 "Delete Webhooks","Delete Webhooks"
 "Make sure to ""Save Config"" before using this button","Make sure to ""Save Config"" before using this button"
 "Are you sure you want to delete the webhooks?","Are you sure you want to delete the webhooks?"
-"Invoicing made easy","Invoicing made easy"
 "Apply Now","Apply Now"
 Features,Features
 "Flexible Terms","Flexible Terms"
@@ -183,3 +182,5 @@ Currency,Currency
 "Your TreviPay Credit Application has been withdrawn.","Your %1 Credit Application has been withdrawn."
 "Please sign-in in to TreviPay Checkout after modifying the cart.","Please sign-in in to %1 Checkout after modifying the cart."
 "The invoice can't be created without products. Add products and try again.", "The invoice can't be created without products. Add products and try again."
+"Cannot link account. You are not permitted to purchase.", "Cannot link account. You are not permitted to purchase."
+"Already have account?", "Already have account?"

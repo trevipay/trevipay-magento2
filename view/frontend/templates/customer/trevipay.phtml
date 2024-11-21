@@ -39,19 +39,17 @@ $forgetMeLabel = __('Forget Me');
             <?php else: ?>
                 <h3 class="trevipay-apply-nologo"> <?=$escaper->escapeHtml($paymentMethodName)?> </h3>
             <?php endif; ?>
-            <h6 class="trevipay-apply-title">
-                <?= $escaper->escapeHtml(__('Invoicing made easy')) ?>
-            </h6>
-            <div>
+            <div class="trevipay-apply-now-button">
                 <a class="trevipay-apply-link"
                    href="<?= $escaper->escapeUrl($viewModel->getContextualApplicationUrl()) ?>">
                     <?= $escaper->escapeHtml(__('Apply Now')) ?>
                 </a>
-                <br />
-                Already have account?
-                <a href="<?= $escaper->escapeUrl($viewModel->getCheckoutAppUrl()) ?>">
-                    <?= $escaper->escapeHtml(__('SIGN IN')) ?>
-                </a>
+                <div class="already-have-account">
+                    <?= $escaper->escapeHtml(__('Already have account?')) ?>
+                    <a class="sign-in" href="<?= $escaper->escapeUrl($viewModel->getCheckoutAppUrl()) ?>">
+                        <?= $escaper->escapeHtml(__('Sign In')) ?>
+                    </a>
+                </div>
             </div>
         </div>
         <div class="trevipay-apply-section trevipay-apply-section-features">

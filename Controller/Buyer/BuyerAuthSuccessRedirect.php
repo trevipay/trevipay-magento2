@@ -19,6 +19,7 @@ use Magento\Framework\Phrase;
 use Magento\Framework\UrlInterface;
 use Psr\Log\LoggerInterface;
 use TreviPay\TreviPay\Exception\ApiClientException;
+use TreviPay\TreviPayMagento\Api\Data\Checkout\CheckoutOutputTokenSubInterface;
 use TreviPay\TreviPayMagento\Exception\Checkout\CheckoutOutputTokenValidationException;
 use TreviPay\TreviPayMagento\Exception\Webhook\InvalidStatusException;
 use TreviPay\TreviPayMagento\Model\Buyer\LinkM2CustomerWithTreviPayBuyer;
@@ -70,7 +71,16 @@ class BuyerAuthSuccessRedirect extends Action implements HttpGetActionInterface
         $treviPayPublicKey = $treviPayMultilineKey->toMultilineKey();
         try {
             $checkoutPayload = $this->processCheckoutOutputToken->execute($token, $treviPayPublicKey);
-            $this->linkM2CustomerWithTreviPayBuyer->execute($checkoutPayload);
+            $buyerHasPurchasePermission = $checkoutPayload->getHasPurchasePermission();
+            if ($buyerHasPurchasePermission) {
+                $this->linkM2CustomerWithTreviPayBuyer->execute($checkoutPayload);
+            } else {
+                $errorMessage = __(
+                    'Cannot link account. You are not permitted to purchase.',
+                    $this->configProvider->getPaymentMethodName()
+                );
+                return $this->redirectToMagentoCheckoutWithError($redirect, $buyerAuthRedirectUrl, $errorMessage);
+            }
         } catch (ExpiredException $e) {
             $errorMessage = __(
                 'Your session has expired. Please sign in again.',

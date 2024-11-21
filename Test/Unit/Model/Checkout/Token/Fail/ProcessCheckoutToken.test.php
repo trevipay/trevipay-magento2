@@ -54,6 +54,7 @@ class FailProcessCheckoutTokenTest extends MockeryTestCase
       CheckoutOutputTokenInterface::SUB => CheckoutOutputTokenSubInterface::BUYER_AUTHENTICATED,
       CheckoutOutputTokenInterface::BUYER_ID => $this->uuidGenerator->execute(),
       CheckoutOutputTokenInterface::REFERENCE_ID => $this->customerId,
+      CheckoutOutputTokenInterface::HAS_PURCHASE_PERMISSION => true,
     ];
     $payload = JWT::encode($details, $privateKey, 'RS256');
 
@@ -77,6 +78,7 @@ class FailProcessCheckoutTokenTest extends MockeryTestCase
       CheckoutOutputTokenInterface::SUB => CheckoutOutputTokenSubInterface::BUYER_AUTHENTICATED,
       CheckoutOutputTokenInterface::BUYER_ID => $this->uuidGenerator->execute(),
       CheckoutOutputTokenInterface::REFERENCE_ID => $this->customerId,
+      CheckoutOutputTokenInterface::HAS_PURCHASE_PERMISSION => false,
     ];
     $payload = JWT::encode($details, $privateKey, 'RS256');
 

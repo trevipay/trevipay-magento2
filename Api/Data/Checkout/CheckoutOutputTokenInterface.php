@@ -11,4 +11,5 @@ interface CheckoutOutputTokenInterface
     public const IAT = 'iat';
     public const EXP = 'exp';
     public const ERROR_CODE = 'error_code';
+    public const HAS_PURCHASE_PERMISSION = 'has_purchase_permission';
 }
