@@ -11,6 +11,7 @@ use TreviPay\TreviPayMagento\ViewModel\Sales\Order\Invoice;
 
 
 $viewModel = $block->getData('view_model');
+$paymentMethodName = $viewModel->getPaymentMethodName();
 ?>
 <?php if ($viewModel->isTreviPayOrder()): ?>
 <div class="block">
@@ -18,9 +19,10 @@ $viewModel = $block->getData('view_model');
         <div class="trevipay-magento-buyer-portal-link">
             <p><?=
                 /* @noEscape */ __(
-                    'Visit the <a href="%1">TreviPay Portal</a> to view your invoices, increase your '
+                    'Visit the <a href=""%1"">TreviPay Portal</a> to view your invoices, increase your '
                         . 'credit line, or make a payment.',
-                    $block->escapeUrl($viewModel->getBuyerPortalUrl())
+                  $block->escapeUrl($viewModel->getBuyerPortalUrl()),
+                  $paymentMethodName
                 ) ?></p>
             <?php foreach ($viewModel->getOrder()->getInvoiceCollection() as $invoice): ?>
                 <?php $invoiceUrl = $viewModel->getInvoiceUrl($invoice); ?>
@@ -28,7 +30,7 @@ $viewModel = $block->getData('view_model');
                     <div class="actions-toolbar">
                         <div class="primary">
                             <a href="<?= $block->escapeUrl($invoiceUrl) ?>" class="action primary" target="_blank">
-                                <span><?= $escaper->escapeHtml(__('View TreviPay Invoice')) ?></span>
+                                <span><?= $escaper->escapeHtml(__('View TreviPay Invoice', $paymentMethodName)) ?></span>
                             </a>
                         </div>
                     </div>

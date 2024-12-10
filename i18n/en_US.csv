@@ -86,6 +86,7 @@ charge,charge
 "We are currently reviewing your enrollment application for TreviPay. This process normally takes around 4 business hours to complete. If we have any questions or an approval, we will reach out to you via email.","We are currently reviewing your enrollment application for %1. This process normally takes around 4 business hours to complete. If we have any questions or an approval, we will reach out to you via email."
 "You have been approved to make purchases on terms! <span %2>[ACTION REQUIRED]</span> Please now check your email for your activation link to complete the setup then your Trevipay credit line is ready for use. This link is valid for 7 days. If the email hasn't arrived, do check in your spam/junk mail folder.","You have been approved to make purchases on terms! <span %2>[ACTION REQUIRED]</span> Please now check your email for your activation link to complete the setup then your %1 credit line is ready for use. This link is valid for 7 days. If the email hasn't arrived, do check in your spam/junk mail folder."
 "Your TreviPay account has been suspended. This is likely due to past due payments or needing a credit line increase. Please visit <a href=""%1"">%2</a> to resolve this matter.","Your %3 account has been suspended. This is likely due to past due payments or needing a credit line increase. Please visit <a href=""%1"">%2</a> to resolve this matter."
+"Your TreviPay account has been suspended. This is likely due to past due payments or needing a credit line increase.","Your %1 account has been suspended. This is likely due to past due payments or needing a credit line increase."
 "Your TreviPay buyer account has been suspended. Please contact your company admin to resolve this matter.","Your %1 buyer account has been suspended. Please contact your company admin to resolve this matter."
 "You chose to withdraw your application. Change of mind? Visit <a href=""%1"">%2</a> to re-apply at any time.","You chose to withdraw your application. Change of mind? Visit <a href=""%1"">%2</a> to re-apply at any time."
 "You did not complete your TreviPay Credit Application. Please fill out the form in its entirety, sign and submit at the end.","You did not complete your %2 Credit Application. Please fill out the form in its entirety, sign and submit at the end."
@@ -111,11 +112,11 @@ Features,Features
 Balance,Balance
 Authorized,Authorized
 Available,Available
-"Visit the <a href=""%1"">TreviPay Portal</a> to view your invoices, increase your credit line, or make a payment.","Visit the <a href=""%1"">TreviPay Portal</a> to view your invoices, increase your credit line, or make a payment."
+"Visit the <a href=""%1"">TreviPay Portal</a> to view your invoices, increase your credit line, or make a payment.","Visit the <a href=""%1"">%2 Portal</a> to view your invoices, increase your credit line, or make a payment."
 "Visit the '%1' Portal to view your invoices, increase your credit line, or make a payment.","Visit the '%1' Portal to view your invoices, increase your credit line, or make a payment."
 "TreviPay Portal","%1 Portal"
 "Re-apply for TreviPay","Re-apply for %1"
-"View TreviPay Invoice","View TreviPay Invoice"
+"View TreviPay Invoice","View %1 Invoice"
 "TreviPay payment method is currently not available to you. Please visit the TreviPay section to find more details.","%1 payment method is currently not available to you. Please visit the %1 section to find more details."
 You are not yet a registered TreviPay user. You will be redirected to the TreviPay credit application form after placing this order. Your order will be processed after approval of your TreviPay credit application and TreviPay user account is created.,You are not yet a registered %1 user. You will be redirected to the %1 credit application form after placing this order. Your order will be processed after approval of your %1 credit application and %1 user account is created.
 Place Order,Place Order
