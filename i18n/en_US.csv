@@ -112,7 +112,7 @@ Features,Features
 Balance,Balance
 Authorized,Authorized
 Available,Available
-"Visit the <a href=""%1"">TreviPay Portal</a> to view your invoices, increase your credit line, or make a payment.","Visit the <a href=""%1"">%2 Portal</a> to view your invoices, increase your credit line, or make a payment."
+"Visit the TreviPay Portal to view your invoices, increase your credit line, or make a payment.","Visit the <a href=""%1"">%2 Portal</a> to view your invoices, increase your credit line, or make a payment."
 "Visit the '%1' Portal to view your invoices, increase your credit line, or make a payment.","Visit the '%1' Portal to view your invoices, increase your credit line, or make a payment."
 "TreviPay Portal","%1 Portal"
 "Re-apply for TreviPay","Re-apply for %1"

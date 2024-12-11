@@ -19,8 +19,7 @@ $paymentMethodName = $viewModel->getPaymentMethodName();
         <div class="trevipay-magento-buyer-portal-link">
             <p><?=
                 /* @noEscape */ __(
-                    'Visit the <a href=""%1"">TreviPay Portal</a> to view your invoices, increase your '
-                        . 'credit line, or make a payment.',
+                    'Visit the TreviPay Portal to view your invoices, increase your credit line, or make a payment.',
                   $block->escapeUrl($viewModel->getBuyerPortalUrl()),
                   $paymentMethodName
                 ) ?></p>
