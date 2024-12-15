@@ -63,6 +63,11 @@ class Invoice implements ArgumentInterface
         return $this->configProvider->getProgramUrl();
     }
 
+    public function getPaymentMethodName(): ?string
+    {
+        return $this->configProvider->getPaymentMethodName();
+    }
+
     public function getOrder(): OrderInterface
     {
         return $this->orderRepository->get((int)$this->request->getParam('order_id'));

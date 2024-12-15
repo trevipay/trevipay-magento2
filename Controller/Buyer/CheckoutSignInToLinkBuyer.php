@@ -88,7 +88,7 @@ class CheckoutSignInToLinkBuyer extends Action implements HttpGetActionInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();
 
-        $clientMultilineKey = new MultilineKey($this->configProvider->getClientPrivateKey());
+        $clientMultilineKey = new MultilineKey($this->configProvider->getClientPrivateKey(), $this->logger);
         $clientPrivateKey = $clientMultilineKey->toMultilineKey();
         $successRedirectUrl =
             $this->_url->getUrl('*/buyer/linkM2CustomerWithTreviPayBuyer', ['_secure' => true]);

@@ -197,14 +197,6 @@ define([
             return window.checkoutConfig.payment.trevipay_magento.paymentMethodName;
         },
 
-        /**
-         * @returns {() => string}
-         */
-        getProgramUrl: function () {
-            const magento = window.checkoutConfig.payment.trevipay_magento;
-            return magento.sandbox ? magento.sandbox_program_url : magento.program_url;
-        },
-
         getTreviPaySection: function () {
             return window.checkoutConfig.payment.trevipay_magento.treviPaySectionUrl;
         },
@@ -409,10 +401,7 @@ define([
         },
 
         tCustomerSuspended: function () {
-            return $t('Your TreviPay account has been suspended. This is likely due to past due payments or needing a credit line increase. Please visit <a href=""%1"">%2</a> to resolve this matter.')
-                .replaceAll('%1', this.getProgramUrl())
-                .replaceAll('%2', this.getPaymentMethodName())
-                .replaceAll('%3', this.getPaymentMethodName());
+            return $t('Your TreviPay account has been suspended. This is likely due to past due payments or needing a credit line increase.').replaceAll('%1', this.getPaymentMethodName());
         },
 
         tCreditApplicationDeclined: function () {

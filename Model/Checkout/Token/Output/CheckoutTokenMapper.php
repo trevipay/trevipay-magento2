@@ -13,7 +13,8 @@ class CheckoutTokenMapper
             $checkoutPayload[CheckoutOutputTokenInterface::SUB],
             $checkoutPayload[CheckoutOutputTokenInterface::REFERENCE_ID],
             $checkoutPayload[CheckoutOutputTokenInterface::BUYER_ID] ?? null,
-            $checkoutPayload[CheckoutOutputTokenInterface::ERROR_CODE] ?? null
+            $checkoutPayload[CheckoutOutputTokenInterface::ERROR_CODE] ?? null,
+            $checkoutPayload[CheckoutOutputTokenInterface::HAS_PURCHASE_PERMISSION] ?? null
         );
     }
 }

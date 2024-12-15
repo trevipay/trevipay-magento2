@@ -14,6 +14,7 @@ class SellerIdBuilderTest extends MockeryTestCase
     private $paymentDataObjectMock;
     private $orderMock;
     private $configProviderMock;
+    private $paymentMock;
 
   /** @Setup */
     protected function setUp(): void

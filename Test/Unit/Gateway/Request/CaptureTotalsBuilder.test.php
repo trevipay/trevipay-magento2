@@ -46,6 +46,8 @@ class CaptureTotalsBuilderTest extends MockeryTestCase
   private $invoiceMock;
   private $invoiceCollectionMock;
   private $invoiceItemMock;
+  private $paymentDataObjectMock;
+  private $captureTotalsBuilder;
 
   /** @Setup */
   protected function setUp(): void

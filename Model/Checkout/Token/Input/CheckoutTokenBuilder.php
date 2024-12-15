@@ -60,12 +60,17 @@ class CheckoutTokenBuilder
      *
      * @throws NoSuchEntityException
      */
-    public function execute(string $clientPrivateKey, $successRedirectUrl, $cancelRedirectUrl): string
+    public function execute(
+        string $clientPrivateKey,
+        string $successRedirectUrl,
+        string $cancelRedirectUrl,
+        string $sub = CheckoutInputTokenSubInterface::BUYER_CONFIRMATION
+    ): string
     {
         $iat = time();
         $exp = $iat + self::JWT_EXPIRY_TIME_IN_SECS;
-        $approvePayload = [
-            "sub" => CheckoutInputTokenSubInterface::BUYER_CONFIRMATION,
+        $payload = [
+            "sub" => $sub,
             "iat" => $iat,
             "exp" => $exp,
             "user_locale" => str_replace('_', '-', $this->locale->getLocale()),
@@ -83,6 +88,12 @@ class CheckoutTokenBuilder
             ],
         ];
 
-        return JWT::encode($approvePayload, $clientPrivateKey, 'RS256');
+        if ($sub === CheckoutInputTokenSubInterface::BUYER_AUTHENTICATION) {
+            unset($payload['purchase_details']);
+            $payload['program_id'] =  $this->configProvider->getProgramId();
+            $payload['reference_id'] =  $this->customerSession->getCustomer()->getId();
+        }
+
+        return JWT::encode($payload, $clientPrivateKey, 'RS256');
     }
 }

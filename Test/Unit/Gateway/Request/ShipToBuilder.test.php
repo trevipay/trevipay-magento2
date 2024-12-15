@@ -30,6 +30,10 @@ class ShipToBuilderTest extends MockeryTestCase
     private $requestMock;
     private $shipmentFactoryMock;
     private $orderAddressMock;
+    private $trackCollectionMock;
+    private $trackMock;
+    private $paymentMock;
+    private $trackingFactory;
 
   /** @Setup */
     protected function setUp(): void
