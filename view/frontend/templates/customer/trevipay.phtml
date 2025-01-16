@@ -212,7 +212,7 @@ $forgetMeLabel = __('Forget Me');
                                     this.closeModal();
                                 }
                             }, {
-                                text: '<?= $escaper->escapeHtml($forgetMeLabel) ?>',
+                                text: '<?= $escaper->escapeHtml($escaper->escapeJs($forgetMeLabel)) ?>',
                                 class: 'action primary',
                                 type: 'submit',
                                 click: window.trevipay.forgetMe,
