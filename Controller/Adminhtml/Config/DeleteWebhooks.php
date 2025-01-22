@@ -68,6 +68,12 @@ class DeleteWebhooks extends Action implements HttpGetActionInterface
      */
     private $logger;
 
+    /**
+     * @var CheckCreatedWebhooks
+     */
+    private $checkCreatedWebhooks;
+
+
     public function __construct(
         Action\Context $context,
         ConfigProvider $configProvider,
