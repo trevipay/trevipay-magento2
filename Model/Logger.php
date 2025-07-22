@@ -24,7 +24,7 @@ class Logger extends Monolog
     }
 
     // phpcs:ignore
-    public function addRecord($level, $message, array $context = [], DateTimeImmutable $datetime = null): bool
+    public function addRecord($level, $message, array $context = [], ?DateTimeImmutable $datetime = null): bool
     {
         if (!$this->configProvider->isInDebugMode()) {
             return false;

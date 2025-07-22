@@ -27,7 +27,7 @@ class TreviPayFormatter extends LineFormatter
     /**
      * {@inheritdoc}
      */
-    public function format(array $record): string
+    public function format($record): string
     {
         $output = parent::format($record);
         if (is_string($output)) {
