@@ -38,13 +38,11 @@
     <preference for="TreviPay\TreviPay\Api\Data\Authorization\AuthorizationResponseInterface"
                 type="TreviPay\TreviPay\Model\Data\Authorization\AuthorizationResponse"/>
     <preference for="TreviPay\TreviPay\Api\Data\Buyer\BuyerResponseInterface"
-                type="TreviPay\TreviPay\Model\Data\Buyer\CustomerResponse"/>
+                type="TreviPay\TreviPay\Model\Data\Buyer\BuyerResponse"/>
     <preference for="TreviPay\TreviPay\Api\Data\ErrorResponseInterface"
                 type="TreviPay\TreviPay\Model\Data\ErrorResponse"/>
     <preference for="TreviPay\TreviPay\Api\Data\ValidationErrorInterface"
                 type="TreviPay\TreviPay\Model\Data\ValidationError"/>
-    <preference for="GuzzleHttp\ClientInterface"
-                type="GuzzleHttp\Client"/>
     <preference for="TreviPay\TreviPay\ApiClientInterface"
                 type="TreviPay\TreviPayMagento\Model\Http\ApiClientDecorator"/>
     <preference for="TreviPay\TreviPay\Api\ConfigProviderInterface"

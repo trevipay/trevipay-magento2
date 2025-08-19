@@ -68,6 +68,5 @@ class CancelAuthorizationTransactionHandler implements HandlerInterface
             Transaction::RAW_DETAILS,
             $additionalInformation[Transaction::RAW_DETAILS]
         );
-        $this->transactionRepository->save($transaction);
     }
 }

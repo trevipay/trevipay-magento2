@@ -2,7 +2,7 @@
 
 namespace TreviPay\TreviPayMagento\Model\Http;
 
-use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use TreviPay\TreviPay\ApiClient;
@@ -23,7 +23,7 @@ class ApiClientDecorator extends ApiClient
     public function __construct(
         LoggerInterface $treviPayLogger,
         MaskValue $maskValue,
-        ClientInterface $client,
+        Client $client,
         GenerateGenericMessage $generateGenericMessage
     ) {
         parent::__construct(
