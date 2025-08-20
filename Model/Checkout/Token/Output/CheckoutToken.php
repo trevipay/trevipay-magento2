@@ -40,11 +40,10 @@ class CheckoutToken
     public function __construct(
         string $sub,
         string $referenceId,
-        string $buyerId = null,
-        string $errorCode = null,
-        bool $hasPurchasePermission = null,
-    )
-    {
+        ?string $buyerId = null,
+        ?string $errorCode = null,
+        ?bool $hasPurchasePermission = null,
+    ) {
         $this->sub = $sub;
         $this->magentoBuyerId = $referenceId;
         $this->treviPayBuyerId = $buyerId;
