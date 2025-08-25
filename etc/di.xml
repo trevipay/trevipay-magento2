@@ -398,4 +398,12 @@
         <plugin name="trevipay_magento_partial_invoice_not_available"
                 type="TreviPay\TreviPayMagento\Plugin\Model\Payment\MethodInterfacePlugin"/>
     </type>
+
+    <!-- 
+        Override OrderAdapter for TreviPay operations, PayPal sets this
+        globally to their own version which includes a float type check
+        which fails when we create orders as Magento uses a string type
+    -->
+    <preference for="Magento\Payment\Gateway\Data\Order\OrderAdapter" 
+                type="TreviPay\TreviPayMagento\Gateway\Data\Order\OrderAdapter" />
 </config>
