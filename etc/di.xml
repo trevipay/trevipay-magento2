@@ -398,4 +398,17 @@
         <plugin name="trevipay_magento_partial_invoice_not_available"
                 type="TreviPay\TreviPayMagento\Plugin\Model\Payment\MethodInterfacePlugin"/>
     </type>
+
+    <!--
+        This plugin converts the base_grand_total to a float on get and getList.
+        PayPals integration add a check on the OrderAdapter class which
+        validates if the base_grand_total is a float. Given they enforce this
+        globally using a preference, we instead use a plugin on the OrderRepository
+        to ensure that the base_grand_total is a float before it hits PayPal so
+        we shouldn't have any conflicts unless another Magento plugin also
+        decides to use <preference> to override a core class completely.
+    -->
+    <type name="Magento\Sales\Model\OrderRepository">
+        <plugin name="trevipay_orderfix_convert_base_grand_total_to_float" type="TreviPay\TreviPayMagento\Plugin\OrderRepositoryPlugin" sortOrder="10"/>
+    </type>
 </config>
