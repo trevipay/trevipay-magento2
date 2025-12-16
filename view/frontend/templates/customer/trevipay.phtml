@@ -14,10 +14,10 @@ $isRegisteredCustomer = $viewModel->isRegisteredCustomer();
 $paymentMethodImagePath = $viewModel->getPaymentMethodImageLocalPath();
 $paymentMethodName = $viewModel->getPaymentMethodName();
 
-$logoPath = 'TreviPay_TreviPayMagento::images/trevipay-logo.svg';
-$featurePath1 = 'TreviPay_TreviPayMagento::images/feature-1.svg';
-$featurePath2 = 'TreviPay_TreviPayMagento::images/feature-2.svg';
-$featurePath3 = 'TreviPay_TreviPayMagento::images/feature-3.svg';
+$coBrandingLogoPath = 'TreviPay_TreviPayMagento::images/co-branding-logo.svg';
+$featurePath1 = 'TreviPay_TreviPayMagento::images/flexible-terms.svg';
+$featurePath2 = 'TreviPay_TreviPayMagento::images/invoicing-your-way.svg';
+$featurePath3 = 'TreviPay_TreviPayMagento::images/easy-checkout.svg';
 
 $forgetMeLabel = __('Forget Me');
 ?>
@@ -39,17 +39,11 @@ $forgetMeLabel = __('Forget Me');
             <?php else: ?>
                 <h3 class="trevipay-apply-nologo"> <?=$escaper->escapeHtml($paymentMethodName)?> </h3>
             <?php endif; ?>
-            <div class="trevipay-apply-now-button">
-                <a class="trevipay-apply-link"
-                   href="<?= $escaper->escapeUrl($viewModel->getContextualApplicationUrl()) ?>">
-                    <?= $escaper->escapeHtml(__('Apply Now')) ?>
-                </a>
-                <div class="already-have-account">
-                    <?= $escaper->escapeHtml(__('Already have account?')) ?>
-                    <a class="sign-in" href="<?= $escaper->escapeUrl($viewModel->getCheckoutAppUrl()) ?>">
-                        <?= $escaper->escapeHtml(__('Sign In')) ?>
-                    </a>
-                </div>
+            <div class="co-branding-image">
+                <img class="co-branding-image"
+                     src="<?= $escaper->escapeHtmlAttr($block->getViewFileUrl($coBrandingLogoPath)) ?>"
+                     alt="<?= $escaper->escapeHtmlAttr($paymentMethodName) ?>"
+                />
             </div>
         </div>
         <div class="trevipay-apply-section trevipay-apply-section-features">
@@ -118,6 +112,18 @@ $forgetMeLabel = __('Forget Me');
                 <?php endif; ?>
              </div>
          </div>
+        <div class="trevipay-apply-now-button">
+            <a class="trevipay-apply-link"
+               href="<?= $escaper->escapeUrl($viewModel->getContextualApplicationUrl()) ?>">
+                <?= $escaper->escapeHtml(__('Apply Now')) ?>
+            </a>
+            <div class="already-have-account">
+                <?= $escaper->escapeHtml(__('Already have account?')) ?>
+                <a class="sign-in" href="<?= $escaper->escapeUrl($viewModel->getCheckoutAppUrl()) ?>">
+                    <?= $escaper->escapeHtml(__('Sign In')) ?>
+                </a>
+            </div>
+        </div>
     </div>
 <?php elseif (!$viewModel->shouldDisplayMessageOnly()): ?>
     <div class="block block-dashboard-info">

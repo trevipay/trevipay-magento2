@@ -14,7 +14,7 @@
     }
   },
   "require": {
-    "firebase/php-jwt": ">=5.4",
+    "firebase/php-jwt": "6.11.1",
     "guzzlehttp/guzzle": "^6.0 || ^7.3",
     "magento/framework": "^102.0.3 || 103.0.*",
     "magento/module-checkout": "100.3.* || 100.4.*",
