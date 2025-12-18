@@ -243,8 +243,24 @@
     }
 
     .trevipay-payment-method-title {
+
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+
         .trevipay-payment-icon {
             max-height: 50px;
+            display: block !important;
+            order: 2;
+            margin-right: 0 !important;
+            border: 0;
+        }
+
+        label {
+            flex-grow: 1;
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
         }
     }
 
@@ -294,11 +310,12 @@
 
     .trevipay-apply-logo {
         width: 155px;
-        margin: 0;
+        margin: 25px 0;
     }
 
     .trevipay-apply-link {
         margin: 20px auto 0;
+        width: 180px;
     }
 
     .trevipay-apply-section-features,
