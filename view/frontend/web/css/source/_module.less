@@ -62,6 +62,7 @@
     .trevipay-apply-logo {
         max-height: 50px;
         margin-right: 1px;
+        margin-left: 20px;
     }
 
     .trevipay-apply-nologo {
@@ -78,20 +79,30 @@
         }
     }
 
+    .trevipay-apply-now-button {
+        display: flex;
+        justify-content: center; /* horizontal */
+        align-items: center;     /* vertical */
+        height: 60px;
+        flex-direction: column;
+        margin-bottom: 35px;
+    }
+
     .trevipay-apply-link {
-        height: 48px;
+        height: 44px;
+        width: 308px;
         display: block;
-        margin-top: 6px;
+        margin-top: 15px;
         margin-bottom: 6px;
         padding: 5px 50px;
         font-weight: 800;
-        line-height: 48px;
+        line-height: 35px;
         letter-spacing: 1px;
         white-space: nowrap;
         text-align: center;
         text-transform: uppercase;
         color: #fff;
-        border-radius: 50px;
+        border-radius: 6px;
         background-color: #0078bf;
         background-image: -webkit-gradient(linear, left top, left bottom, from(#0078bf), to(#0d96e6));
         background-image: linear-gradient(180deg, #0078bf, #0d96e6); /* stylelint-disable-line unit-allowed-list */
@@ -232,8 +243,24 @@
     }
 
     .trevipay-payment-method-title {
+
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+
         .trevipay-payment-icon {
             max-height: 50px;
+            display: block !important;
+            order: 2;
+            margin-right: 0 !important;
+            border: 0;
+        }
+
+        label {
+            flex-grow: 1;
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
         }
     }
 
@@ -283,11 +310,12 @@
 
     .trevipay-apply-logo {
         width: 155px;
-        margin: 0;
+        margin: 25px 0;
     }
 
     .trevipay-apply-link {
         margin: 20px auto 0;
+        width: 180px;
     }
 
     .trevipay-apply-section-features,
