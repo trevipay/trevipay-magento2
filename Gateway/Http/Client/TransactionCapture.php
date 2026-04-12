@@ -101,6 +101,10 @@ class TransactionCapture extends AbstractTransaction
                     $message = __('Purchase Order number is required');
                 } elseif ($apiErrorCode === 'invalid_po') {
                     $message = __('Purchase Order number is invalid or does not match expected format');
+                } elseif ($apiErrorCode === 'invalid_po_format') {
+                    $message = __('Purchase Order number format does not match policy rules defined by your organization');
+                } elseif ($apiErrorCode === 'invalid_po_not_unique') {
+                    $message = __('Purchase Order number has been used in a previous transaction and is not unique');
                 }
             }
 
