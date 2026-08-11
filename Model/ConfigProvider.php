@@ -5,6 +5,7 @@ namespace TreviPay\TreviPayMagento\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\App\ProductMetadata;
@@ -13,14 +14,12 @@ use Magento\Store\Model\Store;
 use TreviPay\TreviPay\Api\ConfigProviderInterface;
 use TreviPay\TreviPay\ApiClient;
 use TreviPay\TreviPay\Model\MaskValue;
-use TreviPay\TreviPayMagento\Model\Composer\InstalledVersionProvider;
+use Magento\Framework\Filesystem\Driver\File as DriverFile;
 use Psr\Log\LoggerInterface;
 
 class ConfigProvider implements ConfigProviderInterface
 {
     public const CODE = 'trevipay_magento';
-
-    private const PACKAGE_NAME = 'msts/trevipay-magento';
 
     public const MEDIA_FOLDER = '/media'; // Root folder where Magento saves media files
 
@@ -104,9 +103,9 @@ class ConfigProvider implements ConfigProviderInterface
     private $maskValue;
 
     /**
-     * @var InstalledVersionProvider
+     * @var DriverFile
      */
-    private $installedVersionProvider;
+    private $driver;
 
     /**
      * @var ProductMetadata
@@ -119,19 +118,19 @@ class ConfigProvider implements ConfigProviderInterface
     private $logger;
 
     public function __construct(
-        ScopeConfigInterface     $scopeConfig,
-        Json                     $serializer,
-        RequestInterface         $request,
-        MaskValue                $maskValue,
-        InstalledVersionProvider $installedVersionProvider,
-        ProductMetadata          $productMetadata,
-        LoggerInterface          $logger
+        ScopeConfigInterface $scopeConfig,
+        Json                 $serializer,
+        RequestInterface     $request,
+        MaskValue            $maskValue,
+        DriverFile           $driver,
+        ProductMetadata      $productMetadata,
+        LoggerInterface      $logger
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->serializer = $serializer;
         $this->request = $request;
         $this->maskValue = $maskValue;
-        $this->installedVersionProvider = $installedVersionProvider;
+        $this->driver = $driver;
         $this->productMetadata = $productMetadata;
         $this->logger = $logger;
     }
@@ -472,8 +471,14 @@ class ConfigProvider implements ConfigProviderInterface
     {
         $composerVer = '0.0.0';
         try {
-            $composerVer = $this->installedVersionProvider->getPrettyVersion(self::PACKAGE_NAME) ?? '0.0.0';
-        } catch (\OutOfBoundsException $exception) {
+            $contents = json_decode($this->driver->
+            fileGetContents($this->driver->getRealPath(__DIR__ . '/../composer.json')), true);
+            if (is_array($contents)) {
+                if (isset($contents['version'])) {
+                    $composerVer = $contents['version'];
+                }
+            }
+        } catch (FileSystemException $exception) {
             $this->logger->error($exception);
         }
 

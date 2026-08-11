@@ -6,19 +6,20 @@ use Faker\Factory as Faker;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ProductMetadata;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Filesystem\Driver\File as DriverFile;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Psr\Log\LoggerInterface;
-use TreviPay\TreviPayMagento\Model\Composer\InstalledVersionProvider;
 use TreviPay\TreviPayMagento\Model\ConfigProvider;
 use TreviPay\TreviPay\Model\MaskValue;
 
 final class ConfigProviderTest extends MockeryTestCase
 {
     private $configProvider;
-    private $installedVersionProviderMock;
+    private $driverFileMock;
     private $faker;
     private $jsonMock;
     private $loggerMock;
@@ -51,7 +52,7 @@ final class ConfigProviderTest extends MockeryTestCase
 
     protected function setUp(): void
     {
-        $this->installedVersionProviderMock = Mockery::mock(InstalledVersionProvider::class);
+        $this->driverFileMock = Mockery::mock(DriverFile::class);
         $this->faker = Faker::create();
         $this->jsonMock = Mockery::mock(Json::class);
         $this->loggerMock = Mockery::mock(LoggerInterface::class);
@@ -65,7 +66,7 @@ final class ConfigProviderTest extends MockeryTestCase
             $this->jsonMock,
             $this->requestMock,
             $this->maskValueMock,
-            $this->installedVersionProviderMock,
+            $this->driverFileMock,
             $this->productMetaDataMock,
             $this->loggerMock
         );
@@ -108,9 +109,12 @@ final class ConfigProviderTest extends MockeryTestCase
         $versionStrMagento = $this->faker->semver();
         $editionStr = $this->faker->word();
 
-        $this->installedVersionProviderMock->shouldReceive('getPrettyVersion')
-            ->with('msts/trevipay-magento')
-            ->andReturn($versionStr);
+        $this->driverFileMock->shouldReceive('fileGetContents')
+            ->with(realpath(__DIR__ . '/../../../composer.json'))
+            ->andReturn(json_encode(array('version' => $versionStr)));
+
+        $this->driverFileMock->shouldReceive('getRealPath')
+            ->andReturn(realpath(__DIR__ . '/../../../composer.json'));
 
         $this->productMetaDataMock->shouldReceive('getVersion')
             ->andReturn($versionStrMagento);
@@ -125,16 +129,19 @@ final class ConfigProviderTest extends MockeryTestCase
         );
     }
 
-    public function testReturnFallbackVersionWhenPackageNotInstalled(): void
+    public function testReturnFailIntegrationString(): void
     {
         $versionStrMagento = $this->faker->semver();
         $editionStr = $this->faker->word();
 
-        $this->installedVersionProviderMock->shouldReceive('getPrettyVersion')
-            ->with('msts/trevipay-magento')
-            ->andThrow(new \OutOfBoundsException('Package is not installed'));
+        $this->driverFileMock->shouldReceive('fileGetContents')
+            ->with(realpath(__DIR__ . '/../../../composer.json'))
+            ->andThrow(new LocalizedException(__('Integration Info not found')));
 
-        $this->loggerMock->shouldReceive('error')->once();
+        $this->driverFileMock->shouldReceive('getRealPath')
+            ->andReturn(realpath(__DIR__ . '/../../../composer.json'));
+
+        $this->expectExceptionMessage('Integration Info not found');
 
         $this->productMetaDataMock->shouldReceive('getVersion')
             ->andReturn($versionStrMagento);
@@ -142,33 +149,7 @@ final class ConfigProviderTest extends MockeryTestCase
         $this->productMetaDataMock->shouldReceive('getEdition')
             ->andReturn($editionStr);
 
-        $this->assertEquals(
-            'magento/' . $versionStrMagento
-            . ' (' . $editionStr . '), trevipay-magento/0.0.0',
-            $this->configProvider->getIntegrationInfo()
-        );
-    }
-
-    public function testReturnFallbackVersionWhenVersionIsNull(): void
-    {
-        $versionStrMagento = $this->faker->semver();
-        $editionStr = $this->faker->word();
-
-        $this->installedVersionProviderMock->shouldReceive('getPrettyVersion')
-            ->with('msts/trevipay-magento')
-            ->andReturn(null);
-
-        $this->productMetaDataMock->shouldReceive('getVersion')
-            ->andReturn($versionStrMagento);
-
-        $this->productMetaDataMock->shouldReceive('getEdition')
-            ->andReturn($editionStr);
-
-        $this->assertEquals(
-            'magento/' . $versionStrMagento
-            . ' (' . $editionStr . '), trevipay-magento/0.0.0',
-            $this->configProvider->getIntegrationInfo()
-        );
+        $this->configProvider->getIntegrationInfo();
     }
 
     public function testReturnValidIsSandbox(): void
