@@ -8,6 +8,7 @@ use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\State\InputMismatchException;
+use Psr\Log\LoggerInterface;
 use TreviPay\TreviPay\Model\Data\Customer\CustomerResponse as CustomerInformation;
 use TreviPay\TreviPayMagento\Api\Data\Webhook\EventTypeInterface;
 use TreviPay\TreviPayMagento\Exception\Webhook\InvalidStatusException;
@@ -37,14 +38,21 @@ class ProcessWebhook
      */
     private $updateM2Customer;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         ValidateInputData $validateInputData,
         GetM2CustomersByField $getM2CustomersByField,
-        UpdateM2Customer $updateM2Customer
+        UpdateM2Customer $updateM2Customer,
+        LoggerInterface $logger
     ) {
         $this->validateInputData = $validateInputData;
         $this->getM2CustomersByField = $getM2CustomersByField;
         $this->updateM2Customer = $updateM2Customer;
+        $this->logger = $logger;
     }
 
     /**
@@ -97,7 +105,15 @@ class ProcessWebhook
         // The default save mechanism is fine because there is no race condition between customer.created and any other
         // webhook with different data. Even though customer.updated may fire before customer.created, it has the same
         // customer data.
+        $storedStatusBefore = $m2Customer->getCustomAttribute(TreviPayCustomer::STATUS)?->getValue();
         $this->updateM2Customer->updateTreviPayCustomer($m2Customer, $customerUpdatedPayload, true, false);
         $this->updateM2Customer->save($m2Customer);
+        $this->logger->info('[TREVIPAY-CREDIT-STATUS] customer.created.saved', [
+            'm2_customer_id' => $m2Customer->getId(),
+            'trevipay_customer_id' => $customerUpdatedPayload->getId(),
+            'payload_customer_status' => $customerUpdatedPayload->getCustomerStatus(),
+            'stored_status_option_before' => $storedStatusBefore,
+            'stored_status_option_after' => $m2Customer->getCustomAttribute(TreviPayCustomer::STATUS)?->getValue(),
+        ]);
     }
 }

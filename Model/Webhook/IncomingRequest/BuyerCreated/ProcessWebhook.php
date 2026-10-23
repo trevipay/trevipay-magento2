@@ -148,6 +148,10 @@ class ProcessWebhook
             $status = $this->getCustomAttributeText->execute($m2Customer, Buyer::STATUS);
             if ($status === BuyerStatusInterface::ACTIVE) {
                 // buyer.created has already been processed
+                $this->logger->info('[TREVIPAY-CREDIT-STATUS] buyer.created.skipped_already_active', [
+                    'm2_customer_id' => $m2Customer->getId(),
+                    'trevipay_buyer_id' => $buyerCreatedPayload->getId(),
+                ]);
                 return;
             }
 

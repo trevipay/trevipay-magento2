@@ -103,6 +103,7 @@ class UpdateM2CustomerByWebhook
      */
     public function updateTreviPayCustomer(CustomerInterface $m2Customer, CustomerResponseInterface $data): void
     {
+        $storedStatusBefore = $m2Customer->getCustomAttribute(TreviPayCustomer::STATUS)?->getValue();
         $this->updateM2Customer->updateTreviPayCustomer($m2Customer, $data, false, false);
         $prevCustomerData = clone $m2Customer;
 
@@ -149,6 +150,13 @@ class UpdateM2CustomerByWebhook
             $this->logger->critical($e->getMessage(), ['exception' => $e]);
             throw $e;
         }
+        $this->logger->info('[TREVIPAY-CREDIT-STATUS] customer.status.written', [
+            'm2_customer_id' => $m2CustomerId,
+            'trevipay_customer_id' => $data->getId(),
+            'payload_customer_status' => $data->getCustomerStatus(),
+            'stored_status_option_before' => $storedStatusBefore,
+            'stored_status_option_after' => $customerStatusOptionId,
+        ]);
 
         $this->dispatchCustomerSaveAfterDataObjectEvent($prevCustomerData, $m2Customer);
     }
@@ -160,6 +168,7 @@ class UpdateM2CustomerByWebhook
      */
     public function insertBuyer(CustomerInterface $m2Customer, BuyerResponseInterface $data): void
     {
+        $storedStatusBefore = $m2Customer->getCustomAttribute(Buyer::STATUS)?->getValue();
         $this->updateM2Customer->updateBuyer($m2Customer, $data, false);
         $prevCustomerData = clone $m2Customer;
 
@@ -226,6 +235,13 @@ class UpdateM2CustomerByWebhook
             $this->logger->critical($e->getMessage(), ['exception' => $e]);
             throw $e;
         }
+        $this->logger->info('[TREVIPAY-CREDIT-STATUS] buyer.inserted', [
+            'm2_customer_id' => $m2CustomerId,
+            'trevipay_buyer_id' => $data->getId(),
+            'payload_buyer_status' => $data->getBuyerStatus(),
+            'stored_status_option_before' => $storedStatusBefore,
+            'stored_status_option_after' => $buyerStatusOptionId,
+        ]);
 
         $this->dispatchCustomerSaveAfterDataObjectEvent($prevCustomerData, $m2Customer);
     }
@@ -237,6 +253,7 @@ class UpdateM2CustomerByWebhook
      */
     public function updateBuyer(CustomerInterface $m2Customer, BuyerResponseInterface $data): void
     {
+        $storedStatusBefore = $m2Customer->getCustomAttribute(Buyer::STATUS)?->getValue();
         $this->updateM2Customer->updateBuyer($m2Customer, $data, false);
         $prevCustomerData = clone $m2Customer;
 
@@ -282,7 +299,7 @@ class UpdateM2CustomerByWebhook
         $connection->beginTransaction();
         try {
             $customerEntityIntTable = $this->getCustomerEntityIntTableName($connection);
-            $connection->update($customerEntityIntTable, $statusData, $statusWhere);
+            $statusRowsUpdated = $connection->update($customerEntityIntTable, $statusData, $statusWhere);
 
             $customerEntityVarcharTableName = $this->getCustomerEntityVarcharTableName($connection);
             $connection->insertOnDuplicate($customerEntityVarcharTableName, $varcharData);
@@ -296,6 +313,14 @@ class UpdateM2CustomerByWebhook
             $this->logger->critical($e->getMessage(), ['exception' => $e]);
             throw $e;
         }
+        $this->logger->info('[TREVIPAY-CREDIT-STATUS] buyer.status.written', [
+            'm2_customer_id' => $m2CustomerId,
+            'trevipay_buyer_id' => $data->getId(),
+            'payload_buyer_status' => $data->getBuyerStatus(),
+            'stored_status_option_before' => $storedStatusBefore,
+            'stored_status_option_after' => $buyerStatusOptionId,
+            'status_rows_updated' => $statusRowsUpdated,
+        ]);
 
         $this->dispatchCustomerSaveAfterDataObjectEvent($prevCustomerData, $m2Customer);
     }

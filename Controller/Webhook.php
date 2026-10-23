@@ -41,19 +41,26 @@ abstract class Webhook extends Action implements CsrfAwareActionInterface
      */
     private $treviPayLogger;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     public function __construct(
         Context $context,
         IsModuleFullyConfigured $isModuleFullyConfigured,
         ValidateWebhookAuthTokenForCreatedWebhooks $validateWebhookAuthTokenForCreatedWebhooks,
         ValidateAuthorizationHeader $validateAuthorizationHeader,
         Json $jsonSerializer,
-        LoggerInterface $treviPayLogger
+        LoggerInterface $treviPayLogger,
+        LoggerInterface $logger
     ) {
         $this->isModuleFullyConfigured = $isModuleFullyConfigured;
         $this->validateWebhookAuthTokenForCreatedWebhooks = $validateWebhookAuthTokenForCreatedWebhooks;
         $this->validateAuthorizationHeader = $validateAuthorizationHeader;
         $this->jsonSerializer = $jsonSerializer;
         $this->treviPayLogger = $treviPayLogger;
+        $this->logger = $logger;
         parent::__construct($context);
     }
 
@@ -135,5 +142,29 @@ abstract class Webhook extends Action implements CsrfAwareActionInterface
         $debugData['response_http_code'] = $response->getHttpResponseCode();
         $debugData['response'] = $this->jsonSerializer->unserialize($response->getBody());
         $this->treviPayLogger->debug('Processing webhook request from TreviPay', $debugData);
+        $this->logger->info('[TREVIPAY-CREDIT-STATUS] webhook.handled', $this->getWebhookSummary() + [
+            'response_http_code' => $debugData['response_http_code'],
+            'response_message' => $debugData['response']['message'] ?? null,
+        ]);
+    }
+
+    /**
+     * system.log reaches Sumo Logic, so keep this to IDs and statuses: no names, emails, tokens or keys.
+     */
+    private function getWebhookSummary(): array
+    {
+        $inputData = (array) json_decode((string) $this->getRequest()->getContent(), true);
+        $data = (array) ($inputData['data'] ?? []);
+
+        return [
+            'event_type' => $inputData['event_type'] ?? null,
+            'webhook_timestamp' => $inputData['timestamp'] ?? null,
+            'id' => $data['id'] ?? null,
+            'customer_id' => $data['customer_id'] ?? null,
+            'client_reference_customer_id' => $data['client_reference_customer_id'] ?? null,
+            'client_reference_buyer_id' => $data['client_reference_buyer_id'] ?? null,
+            'customer_status' => $data['customer_status'] ?? null,
+            'buyer_status' => $data['buyer_status'] ?? null,
+        ];
     }
 }

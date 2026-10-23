@@ -61,7 +61,8 @@ class CustomerCreated extends Webhook implements HttpPostActionInterface
             $validateWebhookAuthTokenForCreatedWebhooks,
             $validateAuthorizationHeader,
             $jsonSerializer,
-            $treviPayLogger
+            $treviPayLogger,
+            $logger
         );
     }
 
