@@ -82,7 +82,7 @@ abstract class Webhook extends Action implements CsrfAwareActionInterface
 
         if (!$this->validateAuthorizationHeader->execute($this->getRequest())) {
             $this->setUnauthorizedErrorResponse(sprintf('Unauthenticated access'));
-            $this->logDebugData([]);
+            $this->logTreviPayDebugData([]);
             $this->getActionFlag()->set('', self::FLAG_NO_DISPATCH, true);
 
             return $this->getResponse();
@@ -138,14 +138,21 @@ abstract class Webhook extends Action implements CsrfAwareActionInterface
      */
     protected function logDebugData(array $debugData): void
     {
+        $this->logTreviPayDebugData($debugData);
+        $this->logger->info('[TREVIPAY-CREDIT-STATUS] webhook.handled', $this->getWebhookSummary() + [
+            'response_http_code' => $this->getResponse()->getHttpResponseCode(),
+        ]);
+    }
+
+    /**
+     * @param string[] $debugData
+     */
+    private function logTreviPayDebugData(array $debugData): void
+    {
         $response = $this->getResponse();
         $debugData['response_http_code'] = $response->getHttpResponseCode();
         $debugData['response'] = $this->jsonSerializer->unserialize($response->getBody());
         $this->treviPayLogger->debug('Processing webhook request from TreviPay', $debugData);
-        $this->logger->info('[TREVIPAY-CREDIT-STATUS] webhook.handled', $this->getWebhookSummary() + [
-            'response_http_code' => $debugData['response_http_code'],
-            'response_message' => $debugData['response']['message'] ?? null,
-        ]);
     }
 
     /**

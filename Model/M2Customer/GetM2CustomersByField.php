@@ -9,9 +9,20 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Psr\Log\LoggerInterface;
+use TreviPay\TreviPayMagento\Model\Buyer\Buyer;
+use TreviPay\TreviPayMagento\Model\Customer\TreviPayCustomer;
 
 class GetM2CustomersByField
 {
+    /**
+     * system.log reaches Sumo Logic, so only these ID fields log the lookup value.
+     */
+    private const LOGGED_VALUE_FIELDS = [
+        TreviPayCustomer::CLIENT_REFERENCE_CUSTOMER_ID,
+        Buyer::CLIENT_REFERENCE_BUYER_ID,
+        Buyer::ID,
+    ];
+
     /**
      * @var CustomerRepositoryInterface
      */
@@ -51,8 +62,7 @@ class GetM2CustomersByField
         $m2Customers = $this->m2CustomerRepository->getList($searchCriteria)->getItems();
         $this->logger->info('[TREVIPAY-CREDIT-STATUS] m2_customer.lookup', [
             'field' => $field,
-            'value' => $value,
-            'filter_groups' => count($searchCriteria->getFilterGroups()),
+            'value' => in_array($field, self::LOGGED_VALUE_FIELDS, true) ? $value : '[redacted]',
             'found_m2_customer_ids' => array_map(fn ($customer) => $customer->getId(), array_values($m2Customers)),
         ]);
         return $m2Customers;
