@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ActionFlag;
