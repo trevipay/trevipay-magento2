@@ -14,7 +14,7 @@ use TreviPay\TreviPayMagento\Exception\Webhook\InvalidStatusException;
 use TreviPay\TreviPayMagento\Exception\Webhook\SchemaValidationException;
 use TreviPay\TreviPayMagento\Model\Customer\TreviPayCustomer;
 use TreviPay\TreviPayMagento\Model\M2Customer\GetM2CustomersByField;
-use TreviPay\TreviPayMagento\Model\M2Customer\UpdateM2Customer;
+use TreviPay\TreviPayMagento\Model\M2Customer\UpdateM2CustomerByWebhook;
 use TreviPay\TreviPayMagento\Model\Webhook\IncomingRequest\ValidateInputData;
 
 /**
@@ -33,18 +33,18 @@ class ProcessWebhook
     private $getM2CustomersByField;
 
     /**
-     * @var UpdateM2Customer
+     * @var UpdateM2CustomerByWebhook
      */
-    private $updateM2Customer;
+    private $updateM2CustomerByWebhook;
 
     public function __construct(
         ValidateInputData $validateInputData,
         GetM2CustomersByField $getM2CustomersByField,
-        UpdateM2Customer $updateM2Customer
+        UpdateM2CustomerByWebhook $updateM2CustomerByWebhook
     ) {
         $this->validateInputData = $validateInputData;
         $this->getM2CustomersByField = $getM2CustomersByField;
-        $this->updateM2Customer = $updateM2Customer;
+        $this->updateM2CustomerByWebhook = $updateM2CustomerByWebhook;
     }
 
     /**
@@ -68,7 +68,7 @@ class ProcessWebhook
         }
 
         $m2Customer = reset($m2Customers);
-        $this->updateM2Customer($m2Customer, $customerUpdatedPayload);
+        $this->updateM2CustomerByWebhook->createTreviPayCustomer($m2Customer, $customerUpdatedPayload);
     }
 
     /**
@@ -82,22 +82,5 @@ class ProcessWebhook
             TreviPayCustomer::CLIENT_REFERENCE_CUSTOMER_ID,
             $customerUpdatedPayload->getClientReferenceCustomerId()
         );
-    }
-
-    /**
-     * @param CustomerInterface $m2Customer
-     * @param CustomerInformation $customerUpdatedPayload
-     * @throws InputException
-     * @throws InputMismatchException
-     * @throws InvalidStatusException
-     * @throws LocalizedException
-     */
-    private function updateM2Customer(CustomerInterface $m2Customer, CustomerInformation $customerUpdatedPayload): void
-    {
-        // The default save mechanism is fine because there is no race condition between customer.created and any other
-        // webhook with different data. Even though customer.updated may fire before customer.created, it has the same
-        // customer data.
-        $this->updateM2Customer->updateTreviPayCustomer($m2Customer, $customerUpdatedPayload, true, false);
-        $this->updateM2Customer->save($m2Customer);
     }
 }

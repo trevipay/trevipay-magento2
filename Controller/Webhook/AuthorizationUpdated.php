@@ -57,7 +57,8 @@ class AuthorizationUpdated extends Webhook implements HttpPostActionInterface
             $validateWebhookAuthTokenForCreatedWebhooks,
             $validateAuthorizationHeader,
             $jsonSerializer,
-            $treviPayLogger
+            $treviPayLogger,
+            $logger
         );
     }
 

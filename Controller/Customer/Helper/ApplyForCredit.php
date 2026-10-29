@@ -145,6 +145,11 @@ class ApplyForCredit
             }
 
             $this->updateM2Customer($m2Customer, $clientReferenceCustomerId, $clientReferenceBuyerId);
+            $this->logger->info('[TREVIPAY-CREDIT-STATUS] apply.redirect', [
+                'm2_customer_id' => $m2CustomerId,
+                'client_reference_customer_id' => $clientReferenceCustomerId,
+                'client_reference_buyer_id' => $clientReferenceBuyerId,
+            ]);
 
             return $resultRedirect->setUrl($applyForCreditUrl);
         } catch (LocalizedException | NoSuchEntityException $e) {
