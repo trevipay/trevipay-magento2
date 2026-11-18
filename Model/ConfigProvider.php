@@ -502,7 +502,7 @@ class ConfigProvider implements ConfigProviderInterface
     /**
      * @return string
      */
-    private function getPluginVersion(): string
+    public function getPluginVersion(): string
     {
         try {
             $contents = json_decode($this->driver->

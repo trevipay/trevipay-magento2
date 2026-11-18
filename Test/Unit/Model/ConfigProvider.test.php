@@ -280,6 +280,22 @@ final class ConfigProviderTest extends MockeryTestCase
         $this->assertEquals($this->expectedIntegrationInfo('0.0.0'), $this->configProvider->getIntegrationInfo());
     }
 
+    public function testGetPluginVersionReturnsTheVersionInTheIntegrationInfo(): void
+    {
+        $this->givenPluginComposerJson([]);
+        $this->installedVersionProviderMock->shouldReceive('getPrettyVersion')
+            ->with('msts/trevipay-magento')
+            ->andReturn('v1.1.30-beta.2');
+        $this->loggerMock->shouldNotReceive('debug');
+        $this->givenMagentoVersion();
+
+        $this->assertEquals('1.1.30-beta.2', $this->configProvider->getPluginVersion());
+        $this->assertEquals(
+            $this->expectedIntegrationInfo('1.1.30-beta.2'),
+            $this->configProvider->getIntegrationInfo()
+        );
+    }
+
     public function testConstructorWithoutVersionDependenciesGetsThemFromObjectManager(): void
     {
         $objectManagerMock = Mockery::mock(ObjectManagerInterface::class);
