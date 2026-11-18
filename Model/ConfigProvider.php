@@ -4,6 +4,7 @@
 namespace TreviPay\TreviPayMagento\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\LocalizedException;
@@ -14,12 +15,18 @@ use Magento\Store\Model\Store;
 use TreviPay\TreviPay\Api\ConfigProviderInterface;
 use TreviPay\TreviPay\ApiClient;
 use TreviPay\TreviPay\Model\MaskValue;
+use TreviPay\TreviPayMagento\Model\Composer\InstalledVersionProvider;
+use TreviPay\TreviPayMagento\Model\Composer\VersionNormalizer;
 use Magento\Framework\Filesystem\Driver\File as DriverFile;
 use Psr\Log\LoggerInterface;
 
 class ConfigProvider implements ConfigProviderInterface
 {
     public const CODE = 'trevipay_magento';
+
+    private const PACKAGE_NAME = 'msts/trevipay-magento';
+
+    private const PLACEHOLDER_VERSION = '0.0.0';
 
     public const MEDIA_FOLDER = '/media'; // Root folder where Magento saves media files
 
@@ -117,14 +124,26 @@ class ConfigProvider implements ConfigProviderInterface
      */
     private $logger;
 
+    /**
+     * @var InstalledVersionProvider
+     */
+    private $installedVersionProvider;
+
+    /**
+     * @var VersionNormalizer
+     */
+    private $versionNormalizer;
+
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
-        Json                 $serializer,
-        RequestInterface     $request,
-        MaskValue            $maskValue,
-        DriverFile           $driver,
-        ProductMetadata      $productMetadata,
-        LoggerInterface      $logger
+        ScopeConfigInterface      $scopeConfig,
+        Json                      $serializer,
+        RequestInterface          $request,
+        MaskValue                 $maskValue,
+        DriverFile                $driver,
+        ProductMetadata           $productMetadata,
+        LoggerInterface           $logger,
+        ?InstalledVersionProvider $installedVersionProvider = null,
+        ?VersionNormalizer        $versionNormalizer = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->serializer = $serializer;
@@ -133,6 +152,11 @@ class ConfigProvider implements ConfigProviderInterface
         $this->driver = $driver;
         $this->productMetadata = $productMetadata;
         $this->logger = $logger;
+        // Optional so that a subclass that calls parent::__construct() with the seven arguments of 1.1.29 still works.
+        $this->installedVersionProvider = $installedVersionProvider
+            ?? ObjectManager::getInstance()->get(InstalledVersionProvider::class);
+        $this->versionNormalizer = $versionNormalizer
+            ?? ObjectManager::getInstance()->get(VersionNormalizer::class);
     }
 
     /**
@@ -469,20 +493,65 @@ class ConfigProvider implements ConfigProviderInterface
      */
     public function getIntegrationInfo(): string
     {
-        $composerVer = '0.0.0';
+        $pluginVersion = $this->getPluginVersion();
+
+        return 'magento/' . $this->productMetadata->getVersion() . ' (' .
+            $this->productMetadata->getEdition() . '), trevipay-magento/' . $pluginVersion;
+    }
+
+    /**
+     * @return string
+     */
+    private function getPluginVersion(): string
+    {
         try {
             $contents = json_decode($this->driver->
             fileGetContents($this->driver->getRealPath(__DIR__ . '/../composer.json')), true);
-            if (is_array($contents)) {
-                if (isset($contents['version'])) {
-                    $composerVer = $contents['version'];
-                }
-            }
         } catch (FileSystemException $exception) {
             $this->logger->error($exception);
+            return self::PLACEHOLDER_VERSION;
         }
 
-        return 'magento/' . $this->productMetadata->getVersion() . ' (' .
-            $this->productMetadata->getEdition() . '), trevipay-magento/' . $composerVer;
+        if (!is_array($contents)) {
+            $this->logger->debug(
+                'TreviPay plugin version is not available: composer.json does not hold a JSON object',
+                ['package' => self::PACKAGE_NAME, 'jsonError' => json_last_error_msg()]
+            );
+            return self::PLACEHOLDER_VERSION;
+        }
+
+        if (isset($contents['version'])) {
+            return (string) $contents['version'];
+        }
+
+        return $this->getInstalledVersion() ?? self::PLACEHOLDER_VERSION;
+    }
+
+    /**
+     * The publish step removes the "version" field from a beta package, so read the installed version from Composer.
+     *
+     * @return string|null
+     */
+    private function getInstalledVersion(): ?string
+    {
+        try {
+            $prettyVersion = $this->installedVersionProvider->getPrettyVersion(self::PACKAGE_NAME);
+        } catch (\OutOfBoundsException $exception) {
+            $this->logger->debug(
+                'TreviPay plugin version is not available: the package is not installed by Composer',
+                ['package' => self::PACKAGE_NAME]
+            );
+            return null;
+        }
+
+        $version = $this->versionNormalizer->normalize($prettyVersion);
+        if ($version === null) {
+            $this->logger->debug(
+                'TreviPay plugin version is not available: the Composer version is not usable',
+                ['package' => self::PACKAGE_NAME, 'prettyVersion' => $prettyVersion]
+            );
+        }
+
+        return $version;
     }
 }

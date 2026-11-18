@@ -187,7 +187,7 @@ class UpdateM2CustomerByWebhook
             self::VALUE => $customerStatusOptionId
         ];
         $statusAttributeId = $this->getM2CustomerAttributeIdByCode(TreviPayCustomer::STATUS);
-        // 3Rivers does not guarantee webhook order, so customer.updated may already have stored a newer status.
+        // TreviPay does not guarantee webhook order, so customer.updated may already have stored a newer status.
         // Only replace the status that the credit application stored.
         $statusWhere = [
             self::ENTITY_ID . ' = ?' => $m2CustomerId,
@@ -201,7 +201,7 @@ class UpdateM2CustomerByWebhook
                 self::ENTITY_ID => $m2CustomerId,
                 self::VALUE => $data->getId()
             ],
-            // Name is not guarded: only customer.created writes the 3Rivers customer ID. A late customer.created can overwrite
+            // Name is not guarded: only customer.created writes the TreviPay customer ID. A late customer.created can overwrite
             // a newer name from customer.updated, but it's unlikely that the name would change between the two webhooks.
             [
                 self::ATTRIBUTE_ID => $this->getM2CustomerAttributeIdByCode(TreviPayCustomer::NAME),

@@ -156,7 +156,7 @@ abstract class Webhook extends Action implements CsrfAwareActionInterface
     }
 
     /**
-     * system.log reaches Sumo Logic, so keep this to IDs and statuses: no names, emails, tokens or keys.
+     * system.log goes to central log storage, so keep this to IDs and statuses: no names, emails, tokens or keys.
      */
     private function getWebhookSummary(): array
     {

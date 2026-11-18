@@ -15,7 +15,7 @@ use TreviPay\TreviPayMagento\Model\Customer\TreviPayCustomer;
 class GetM2CustomersByField
 {
     /**
-     * system.log reaches Sumo Logic, so only these ID fields log the lookup value.
+     * system.log goes to central log storage, so only these ID fields log the lookup value.
      */
     private const LOGGED_VALUE_FIELDS = [
         TreviPayCustomer::CLIENT_REFERENCE_CUSTOMER_ID,

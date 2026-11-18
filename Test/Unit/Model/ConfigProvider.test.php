@@ -4,15 +4,20 @@ namespace TreviPay\TreviPay\Test\Unit\Model;
 
 use Faker\Factory as Faker;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ProductMetadata;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem\Driver\File as DriverFile;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Psr\Log\LoggerInterface;
+use TreviPay\TreviPayMagento\Model\Composer\InstalledVersionProvider;
+use TreviPay\TreviPayMagento\Model\Composer\VersionNormalizer;
 use TreviPay\TreviPayMagento\Model\ConfigProvider;
 use TreviPay\TreviPay\Model\MaskValue;
 
@@ -21,6 +26,7 @@ final class ConfigProviderTest extends MockeryTestCase
     private $configProvider;
     private $driverFileMock;
     private $faker;
+    private $installedVersionProviderMock;
     private $jsonMock;
     private $loggerMock;
     private $maskValueMock;
@@ -54,6 +60,7 @@ final class ConfigProviderTest extends MockeryTestCase
     {
         $this->driverFileMock = Mockery::mock(DriverFile::class);
         $this->faker = Faker::create();
+        $this->installedVersionProviderMock = Mockery::mock(InstalledVersionProvider::class);
         $this->jsonMock = Mockery::mock(Json::class);
         $this->loggerMock = Mockery::mock(LoggerInterface::class);
         $this->maskValueMock = Mockery::mock(MaskValue::class);
@@ -68,12 +75,17 @@ final class ConfigProviderTest extends MockeryTestCase
             $this->maskValueMock,
             $this->driverFileMock,
             $this->productMetaDataMock,
-            $this->loggerMock
+            $this->loggerMock,
+            $this->installedVersionProviderMock,
+            new VersionNormalizer()
         );
     }
 
     public function tearDown(): void
     {
+        $objectManagerInstance = new \ReflectionProperty(ObjectManager::class, '_instance');
+        $objectManagerInstance->setAccessible(true);
+        $objectManagerInstance->setValue(null, null);
         Mockery::close();
     }
 
@@ -150,6 +162,178 @@ final class ConfigProviderTest extends MockeryTestCase
             ->andReturn($editionStr);
 
         $this->configProvider->getIntegrationInfo();
+    }
+
+    public function testIntegrationInfoUsesVersionFieldWithoutComposerLookup(): void
+    {
+        $this->givenPluginComposerJson(['version' => '1.1.30']);
+        $this->installedVersionProviderMock->shouldNotReceive('getPrettyVersion');
+        $this->loggerMock->shouldNotReceive('debug');
+        $this->givenMagentoVersion();
+
+        $this->assertEquals($this->expectedIntegrationInfo('1.1.30'), $this->configProvider->getIntegrationInfo());
+    }
+
+    public function testIntegrationInfoReportsEmptyVersionFieldUnchanged(): void
+    {
+        $this->givenPluginComposerJson(['version' => '']);
+        $this->installedVersionProviderMock->shouldNotReceive('getPrettyVersion');
+        $this->loggerMock->shouldNotReceive('debug');
+        $this->givenMagentoVersion();
+
+        $this->assertEquals($this->expectedIntegrationInfo(''), $this->configProvider->getIntegrationInfo());
+    }
+
+    /**
+     * @dataProvider usableInstalledVersionProvider
+     */
+    public function testIntegrationInfoFallsBackToInstalledVersion(string $prettyVersion, string $expected): void
+    {
+        $this->givenPluginComposerJson([]);
+        $this->installedVersionProviderMock->shouldReceive('getPrettyVersion')
+            ->with('msts/trevipay-magento')
+            ->andReturn($prettyVersion);
+        $this->loggerMock->shouldNotReceive('debug');
+        $this->givenMagentoVersion();
+
+        $this->assertEquals($this->expectedIntegrationInfo($expected), $this->configProvider->getIntegrationInfo());
+    }
+
+    public function usableInstalledVersionProvider(): array
+    {
+        return [
+            'beta tag' => ['v1.1.30-beta.2', '1.1.30-beta.2'],
+            'release' => ['1.1.30', '1.1.30'],
+        ];
+    }
+
+    /**
+     * @dataProvider unusableInstalledVersionProvider
+     */
+    public function testIntegrationInfoReportsPlaceholderForUnusableInstalledVersion(?string $prettyVersion): void
+    {
+        $this->givenPluginComposerJson([]);
+        $this->installedVersionProviderMock->shouldReceive('getPrettyVersion')
+            ->with('msts/trevipay-magento')
+            ->andReturn($prettyVersion);
+        $this->loggerMock->shouldReceive('debug')
+            ->once()
+            ->with(
+                'TreviPay plugin version is not available: the Composer version is not usable',
+                ['package' => 'msts/trevipay-magento', 'prettyVersion' => $prettyVersion]
+            );
+        $this->givenMagentoVersion();
+
+        $this->assertEquals($this->expectedIntegrationInfo('0.0.0'), $this->configProvider->getIntegrationInfo());
+    }
+
+    public function unusableInstalledVersionProvider(): array
+    {
+        return [
+            'branch' => ['dev-develop'],
+            'no version' => [null],
+        ];
+    }
+
+    public function testIntegrationInfoReportsPlaceholderWhenPackageIsNotInstalled(): void
+    {
+        $this->givenPluginComposerJson([]);
+        $this->installedVersionProviderMock->shouldReceive('getPrettyVersion')
+            ->with('msts/trevipay-magento')
+            ->andThrow(new \OutOfBoundsException('Package "msts/trevipay-magento" is not installed'));
+        $this->loggerMock->shouldReceive('debug')
+            ->once()
+            ->with(
+                'TreviPay plugin version is not available: the package is not installed by Composer',
+                ['package' => 'msts/trevipay-magento']
+            );
+        $this->givenMagentoVersion();
+
+        $this->assertEquals($this->expectedIntegrationInfo('0.0.0'), $this->configProvider->getIntegrationInfo());
+    }
+
+    public function testIntegrationInfoReportsPlaceholderWhenComposerJsonIsNotAnObject(): void
+    {
+        $this->givenPluginComposerJsonContents('not json');
+        $this->installedVersionProviderMock->shouldNotReceive('getPrettyVersion');
+        $this->loggerMock->shouldReceive('debug')
+            ->once()
+            ->with(
+                'TreviPay plugin version is not available: composer.json does not hold a JSON object',
+                ['package' => 'msts/trevipay-magento', 'jsonError' => 'Syntax error']
+            );
+        $this->givenMagentoVersion();
+
+        $this->assertEquals($this->expectedIntegrationInfo('0.0.0'), $this->configProvider->getIntegrationInfo());
+    }
+
+    public function testIntegrationInfoReportsPlaceholderWhenComposerJsonIsUnreadable(): void
+    {
+        $this->driverFileMock->shouldReceive('getRealPath')
+            ->andThrow(new FileSystemException(__('composer.json is unreadable')));
+        $this->installedVersionProviderMock->shouldNotReceive('getPrettyVersion');
+        $this->loggerMock->shouldReceive('error')
+            ->once()
+            ->with(Mockery::type(FileSystemException::class));
+        $this->givenMagentoVersion();
+
+        $this->assertEquals($this->expectedIntegrationInfo('0.0.0'), $this->configProvider->getIntegrationInfo());
+    }
+
+    public function testConstructorWithoutVersionDependenciesGetsThemFromObjectManager(): void
+    {
+        $objectManagerMock = Mockery::mock(ObjectManagerInterface::class);
+        $objectManagerMock->shouldReceive('get')
+            ->with(InstalledVersionProvider::class)
+            ->andReturn($this->installedVersionProviderMock);
+        $objectManagerMock->shouldReceive('get')
+            ->with(VersionNormalizer::class)
+            ->andReturn(new VersionNormalizer());
+        ObjectManager::setInstance($objectManagerMock);
+
+        $configProvider = new ConfigProvider(
+            $this->scopeConfigMock,
+            $this->jsonMock,
+            $this->requestMock,
+            $this->maskValueMock,
+            $this->driverFileMock,
+            $this->productMetaDataMock,
+            $this->loggerMock
+        );
+
+        $this->givenPluginComposerJson([]);
+        $this->installedVersionProviderMock->shouldReceive('getPrettyVersion')
+            ->with('msts/trevipay-magento')
+            ->andReturn('v1.1.30-beta.2');
+        $this->loggerMock->shouldNotReceive('debug');
+        $this->givenMagentoVersion();
+
+        $this->assertEquals($this->expectedIntegrationInfo('1.1.30-beta.2'), $configProvider->getIntegrationInfo());
+    }
+
+    private function givenPluginComposerJson(array $contents): void
+    {
+        $this->givenPluginComposerJsonContents(json_encode($contents));
+    }
+
+    private function givenPluginComposerJsonContents(string $contents): void
+    {
+        $composerJsonPath = realpath(__DIR__ . '/../../../composer.json');
+        $this->driverFileMock->shouldReceive('getRealPath')->andReturn($composerJsonPath);
+        $this->driverFileMock->shouldReceive('fileGetContents')
+            ->with($composerJsonPath)
+            ->andReturn($contents);
+    }
+
+    private function givenMagentoVersion(): void
+    {
+        $this->productMetaDataMock->shouldReceive('getVersion')->andReturn('2.4.9');
+        $this->productMetaDataMock->shouldReceive('getEdition')->andReturn('Community');
+    }
+
+    private function expectedIntegrationInfo(string $pluginVersion): string
+    {
+        return 'magento/2.4.9 (Community), trevipay-magento/' . $pluginVersion;
     }
 
     public function testReturnValidIsSandbox(): void
